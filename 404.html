@@ -143,6 +143,16 @@ footer{background:#f6f3ef;color:var(--faint);padding:20px;margin-top:40px}
   flex-wrap:wrap;gap:12px;padding:0 20px;text-align:center;
 }
 .footer-nav{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+/* === Scroll Reveal Base === */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s ease-out;
+}
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
 </style>
 </head>
 
@@ -230,6 +240,25 @@ footer{background:#f6f3ef;color:var(--faint);padding:20px;margin-top:40px}
     </nav>
   </div>
 </footer>
+<script>
+// === Scroll Reveal Animation ===
+const revealElements = document.querySelectorAll(".reveal");
+
+const revealOnScroll = () => {
+  const windowHeight = window.innerHeight;
+  revealElements.forEach(el => {
+    const revealTop = el.getBoundingClientRect().top;
+    const revealPoint = 120; // how early to trigger animation
+    if (revealTop < windowHeight - revealPoint) {
+      el.classList.add("active");
+    }
+  });
+};
+
+window.addEventListener("scroll", revealOnScroll);
+revealOnScroll(); // trigger on load
+</script>
+
 <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').catch(console.error);

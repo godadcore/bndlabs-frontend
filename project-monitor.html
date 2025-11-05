@@ -178,6 +178,16 @@
   .footer-nav{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
   .socials{display:flex;gap:10px;align-items:center}
   .socials a svg{width:18px;height:18px;fill:#000}
+/* === Scroll Reveal Base === */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s ease-out;
+}
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
 </style>
 </head>
 <body>
@@ -351,5 +361,24 @@
   window.addEventListener('scroll', onScroll, {passive:true});
   onScroll();
 </script>
+<script>
+// === Scroll Reveal Animation ===
+const revealElements = document.querySelectorAll(".reveal");
+
+const revealOnScroll = () => {
+  const windowHeight = window.innerHeight;
+  revealElements.forEach(el => {
+    const revealTop = el.getBoundingClientRect().top;
+    const revealPoint = 120; // how early to trigger animation
+    if (revealTop < windowHeight - revealPoint) {
+      el.classList.add("active");
+    }
+  });
+};
+
+window.addEventListener("scroll", revealOnScroll);
+revealOnScroll(); // trigger on load
+</script>
+
 </body>
 </html>

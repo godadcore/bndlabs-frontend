@@ -189,6 +189,16 @@ font-weight:700;margin-bottom:10px}
   footer{background:#f6f3ef;color:var(--faint);padding:20px;margin-top:28px}
   .footer-inner{max-width:var(--max-width);margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:0 20px}
   .footer-nav{display:flex;gap:14px;flex-wrap:wrap}
+/* === Scroll Reveal Base === */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s ease-out;
+}
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
 </style>
 </head>
 <body class="body-offset">
@@ -214,7 +224,7 @@ font-weight:700;margin-bottom:10px}
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-card">
+  <div class="hero-card reveal">
     <div class="hero-inner">
       <div class="pill">WRITE TO US</div>
       <h1>Get In Touch</h1>
@@ -373,6 +383,24 @@ document.getElementById("contactForm").addEventListener("submit", function(event
   alert("✅ Message sent successfully!");
   document.getElementById("contactForm").reset();
 });
+</script>
+<script>
+// === Scroll Reveal Animation ===
+const revealElements = document.querySelectorAll(".reveal");
+
+const revealOnScroll = () => {
+  const windowHeight = window.innerHeight;
+  revealElements.forEach(el => {
+    const revealTop = el.getBoundingClientRect().top;
+    const revealPoint = 120; // how early to trigger animation
+    if (revealTop < windowHeight - revealPoint) {
+      el.classList.add("active");
+    }
+  });
+};
+
+window.addEventListener("scroll", revealOnScroll);
+revealOnScroll(); // trigger on load
 </script>
 
 </body>

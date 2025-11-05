@@ -277,6 +277,16 @@
   @media(max-width:720px){
     .footer-inner{flex-direction:column;gap:10px;}
   }
+/* === Scroll Reveal Base === */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s ease-out;
+}
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
 </style>
 </head>
 
@@ -306,7 +316,7 @@
   </header>
 
   <div class="hero-wrap">
-    <div class="hero-card">
+    <div class="hero-card reveal">
       <div class="label-left">
         <h1>UI/UX Designer & Developer</h1>
         <p>UI/UX Designer specialising in UI/UX & design systems. Front-end developer who writes clean, elegant, and efficient code.</p>
@@ -377,6 +387,23 @@
     });
   });
 </script>
+<script>
+// === Scroll Reveal Animation ===
+const revealElements = document.querySelectorAll(".reveal");
 
+const revealOnScroll = () => {
+  const windowHeight = window.innerHeight;
+  revealElements.forEach(el => {
+    const revealTop = el.getBoundingClientRect().top;
+    const revealPoint = 120; // how early to trigger animation
+    if (revealTop < windowHeight - revealPoint) {
+      el.classList.add("active");
+    }
+  });
+};
+
+window.addEventListener("scroll", revealOnScroll);
+revealOnScroll(); // trigger on load
+</script>
 </body>
 </html>

@@ -211,6 +211,16 @@
     .hero-right{align-items:center}
     .preview-cards{justify-content:center;flex-wrap:wrap}
   }
+/* === Scroll Reveal Base === */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s ease-out;
+}
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
 </style>
 </head>
 
@@ -323,5 +333,24 @@
     },400);
   });
 </script>
+<script>
+// === Scroll Reveal Animation ===
+const revealElements = document.querySelectorAll(".reveal");
+
+const revealOnScroll = () => {
+  const windowHeight = window.innerHeight;
+  revealElements.forEach(el => {
+    const revealTop = el.getBoundingClientRect().top;
+    const revealPoint = 120; // how early to trigger animation
+    if (revealTop < windowHeight - revealPoint) {
+      el.classList.add("active");
+    }
+  });
+};
+
+window.addEventListener("scroll", revealOnScroll);
+revealOnScroll(); // trigger on load
+</script>
+
 </body>
 </html>
