@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin | Bodunde CMS</title>
+<style>
+  body {
+    font-family: "SF Pro Text", Arial, sans-serif;
+    background: #fafafa;
+    color: #111;
+    margin: 0;
+    padding: 0;
+  }
+  header {
+    background: linear-gradient(120deg, #FF4D00, #FF8C00);
+    color: #fff;
+    padding: 16px 24px;
+    font-weight: 700;
+  }
+  .container {
+    max-width: 900px;
+    margin: 30px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,.1);
+    padding: 20px;
+  }
+  .hidden { display: none; }
+  .login {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; height: 80vh; gap: 10px;
+  }
+  input, textarea {
+    width: 100%; padding: 10px; border: 1px solid #ddd;
+    border-radius: 8px; font-size: 14px;
+  }
+  button {
+    background: linear-gradient(120deg, #FF4D00, #FF8C00);
+    color: #fff; border: none; padding: 10px 16px;
+    border-radius: 8px; cursor: pointer; font-weight: 700;
+  }
+  button:hover { opacity: .9; }
+  .project { border: 1px solid #eee; border-radius: 8px; padding: 10px; margin-top: 10px; }
+  .actions { display: flex; gap: 10px; margin-top: 10px; }
+</style>
+</head>
+<body>
+<header>🔐 Bodunde CMS Dashboard</header>
+
+<div class="login" id="loginScreen">
+  <h2>Admin Login</h2>
+  <input type="password" id="password" placeholder="Enter password">
+  <button onclick="checkPassword()">Login</button>
+</div>
+
+<div class="container hidden" id="adminPanel">
+  <h2>Manage Portfolio Projects</h2>
+
+  <form id="projectForm">
+    <input type="hidden" id="editIndex">
+    <input type="text" id="title" placeholder="Project Title" required>
+    <input type="text" id="slug" placeholder="Project Slug (e.g. project-monitor)" required>
+    <input type="text" id="category" placeholder="Category" required>
+    <textarea id="description" placeholder="Description" required></textarea>
+    <input type="text" id="image" placeholder="Image URL" required>
+    <input type="date" id="date" required>
+    <button type="submit">Save Project</button>
+  </form>
+
+  <h3>Current Projects</h3>
+  <div id="projectList"></div>
+
+  <button onclick="exportJSON()">⬇ Export JSON</button>
+</div>
+
+<script>
+  const PASSWORD = "bodunde123"; // 🔐 change this later
+
+  function checkPassword() {
+    const entered = document.getElementById("password").value;
+    if (entered === PASSWORD) {
+      document.getElementById("loginScreen").classList.add("hidden");
+      document.getElementById("adminPanel").classList.remove("hidden");
+      loadProjects();
+    } else {
+      alert("Incorrect password!");
+    }
+  }
+
+  let projects = [];
+
+  async function loadProjects() {
+    try {
+      const res = await fetch("portfolio.json");
+      projects = await res.json();
+      renderProjects();
+    } catch {
+      projects = [];
+    }
+  }
+
+  function renderProjects() {
+    const list = document.getElementById("projectList");
+    list.innerHTML = "";
+    projects.forEach((p, i) => {
+      const div = document.createElement("div");
+      div.className = "project";
+      div.innerHTML = `
+        <strong>${p.title}</strong> <em>(${p.category})</em><br>
+        <small>${p.date}</small><br>
+        ${p.description}<br>
+        <img src="${p.image}" alt="${p.title}" width="100"><br>
+        <div class="actions">
+          <button onclick="editProject(${i})">Edit</button>
+          <button onclick="deleteProject(${i})">Delete</button>
+        </div>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  document.getElementById("projectForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const index = document.getElementById("editIndex").value;
+    const newProj = {
+      title: document.getElementById("title").value,
+      slug: document.getElementById("slug").value,
+      category: document.getElementById("category").value,
+      description: document.getElementById("description").value,
+      image: document.getElementById("image").value,
+      date: document.getElementById("date").value
+    };
+    if (index) {
+      projects[index] = newProj;
+    } else {
+      projects.push(newProj);
+    }
+    e.target.reset();
+    document.getElementById("editIndex").value = "";
+    renderProjects();
+  });
+
+  function editProject(i) {
+    const p = projects[i];
+    document.getElementById("editIndex").value = i;
+    document.getElementById("title").value = p.title;
+    document.getElementById("slug").value = p.slug;
+    document.getElementById("category").value = p.category;
+    document.getElementById("description").value = p.description;
+    document.getElementById("image").value = p.image;
+    document.getElementById("date").value = p.date;
+  }
+
+  function deleteProject(i) {
+    if (confirm("Delete this project?")) {
+      projects.splice(i, 1);
+      renderProjects();
+    }
+  }
+
+  function exportJSON() {
+    const blob = new Blob([JSON.stringify(projects, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "portfolio.json";
+    a.click();
+  }
+</script>
+</body>
+</html>
