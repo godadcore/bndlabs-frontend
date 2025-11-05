@@ -1,6 +1,29 @@
 <!doctype html>
 <html lang="en">
-<head>
+<head><title>Contact | Bodunde</title>
+<meta name="description" content="Get in touch with Bodunde — UX designer and front-end developer. Let’s collaborate on your next digital product." />
+<link rel="canonical" href="https://bodunde.com/contact" />
+<!-- ===== Favicon + PWA Setup ===== -->
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+<link rel="apple-touch-icon" href="/favicon.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#FF4D00">
+<meta name="application-name" content="Bodunde">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Bodunde">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Contact | Bodunde" />
+<meta property="og:description" content="Reach out to Bodunde — available for freelance projects and collaborations." />
+<meta property="og:url" content="https://bodunde.com/contact" />
+<meta property="og:image" content="https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=1200&q=80" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Contact | Bodunde" />
+<meta name="twitter:description" content="Get in touch with Bodunde for design collaborations and creative partnerships." />
+<meta name="twitter:image" content="https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=1200&q=80" />
+
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Contact — Bodunde</title>
@@ -312,6 +335,12 @@ font-weight:700;margin-bottom:10px}
     }
   });
 </script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(console.error);
+  }
+</script>
+
 <script>
 document.getElementById("contactForm").addEventListener("submit", function(event) {
   event.preventDefault(); // stop normal form submission
