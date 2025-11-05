@@ -1,0 +1,22 @@
+{
+  "name": "Bodunde — UI/UX Designer & Front-End Developer",
+  "short_name": "Bodunde",
+  "description": "I design and develop high-conversion digital interfaces, precision-engineered for global performance and measurable business impact.",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#FF4D00",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
