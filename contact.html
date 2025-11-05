@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Contact — Bodunde</title>
+<meta name="description" content="Get in touch with Bodunde — UX designer & front-end developer." />
+
+<style>
+  :root{
+    --primary:#FF4D00;
+    --primary-2:#FF8C00;
+    --primary-gradient:linear-gradient(120deg,#FF4D00,#FF8C00);
+    --light-bg:#FFFFFF;
+    --light-text:#0B0B0B;
+    --muted:rgba(11,11,11,0.65);
+    --faint:rgba(11,11,11,0.55);
+    --card:#f6f3ef;
+    --max-width:1100px;
+    --radius:16px;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:"SF Pro Text",-apple-system,BlinkMacSystemFont,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    color:var(--light-text);
+    background:#fff;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+  }
+  a{color:inherit;text-decoration:none}
+
+  /* ===== HEADER (hamburger everywhere) ===== */
+  header{
+    height:64px;
+    display:flex;align-items:center;justify-content:space-between;
+    position:fixed;top:0;left:0;right:0;z-index:2000;
+    background:rgba(0,0,0,0.92);backdrop-filter:blur(10px);
+    color:#fff;padding:12px 24px;border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .brand{display:flex;align-items:center;gap:10px}
+  .brand .name{font-weight:700;font-size:18px;color:#fff}
+  .logo svg{width:36px;height:36px;fill:#fff}
+  .nav{display:none;}
+  .nav.active{
+    display:flex;flex-direction:column;align-items:flex-end;
+    position:absolute;top:64px;right:16px;width:220px;
+    background:rgba(20,20,20,0.92);backdrop-filter:blur(10px);
+    border-radius:20px;padding:12px 10px;gap:10px;
+    box-shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+  .nav a{
+    background:rgba(255,255,255,.08);color:#fff;
+    padding:12px 0;border-radius:999px;width:100%;text-align:center;
+    font-weight:500;transition:.2s;
+  }
+  .nav a:hover{background:rgba(255,255,255,.18);transform:translateY(-1px)}
+  .nav a.active{background:var(--primary-gradient);color:#fff;font-weight:700}
+  .cta{padding:10px 14px;border-radius:10px;background:var(--primary-gradient);font-weight:700;color:#fff;border:0;cursor:pointer}
+  .menu-toggle{display:block;background:transparent;border:0;color:#fff;font-size:22px;cursor:pointer}
+
+  .body-offset{padding-top:80px}
+
+  /* ===== HERO ===== */
+  .hero{
+    max-width:var(--max-width);margin:0 auto 18px;padding:0 20px;
+  }
+  .hero-card{
+    position:relative;overflow:hidden;border-radius:22px;
+    background:var(--primary-gradient); /* brand orange gradient */
+    color:#fff;min-height:160px;display:flex;align-items:center;justify-content:center;
+  }
+  .hero-card::before,
+  .hero-card::after{
+    content:"";position:absolute;border:3px solid rgba(255,255,255,.35);border-radius:999px;
+  }
+  .hero-card::before{width:320px;height:320px;left:-120px;top:-120px}
+  .hero-card::after{width:420px;height:420px;right:-160px;bottom:-160px}
+  .hero-inner{position:relative;z-index:1;text-align:center;padding:28px 16px}
+  .pill{display:inline-block;padding:6px 12px;border-radius:999px;background:#fff;color:var(--primary);
+font-weight:700;margin-bottom:10px}
+  .hero h1{margin:0;font-size:36px;font-weight:800;letter-spacing:-0.5px}
+  @media(min-width:720px){ .hero h1{font-size:44px} }
+
+  /* ===== LAYOUT ===== */
+  .container{max-width:var(--max-width);margin:0 auto;padding:0 20px}
+  .grid{
+    display:grid;grid-template-columns:1.2fr .8fr;gap:22px;
+  }
+  @media(max-width:980px){ .grid{grid-template-columns:1fr} }
+
+  /* Left: form card */
+  .card{
+    background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:var(--radius);
+    box-shadow:0 6px 18px rgba(0,0,0,.06);
+  }
+  .card .pad{padding:22px}
+  .card h2{margin:0 0 6px;font-size:24px}
+  .card p.sub{margin:0 0 16px;color:var(--muted);font-size:14px}
+  .divider{height:1px;background:rgba(0,0,0,.06);margin:12px 0 18px}
+
+  /* FORM */
+  form{width:100%}
+  .form-grid{
+    display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;
+  }
+  @media(max-width:560px){ .form-grid{grid-template-columns:1fr} }
+
+  .field, textarea{
+    width:100%;
+    padding:12px 14px;border-radius:12px;border:1px solid rgba(0,0,0,.12);
+    background:#fff;font-size:15px;outline:none;
+  }
+  .field:focus, textarea:focus{border-color:#0b74ff;box-shadow:0 0 0 3px rgba(11,116,255,.12)}
+  textarea{min-height:120px;resize:vertical}
+
+  /* CONSENT CHECKBOXES — aligned flush with inputs & equal spacing */
+  .consents{margin-top:12px}
+  /* Make each consent row fill the same left edge as inputs */
+  label.cb{
+    display:grid;
+    grid-template-columns:20px 1fr; /* checkbox | text */
+    column-gap:10px;
+    align-items:start;
+    margin:0; /* no leftover margins */
+    color:var(--faint);
+    font-size:14px;
+    line-height:1.45;
+  }
+  /* Uniform vertical spacing between the two */
+  .consents .cb + .cb{ margin-top:12px; }
+
+  /* normalize checkbox size */
+ .cb input[type="checkbox"]{
+  width:18px;height:18px;margin:0;accent-color:var(--primary);
+}
+
+  .help{color:var(--faint);font-size:12px;margin-top:12px}
+  .btn{
+    display:inline-block;margin-top:14px;border:0;cursor:pointer;
+    padding:12px 18px;border-radius:12px;font-weight:800;
+    background:var(--primary-gradient);color:#fff;
+    box-shadow:0 8px 20px rgba(255,77,0,.25);
+  }
+  .btn:hover{opacity:.95}
+
+  /* Right column */
+  .side-stack{display:flex;flex-direction:column;gap:18px}
+  .photo{
+    background:#eef5ff;border:1px solid rgba(0,0,0,.06);border-radius:var(--radius);
+    overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:280px;
+  }
+  .photo img{max-width:100%;height:auto;display:block}
+
+  .info-card{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:var(--radius);box-shadow:0 6px 18px rgba(0,0,0,.06)}
+  .info-card .pad{padding:18px}
+  .info-title{font-weight:800;margin:0 0 10px}
+  .row{display:flex;gap:10px;align-items:flex-start;margin:10px 0}
+  .bullet{width:32px;height:32px;border-radius:10px;background:#eef5ff;display:inline-flex;align-items:center;justify-content:center;flex:none}
+  .bullet svg{width:16px;height:16px;fill:var(--primary)
+}
+  .muted{color:var(--faint)}
+  .socials{display:flex;gap:8px;margin-top:8px}
+  .socials a{width:36px;height:36px;border-radius:10px;border:1px solid rgba(0,0,0,.08);display:inline-flex;align-items:center;justify-content:center}
+  .socials a svg{width:16px;height:16px;fill:#000}
+
+  /* FOOTER */
+  footer{background:#f6f3ef;color:var(--faint);padding:20px;margin-top:28px}
+  .footer-inner{max-width:var(--max-width);margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:0 20px}
+  .footer-nav{display:flex;gap:14px;flex-wrap:wrap}
+</style>
+</head>
+<body class="body-offset">
+
+<header>
+  <div class="brand">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-2.9h2v-2.2c0-2 1.2-3.1 3-3.1.9 0 1.8.1 2 .1v2.3h-1.1c-1 0-1.3.6-1.3 1.2v1.7h2.6l-.4 2.9h-2.2v7A10 10 0 0 0 22 12z" fill="currentColor"/></svg>
+    </div>
+    <div class="brand-text"><div class="name">Bodunde</div></div>
+  </div>
+
+  <nav class="nav" aria-label="Main">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="portfolio.html">Portfolio</a>
+    <a href="blog.html">Blog</a>
+    <a href="contact.html" class="active">Contact</a>
+  </nav>
+
+  <button class="menu-toggle" id="menuToggle" aria-label="Menu">☰</button>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-card">
+    <div class="hero-inner">
+      <div class="pill">WRITE TO US</div>
+      <h1>Get In Touch</h1>
+    </div>
+  </div>
+</section>
+
+<main class="container">
+  <div class="grid">
+    <!-- LEFT: FORM -->
+    <div class="card">
+      <div class="pad">
+        <h2>Let’s Talk!</h2>
+        <p class="sub">Get in touch with us using the enquiry form or contact details below.</p>
+        <div class="divider"></div>
+
+        <form id="contactForm" action="#" method="post">
+          <div class="form-grid">
+            <div><input class="field" type="text" id="firstName" name="first_name" placeholder="First Name" /></div>
+            <div><input class="field" type="text" id="lastName" name="last_name" placeholder="Last Name" /></div>
+          </div>
+
+          <div style="margin-top:12px">
+            <input class="field" type="email" id="email" name="email" placeholder="Email" />
+          </div>
+
+          <div style="margin-top:12px">
+            <textarea name="message" id="message" class="field" placeholder="Message"></textarea>
+          </div>
+
+          <!-- CONSENTS (aligned with inputs) -->
+          <div class="consents">
+            <label class="cb">
+  <input type="checkbox" id="updates" name="agree_messages">
+  <span>I agree to receive other communication messages.</span>
+</label>
+           <label class="cb">
+  <input type="checkbox" id="consent" name="agree_data">
+  <span>I give my consent to Bodunde to store my data.</span>
+</label>
+          </div>
+
+          <p class="help">We respect your privacy. You can opt out at any time.</p>
+
+          <button class="btn" type="submit">Send Message</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- RIGHT: IMAGE + INFO -->
+    <aside class="side-stack">
+      <div class="photo">
+        <img src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?q=80&w=1400&auto=format&fit=crop" alt="Happy person on phone">
+      </div>
+
+      <div class="info-card">
+        <div class="pad">
+          <h3 class="info-title">Quick Contact</h3>
+          <div class="row">
+            <span class="bullet"><svg viewBox="0 0 24 24"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.3 0-8 2.2-8 5v1h16v-1c0-2.8-3.7-5-8-5Z"/></svg></span>
+            <div>
+              <div class="muted">Email</div>
+              <div>hello@bodunde.dev</div>
+            </div>
+          </div>
+
+          <div class="row">
+            <span class="bullet"><svg viewBox="0 0 24 24"><path d="M6.6 10.8a15.6 15.6 0 0 0 6.6 6.6l2.2-2.2c.3-.3.8-.4 1.2-.3 1 .3 2 .5 3 .5.7 0 1.2.5 1.2 1.2V20c0 .7-.5 1.2-1.2 1.2C10.4 21.2 2.8 13.6 2.8 3.2 2.8 2.5 3.3 2 4 2h3.2c.7 0 1.2.5 1.2 1.2 0 1 .2 2 .5 3 .1.4 0 .9-.3 1.2l-2 2.4Z"/></svg></span>
+            <div>
+              <div class="muted">Phone Number</div>
+              <div>+234 (0) 800 000 0000</div>
+            </div>
+          </div>
+
+          <div class="row">
+            <span class="bullet"><svg viewBox="0 0 24 24"><path d="M12 2a8 8 0 0 0-8 8c0 5.2 8 12 8 12s8-6.8 8-12a8 8 0 0 0-8-8Zm0 10.5A2.5 2.5 0 1 1 12 7.5a2.5 2.5 0 0 1 0 5Z"/></svg></span>
+            <div>
+              <div class="muted">Headquarter</div>
+              <div>Lagos, Nigeria</div>
+            </div>
+          </div>
+
+          <div style="margin-top:10px;font-weight:800">Follow us</div>
+          <div class="socials">
+            <a href="#"><svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.7v-2.9h2.7V9.5c0-2.7 1.6-4.2 4-4.2 1.1 0 2.3.2 2.3.2v2.6h-1.3c-1.3 0-1.7.8-1.7 1.6v1.9h3l-.5 2.9h-2.5v7A10 10 0 0 0 22 12Z"/></svg></a>
+            <a href="#"><svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.1 1.5 4.5 4.5 0 0 0-7.8 3v1A10.7 10.7 0 0 1 3 4s-4 9 5 13a11.6 11.6 0 0 1-7 2c9 5 20 0 20-11.5 0-.3 0-.5-.1-.8A7.7 7.7 0 0 0 23 3z"/></svg></a>
+            <a href="#"><svg viewBox="0 0 24 24"><path d="M22.5 6.1c-.8.4-1.7.6-2.6.8a4.6 4.6 0 0 0-7.9 3v.7a13 13 0 0 1-9.5-4.8 4.6 4.6 0 0 0 1.4 6.1c-.7 0-1.4-.2-2-.5v.1c0 2.2 1.6 4.1 3.7 4.6-.6.2-1.2.2-1.8.1.5 1.8 2.3 3.2 4.3 3.3A9.2 9.2 0 0 1 2 19.6a13 13 0 0 0 7 2c8.3 0 12.8-6.9 12.8-12.8v-.6c.9-.6 1.6-1.4 2.2-2.3z"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div style="font-size:14px">© 2025 <strong>Bodunde</strong>. Designed & coded with ❤️ in Lagos.</div>
+    <nav class="footer-nav">
+      <a href="about.html">About</a>
+      <a href="portfolio.html">Portfolio</a>
+      <a href="blog.html">Blog</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+  // hamburger
+  const menuToggle = document.getElementById('menuToggle');
+  const nav = document.querySelector('.nav');
+  menuToggle.addEventListener('click', () => nav.classList.toggle('active'));
+  document.addEventListener('click', (e)=>{
+    if(!nav.contains(e.target) && !menuToggle.contains(e.target)){
+      nav.classList.remove('active');
+    }
+  });
+</script>
+<script>
+document.getElementById("contactForm").addEventListener("submit", function(event) {
+  event.preventDefault(); // stop normal form submission
+
+  // get form fields
+  const firstName = document.getElementById("firstName").value.trim();
+  const lastName = document.getElementById("lastName").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const message = document.getElementById("message").value.trim();
+  const consent = document.getElementById("consent").checked;
+  const updates = document.getElementById("updates").checked;
+
+  // validation check
+  if (!firstName || !lastName || !email || !message) {
+    alert("⚠️ Please fill out all required fields before sending.");
+    return;
+  }
+
+  // email format check
+  const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+  if (!email.match(emailPattern)) {
+    alert("⚠️ Please enter a valid email address.");
+    return;
+  }
+
+  // checkbox check
+  if (!consent || !updates) {
+    alert("⚠️ Please agree to both checkboxes before sending.");
+    return;
+  }
+
+  // success
+  alert("✅ Message sent successfully!");
+  document.getElementById("contactForm").reset();
+});
+</script>
+
+</body>
+</html>
