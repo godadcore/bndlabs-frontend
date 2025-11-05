@@ -1,171 +1,200 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin | Bodunde CMS</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Bodunde CMS — Admin</title>
+<meta name="description" content="Private admin panel for Bodunde site." />
+
 <style>
-  body {
-    font-family: "SF Pro Text", Arial, sans-serif;
-    background: #fafafa;
-    color: #111;
-    margin: 0;
-    padding: 0;
+  :root{
+    --primary:#FF4D00;
+    --primary-2:#FF8C00;
+    --grad:linear-gradient(120deg,#FF4D00,#FF8C00);
+    --bg:#FFFFFF;
+    --text:#0B0B0B;
+    --muted:rgba(11,11,11,.65);
+    --faint:rgba(11,11,11,.55);
+    --card:#f6f3ef;
+    --max:1100px;
+    --r:16px;
   }
-  header {
-    background: linear-gradient(120deg, #FF4D00, #FF8C00);
-    color: #fff;
-    padding: 16px 24px;
-    font-weight: 700;
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:"SF Pro Text",-apple-system,BlinkMacSystemFont,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    color:var(--text); background:#fff; -webkit-font-smoothing:antialiased;
   }
-  .container {
-    max-width: 900px;
-    margin: 30px auto;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 6px 20px rgba(0,0,0,.1);
-    padding: 20px;
+  a{color:inherit;text-decoration:none}
+
+  header{
+    position:sticky; top:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    background:rgba(0,0,0,.92); color:#fff; padding:12px 20px;
+    border-bottom:1px solid rgba(255,255,255,.1);
   }
-  .hidden { display: none; }
-  .login {
-    display: flex; flex-direction: column; align-items: center;
-    justify-content: center; height: 80vh; gap: 10px;
+  .brand{display:flex;align-items:center;gap:10px}
+  .brand .name{font-weight:800}
+  .logo svg{width:28px;height:28px;fill:#fff}
+  .wrap{max-width:var(--max); margin:18px auto; padding:0 20px 32px}
+  .gate{
+    position:fixed; inset:0; background:rgba(0,0,0,.86);
+    display:flex; align-items:center; justify-content:center;
   }
-  input, textarea {
-    width: 100%; padding: 10px; border: 1px solid #ddd;
-    border-radius: 8px; font-size: 14px;
+  .login{
+    width:min(440px,92vw);
+    background:#111; color:#fff; border-radius:18px; overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,.5); border:1px solid rgba(255,255,255,.08);
   }
-  button {
-    background: linear-gradient(120deg, #FF4D00, #FF8C00);
-    color: #fff; border: none; padding: 10px 16px;
-    border-radius: 8px; cursor: pointer; font-weight: 700;
+  .login-head{background:var(--grad); padding:18px; font-weight:900; font-size:18px; text-align:center;}
+  .login-body{padding:18px}
+  .field{
+    width:100%; padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.2);
+    background:#0f0f10; color:#fff; outline:none; font-size:15px;
   }
-  button:hover { opacity: .9; }
-  .project { border: 1px solid #eee; border-radius: 8px; padding: 10px; margin-top: 10px; }
-  .actions { display: flex; gap: 10px; margin-top: 10px; }
+  .field:focus{border-color:#fff4; box-shadow:0 0 0 3px #ffffff22}
+  .btn{
+    display:inline-block; margin-top:12px; padding:12px 18px; border:0; cursor:pointer;
+    border-radius:12px; font-weight:800; color:#fff; background:var(--grad);
+    box-shadow:0 10px 24px rgba(255,77,0,.28);
+  }
+  .muted{color:#bbb; font-size:13px}
+
+  .tabs{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;}
+  .tab{
+    padding:10px 14px; border-radius:999px; border:1px solid rgba(0,0,0,.08);
+    background:#fff; cursor:pointer; font-weight:700; font-size:14px;
+  }
+  .tab.active{background:var(--grad); color:#fff; border-color:transparent}
+  .cards{display:grid; gap:16px}
+  .card{
+    background:#fff; border:1px solid rgba(0,0,0,.08); border-radius:var(--r);
+    box-shadow:0 6px 18px rgba(0,0,0,.06);
+  }
+  .pad{padding:18px}
+  h2{margin:0 0 4px; font-size:22px}
+  p.sub{margin:0 0 14px; color:var(--muted); font-size:14px}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  @media(max-width:760px){ .grid2{grid-template-columns:1fr} }
+  textarea.field{min-height:120px; resize:vertical}
+  .row{display:grid; gap:8px; margin:10px 0}
+  label{font-size:13px; font-weight:700; color:var(--faint)}
+  .savebar{display:flex; gap:10px; align-items:center; justify-content:flex-start; margin-top:8px}
+  .ghost{
+    padding:10px 14px; border-radius:12px; border:1px solid rgba(0,0,0,.12);
+    background:#fff; font-weight:700; cursor:pointer;
+  }
+  .note{font-size:13px; color:var(--muted)}
+  .ok{color:#17a34a; font-weight:800; display:none}
+  .err{color:#c02727; font-weight:800; display:none}
+  footer{margin-top:28px; color:var(--faint); text-align:center; font-size:13px}
 </style>
 </head>
 <body>
-<header>🔐 Bodunde CMS Dashboard</header>
 
-<div class="login" id="loginScreen">
-  <h2>Admin Login</h2>
-  <input type="password" id="password" placeholder="Enter password">
-  <button onclick="checkPassword()">Login</button>
+<header>
+  <div class="brand">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-2.9h2v-2.2c0-2 1.2-3.1 3-3.1.9 0 1.8.1 2 .1v2.3h-1.1c-1 0-1.3.6-1.3 1.2v1.7h2.6l-.4 2.9h-2.2v7A10 10 0 0 0 22 12z" fill="currentColor"/></svg>
+    </div>
+    <div class="name">Bodunde CMS</div>
+  </div>
+  <div><button id="logout" class="ghost" style="display:none">Log out</button></div>
+</header>
+
+<div class="wrap">
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-panel="home">Home</button>
+    <button class="tab" data-panel="about">About</button>
+    <button class="tab" data-panel="portfolio">Portfolio</button>
+    <button class="tab" data-panel="project">Project (Monitor)</button>
+    <button class="tab" data-panel="blog">Blog (List)</button>
+    <button class="tab" data-panel="post">Blog Post</button>
+    <button class="tab" data-panel="contact">Contact</button>
+    <button class="tab" data-panel="four">404</button>
+  </div>
+
+  <div class="cards">
+
+    <!-- PROJECT (Monitor) -->
+    <section class="card panel" id="project" style="display:block">
+      <div class="pad">
+        <h2>Project: Monitor Case Study</h2>
+        <p class="sub">Top hero + intro wide image.</p>
+        <div class="row">
+          <label>Hero Title</label>
+          <input id="proj_title" class="field" placeholder="Monitor app design">
+        </div>
+        <div class="row">
+          <label>Hero Lead</label>
+          <textarea id="proj_lead" class="field" placeholder="Check out some of my latest product design case studies…"></textarea>
+        </div>
+        <div class="row">
+          <label>Hero Image URL</label>
+          <input id="proj_img" class="field" placeholder="https://…">
+        </div>
+        <div class="row">
+          <label>Intro Wide Image URL</label>
+          <input id="proj_intro_img" class="field" placeholder="https://…">
+        </div>
+        <div class="savebar">
+          <button class="btn" onclick="save('project')">Save Project</button>
+          <span class="ok" id="project_ok">Saved ✓</span>
+          <span class="err" id="project_err">Save failed</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>© 2025 <strong>Bodunde</strong>. Private admin. Keep this page confidential.</footer>
 </div>
 
-<div class="container hidden" id="adminPanel">
-  <h2>Manage Portfolio Projects</h2>
-
-  <form id="projectForm">
-    <input type="hidden" id="editIndex">
-    <input type="text" id="title" placeholder="Project Title" required>
-    <input type="text" id="slug" placeholder="Project Slug (e.g. project-monitor)" required>
-    <input type="text" id="category" placeholder="Category" required>
-    <textarea id="description" placeholder="Description" required></textarea>
-    <input type="text" id="image" placeholder="Image URL" required>
-    <input type="date" id="date" required>
-    <button type="submit">Save Project</button>
-  </form>
-
-  <h3>Current Projects</h3>
-  <div id="projectList"></div>
-
-  <button onclick="exportJSON()">⬇ Export JSON</button>
+<!-- LOGIN GATE -->
+<div class="gate" id="gate">
+  <div class="login">
+    <div class="login-head">Bodunde Admin Login</div>
+    <div class="login-body">
+      <label class="muted">Password</label>
+      <input id="pass" type="password" class="field" placeholder="Enter password">
+      <button class="btn" id="enter">Enter</button>
+      <div class="muted" style="margin-top:10px">Tip: Change the password inside admin.html (look for <code>PASSWORD</code> constant).</div>
+    </div>
+  </div>
 </div>
 
 <script>
-  const PASSWORD = "bodunde123"; // 🔐 change this later
+const PASSWORD = "bodunde123";
+const authed = () => sessionStorage.getItem("bodunde_authed")==="yes";
+const setAuthed = (v) => sessionStorage.setItem("bodunde_authed", v ? "yes":"no");
+const gate  = document.getElementById('gate');
+const enter = document.getElementById('enter');
+const pass  = document.getElementById('pass');
+const logout= document.getElementById('logout');
+function showApp(){gate.style.display='none';logout.style.display='inline-block';}
+function showGate(){gate.style.display='flex';logout.style.display='none';}
+if(authed()) showApp();
+enter.addEventListener('click', ()=>{if(pass.value.trim()===PASSWORD){setAuthed(true);showApp();}else{alert('Incorrect password.');}});
+pass.addEventListener('keydown',(e)=>{if(e.key==='Enter')enter.click();});
+logout.addEventListener('click',()=>{setAuthed(false);showGate();});
 
-  function checkPassword() {
-    const entered = document.getElementById("password").value;
-    if (entered === PASSWORD) {
-      document.getElementById("loginScreen").classList.add("hidden");
-      document.getElementById("adminPanel").classList.remove("hidden");
-      loadProjects();
-    } else {
-      alert("Incorrect password!");
+const tabs=document.querySelectorAll('.tab'),panels=document.querySelectorAll('.panel');
+tabs.forEach(t=>{t.addEventListener('click',()=>{tabs.forEach(x=>x.classList.remove('active'));t.classList.add('active');const id=t.dataset.panel;panels.forEach(p=>p.style.display=(p.id===id)?'block':'none');});});
+
+function val(id){const el=document.getElementById(id);return el?el.value.trim():"";}
+function flash(okId,errId,good){const ok=document.getElementById(okId),er=document.getElementById(errId);if(good){ok.style.display='inline';er.style.display='none';setTimeout(()=>ok.style.display='none',1400);}else{er.style.display='inline';ok.style.display='none';setTimeout(()=>er.style.display='none',1400);}}
+
+function save(which){
+  try{
+    if(which==='project'){
+      const d={title:val('proj_title'),lead:val('proj_lead'),img:val('proj_img'),intro:val('proj_intro_img')};
+      localStorage.setItem('cms_project',JSON.stringify(d));
+      flash('project_ok','project_err',true);
     }
-  }
-
-  let projects = [];
-
-  async function loadProjects() {
-    try {
-      const res = await fetch("portfolio.json");
-      projects = await res.json();
-      renderProjects();
-    } catch {
-      projects = [];
-    }
-  }
-
-  function renderProjects() {
-    const list = document.getElementById("projectList");
-    list.innerHTML = "";
-    projects.forEach((p, i) => {
-      const div = document.createElement("div");
-      div.className = "project";
-      div.innerHTML = `
-        <strong>${p.title}</strong> <em>(${p.category})</em><br>
-        <small>${p.date}</small><br>
-        ${p.description}<br>
-        <img src="${p.image}" alt="${p.title}" width="100"><br>
-        <div class="actions">
-          <button onclick="editProject(${i})">Edit</button>
-          <button onclick="deleteProject(${i})">Delete</button>
-        </div>
-      `;
-      list.appendChild(div);
-    });
-  }
-
-  document.getElementById("projectForm").addEventListener("submit", (e) => {
-    e.preventDefault();
-    const index = document.getElementById("editIndex").value;
-    const newProj = {
-      title: document.getElementById("title").value,
-      slug: document.getElementById("slug").value,
-      category: document.getElementById("category").value,
-      description: document.getElementById("description").value,
-      image: document.getElementById("image").value,
-      date: document.getElementById("date").value
-    };
-    if (index) {
-      projects[index] = newProj;
-    } else {
-      projects.push(newProj);
-    }
-    e.target.reset();
-    document.getElementById("editIndex").value = "";
-    renderProjects();
-  });
-
-  function editProject(i) {
-    const p = projects[i];
-    document.getElementById("editIndex").value = i;
-    document.getElementById("title").value = p.title;
-    document.getElementById("slug").value = p.slug;
-    document.getElementById("category").value = p.category;
-    document.getElementById("description").value = p.description;
-    document.getElementById("image").value = p.image;
-    document.getElementById("date").value = p.date;
-  }
-
-  function deleteProject(i) {
-    if (confirm("Delete this project?")) {
-      projects.splice(i, 1);
-      renderProjects();
-    }
-  }
-
-  function exportJSON() {
-    const blob = new Blob([JSON.stringify(projects, null, 2)], { type: "application/json" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "portfolio.json";
-    a.click();
-  }
+  }catch(e){console.error(e);flash('project_ok','project_err',false);}
+}
 </script>
+
 </body>
 </html>
