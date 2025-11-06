@@ -372,7 +372,7 @@ revealOnScroll();
       .slice(0,3);
 
     grid.innerHTML = latest.map(p => `
-      <a href="project-details.html?id=${encodeURIComponent(p.id)}" class="project-card">
+      <a href="project-monitor.html?id=${encodeURIComponent(p.id)}" class="project-card">
         <img src="${escapeAttr(p.hero || '')}" alt="${escapeAttr(p.title || '')}">
         <div class="project-content">
           <h3>${escapeHtml(p.title || 'Untitled Project')}</h3>
