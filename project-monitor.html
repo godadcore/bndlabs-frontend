@@ -14,7 +14,7 @@
     --muted:rgba(11,11,11,0.70);
     --faint:rgba(11,11,11,0.55);
     --max-width:1100px;
-    --grey-bg:#f7f7f7; /* GREY, not gray :) */
+    --grey-bg:#f7f7f7;
   }
 
   *{box-sizing:border-box;margin:0;padding:0}
@@ -52,7 +52,7 @@
   .container{max-width:var(--max-width);margin:0 auto;padding:0 36px}
   .pad-top{padding-top:96px}
 
-  /* ===== HERO ===== (white) */
+  /* ===== HERO ===== */
   .hero{
     background:#fff;overflow:hidden;padding:100px 0;
   }
@@ -146,7 +146,7 @@
 </header>
 
 <main class="pad-top">
-  <!-- HERO (white) -->
+  <!-- HERO -->
   <section class="hero">
     <div class="container hero-inner">
       <div>
@@ -160,7 +160,7 @@
     </div>
   </section>
 
-  <!-- DYNAMIC SECTIONS -->
+  <!-- CMS SECTIONS -->
   <div id="sections"></div>
 
   <!-- MORE PROJECTS -->
@@ -182,113 +182,65 @@
 </footer>
 
 <script>
-/* ===== MENU ===== */
 document.getElementById('menuToggle').addEventListener('click',()=>{
   document.querySelector('.nav').classList.toggle('active');
 });
 
-/* ===== CMS PROJECT DETAIL LOADER =====
-   Robust grouping: img(s) -> h2 -> p in SAME section block.
-   Accepts 0–2 images, and is resilient if CMS sends h2/p first. */
+/* ===== CMS PROJECT DETAIL LOADER ===== */
 (function(){
   const params = new URLSearchParams(location.search);
   const id = params.get('id');
-  const projects = safeParse(localStorage.getItem('cms_projects')) || [];
+  const projects = JSON.parse(localStorage.getItem('cms_projects') || '[]');
   const project = projects.find(p => String(p.id) === String(id)) || projects[0];
   if(!project) return;
 
-  // HERO
-  setText('proj_title', project.title);
-  setText('proj_desc', project.desc);
-  setText('proj_tag', project.tag);
-  setText('proj_date', project.date);
-  setSrc('proj_image', project.hero);
+  document.getElementById('proj_title').textContent = project.title || '';
+  document.getElementById('proj_desc').textContent = project.desc || '';
+  document.getElementById('proj_tag').textContent = project.tag || '';
+  document.getElementById('proj_date').textContent = project.date || '';
+  document.getElementById('proj_image').src = project.hero || '';
 
-  // SECTIONS
+  const sections = Array.isArray(project.sections) ? project.sections : [];
   const secWrap = document.getElementById('sections');
   secWrap.innerHTML = '';
 
-  const items = Array.isArray(project.sections) ? project.sections : [];
-  let i = 0, greyToggle = false;
+  let bgToggle = false;
+  for(let i=0;i<sections.length;i++){
+    const s = sections[i];
+    if(s.type==='img'){
+      const imgs=[s];
+      let j=i+1;
+      while(j<sections.length && sections[j].type==='img' && imgs.length<2){ imgs.push(sections[j]); j++; }
+      let h='',p='';
+      if(j<sections.length && sections[j].type==='h2'){ h=sections[j].value; j++; }
+      if(j<sections.length && sections[j].type==='p'){ p=sections[j].value; j++; }
 
-  while (i < items.length) {
-    let imgs = [];
-    let heading = '';
-    let para = '';
-
-    const cur = items[i] || {};
-
-    // Prefer image-first: collect up to 2 leading images
-    if (cur.type === 'img') {
-      while (i < items.length && items[i].type === 'img' && imgs.length < 2) {
-        pushImg(items[i]); i++;
-      }
-      // then collect one heading, then one paragraph (if present)
-      if (i < items.length && items[i].type === 'h2') { heading = items[i].value || ''; i++; }
-      if (i < items.length && items[i].type === 'p')  { para    = items[i].value || ''; i++; }
-    } else if (cur.type === 'h2' || cur.type === 'p') {
-      // If CMS sends heading/para first, collect them, then optional images right after
-      if (cur.type === 'h2') { heading = cur.value || ''; i++; }
-      if (i < items.length && items[i].type === 'p')  { para    = items[i].value || ''; i++; }
-      while (i < items.length && items[i].type === 'img' && imgs.length < 2) {
-        pushImg(items[i]); i++;
-      }
-    } else {
-      // Unknown item, skip to avoid infinite loop
-      i++;
-      continue;
+      const block=document.createElement('section');
+      block.className='block'+(bgToggle?' grey':'');
+      block.innerHTML=`
+        <div class="container">
+          ${imgs.length===2?`<div class="two-up"><img src="${escapeAttr(imgs[0].value)}"><img src="${escapeAttr(imgs[1].value)}"></div>`:`<img src="${escapeAttr(imgs[0].value)}">`}
+          ${h?`<h2>${escapeHtml(h)}</h2>`:''}
+          ${p?`<p>${escapeHtml(p)}</p>`:''}
+        </div>`;
+      secWrap.appendChild(block);
+      bgToggle=!bgToggle;
+      i=j-1;
     }
-
-    // If absolutely nothing gathered (shouldn’t happen), skip
-    if (!heading && !para && imgs.length === 0) continue;
-
-    // Build the section block
-    const section = document.createElement('section');
-    section.className = 'block' + (greyToggle ? ' grey' : '');
-
-    let imgsHTML = '';
-    if (imgs.length === 2) {
-      imgsHTML = `<div class="two-up">
-        <img src="${escapeAttr(imgs[0])}" alt="">
-        <img src="${escapeAttr(imgs[1])}" alt="">
-      </div>`;
-    } else if (imgs.length === 1) {
-      imgsHTML = `<img src="${escapeAttr(imgs[0])}" alt="">`;
-    }
-
-    section.innerHTML = `
-      <div class="container">
-        ${imgsHTML}
-        ${heading ? `<h2>${escapeHtml(heading)}</h2>` : ''}
-        ${para ? `<p>${escapeHtml(para)}</p>` : ''}
-      </div>
-    `;
-
-    secWrap.appendChild(section);
-    greyToggle = !greyToggle; // alternate white / grey
   }
 
-  // MORE PROJECTS
-  const more = document.getElementById('moreGrid');
-  const others = projects.filter(p => String(p.id) !== String(project.id)).slice(0,3);
-  others.forEach(p => {
-    const a = document.createElement('a');
-    a.className = 'more-item';
-    a.href = `project-monitor.html?id=${encodeURIComponent(p.id)}`;
-    a.innerHTML = `
-      <img src="${escapeAttr(p.hero || '')}" alt="">
-      <div class="p"><h3>${escapeHtml(p.title || '')}</h3><small>${escapeHtml(p.tag || '')}</small></div>
-    `;
+  const more=document.getElementById('moreGrid');
+  const others=projects.filter(p=>String(p.id)!==String(project.id)).slice(0,3);
+  others.forEach(p=>{
+    const a=document.createElement('a');
+    a.className='more-item';
+    a.href=`project-monitor.html?id=${encodeURIComponent(p.id)}`;
+    a.innerHTML=`<img src="${escapeAttr(p.hero||'')}"><div class="p"><h3>${escapeHtml(p.title||'')}</h3><small>${escapeHtml(p.tag||'')}</small></div>`;
     more.appendChild(a);
   });
 
-  /* ===== Helpers ===== */
-  function pushImg(node){ const v = (node && node.value) ? String(node.value) : ''; if (v) imgs.push(v); }
-  function setText(id, val){ const el = document.getElementById(id); if(el) el.textContent = val || ''; }
-  function setSrc(id, val){ const el = document.getElementById(id); if(el) el.src = val || ''; }
-  function escapeHtml(s){ return String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
-  function escapeAttr(s){ return String(s||'').replace(/"/g,'&quot;'); }
-  function safeParse(json){ try{ return JSON.parse(json||''); } catch(e){ return null; } }
+  function escapeHtml(s){return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+  function escapeAttr(s){return (s||'').replace(/"/g,'&quot;');}
 })();
 </script>
 </body>
