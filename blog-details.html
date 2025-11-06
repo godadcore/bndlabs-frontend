@@ -45,11 +45,25 @@
   .body-offset{padding-top:86px;}
 
   /* HERO (updated layout) */
-  .hero{padding:24px 0 12px;text-align:center}
-  .hero-card{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.06);padding:48px 24px;margin-bottom:20px}
-  .post-title{font-family:"SF Pro Display",-apple-system,BlinkMacSystemFont,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:42px;line-height:1.15;margin:0 0 8px;background:var(--primary-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-  .post-sub{color:var(--light-muted);font-size:18px;margin:8px 0 14px}
-  .post-meta{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;color:var(--light-faint);font-size:14px}
+ .hero{padding:24px 0 12px;text-align:left}
+
+.post-meta{
+  display:flex;
+  justify-content:flex-start;   /* was center */
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+  color:var(--light-faint);
+  font-size:14px;
+}
+
+/* author chip */
+.post-meta .author{display:flex;align-items:center;gap:8px}
+.post-meta .author img{
+  width:34px;height:34px;border-radius:50%;
+  object-fit:cover;border:2px solid rgba(0,0,0,0.05);
+}
+
 
   /* ARTICLE */
   .article{padding:18px 0 32px}
@@ -109,11 +123,15 @@
       <div class="hero-card reveal">
         <h1 class="post-title" id="post_title">Post title</h1>
         <p class="post-sub" id="post_sub">Post subtitle goes here</p>
-        <div class="post-meta">
-          <span id="post_author">Author</span><span>•</span>
-          <span id="post_date">Date</span><span>•</span>
-          <span id="post_tag">Category</span>
-        </div>
+      <div class="post-meta">
+  <span class="author">
+    <img id="author_img" src="" alt="Author">
+    <span id="post_author">Author</span>
+  </span>
+  <span>•</span><span id="post_date">Date</span>
+  <span>•</span><span id="post_tag">Category</span>
+</div>
+
       </div>
     </div>
   </section>
@@ -164,12 +182,22 @@
     if(!posts.length) return;
 
     const post = posts.find(p=>String(p.id)===String(id)) || posts[0];
+function readProfile(){
+  try { return JSON.parse(localStorage.getItem('cms_profile') || '{}'); }
+  catch(e){ return {}; }
+}
+const profile = readProfile();
 
-    setText('#post_title', post.title);
-    setText('#post_sub', post.subtitle);
-    setText('#post_author', post.author);
-    setText('#post_date', post.date);
-    setText('#post_tag', post.tag || post.category);
+   setText('#post_title', post.title);
+setText('#post_sub', post.subtitle);
+setText('#post_date', post.date);
+setText('#post_tag', post.tag || post.category);
+
+// author: prefer profile, fallback to post fields
+setText('#post_author', profile.name || post.author || 'Admin');
+const imgEl = document.getElementById('author_img');
+if (imgEl) imgEl.src = profile.avatar || 'default-avatar.png';
+
 
     // body render: use innerHTML for formatted text
     const body = document.getElementById('article_body');
