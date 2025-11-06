@@ -405,7 +405,22 @@ revealOnScroll(); // trigger on load
       projects.forEach(proj=>{
         // Match your real HTML
         const item = document.createElement('div');
-        item.className = 'portfolio-item reveal';
+        item.className = 'portfolio-item';
+item.innerHTML = `
+  <img src="${proj.hero || 'https://via.placeholder.com/800x500?text=No+Image'}" alt="${proj.title || 'Project Image'}">
+  <div class="portfolio-content">
+    <h3>${proj.title || 'Untitled Project'}</h3>
+    <p>${proj.tag || ''}</p>
+  </div>
+`;
+const link = document.createElement('a');
+link.href = "project-monitor.html?id=" + encodeURIComponent(proj.id);
+link.style.display = 'block';
+link.style.textDecoration = 'none';
+link.style.color = 'inherit';
+link.appendChild(item);
+container.appendChild(link);
+
         item.innerHTML = `
           <a href="project-monitor.html?id=${encodeURIComponent(proj.id)}" style="text-decoration:none;color:inherit;">
             <img src="${proj.hero || 'https://via.placeholder.com/800x500?text=No+Image'}" alt="${proj.title || 'Project Image'}">
