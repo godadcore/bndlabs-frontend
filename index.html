@@ -246,9 +246,9 @@
   <div class="hero-wrap">
     <div class="hero-card reveal">
       <div class="label-left">
-        <h1 id="home_title">UI/UX Designer & Developer</h1>
-        <p id="home_desc">UI/UX Designer specialising in UI/UX & design systems. Front-end developer who writes clean, elegant, and efficient code.</p>
-        <div class="pill" id="home_pill">Design + Code</div>
+       <h1 id="h_title">UI/UX Designer & Developer</h1>
+        <p id="h_sub">UI/UX Designer specialising in UI/UX & design systems. Front-end developer who writes clean, elegant, and efficient code.</p>
+        <div class="pill" id="h_pill">Design + Code</div>
 
         <!-- optional CMS-driven softwares row (chips). Hidden if empty -->
         <div class="softwares" id="home_softwares" style="display:none;"></div>
@@ -258,11 +258,11 @@
 
   <!-- PROJECTS from CMS -->
   <section class="projects-section" id="projects">
-    <h2 class="projects-title">Some of my latest work</h2>
+  <h2 class="projects-title" id="h_proj_title">Some of my latest work</h2>
     <div class="projects-grid" id="projectsGrid"><!-- filled by JS --></div>
 
     <div class="see-all-wrap">
-      <a href="portfolio.html" class="see-all-btn">See All Work</a>
+     <a href="portfolio.html" id="h_button" class="see-all-btn">See All Work</a>
     </div>
   </section>
 
@@ -382,6 +382,26 @@ revealOnScroll();
   function escapeHtml(s){ return String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
   function escapeAttr(s){ return String(s||'').replace(/"/g,'&quot;'); }
 })();
+
+<script>
+(function(){
+  const key = 'cms_home';
+  try {
+    const h = JSON.parse(localStorage.getItem(key) || '{}');
+    if(h.title) document.getElementById('h_title').textContent = h.title;
+    if(h.sub) document.getElementById('h_sub').textContent = h.sub;
+    if(h.pill) document.getElementById('h_pill').textContent = h.pill;
+    if(h.proj_title) document.getElementById('h_proj_title').textContent = h.proj_title;
+
+    // ✅ Adjusted for your real HTML structure
+    const btn = document.querySelector('.see-all-btn');
+    if(btn && h.button) btn.textContent = h.button;
+  } catch(e) {
+    console.warn('Failed to load home content:', e);
+  }
+})();
+</script>
+
 </script>
 </body>
 </html>
