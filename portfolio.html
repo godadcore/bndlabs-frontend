@@ -180,21 +180,56 @@
     grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
     gap:28px;
   }
-  .portfolio-item{
-    background:#fff;
-    border-radius:14px;
-    box-shadow:0 6px 20px rgba(0,0,0,0.05);
-    overflow:hidden;
-    transition:transform .3s,box-shadow .3s;
-  }
-  .portfolio-item:hover{
-    transform:translateY(-6px);
-    box-shadow:0 12px 30px rgba(0,0,0,0.08);
-  }
-  .portfolio-item img{width:100%;height:180px;object-fit:cover;}
-  .portfolio-content{padding:16px;}
-  .portfolio-content h3{margin:0 0 6px;font-size:18px;}
-  .portfolio-content p{margin:0;color:var(--light-muted);font-size:14px;}
+ /* === PORTFOLIO CARDS (UPDATED TO MATCH BRAND STYLE) === */
+.portfolio-item {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.portfolio-item img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.portfolio-content {
+  padding: 18px;
+  transition: all 0.3s ease;
+}
+
+.portfolio-content h3 {
+  margin: 0 0 6px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #0b0b0b;
+  transition: color 0.3s ease;
+}
+
+.portfolio-content p {
+  margin: 0;
+  color: rgba(11, 11, 11, 0.6);
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+/* Hover effect — brand color orange */
+.portfolio-item:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 14px 30px rgba(255, 77, 0, 0.15);
+  background: #FF4D00;
+}
+
+.portfolio-item:hover h3,
+.portfolio-item:hover p {
+  color: #fff;
+}
 
   /* FOOTER */
   footer{
