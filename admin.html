@@ -1,146 +1,126 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <!-- Preload + Load Material Symbols Rounded -->
-<link rel="preload" href="https://fonts.gstatic.com/s/materialsymbolsrounded/v143/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2" as="font" type="font/woff2" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,700,1,0" rel="stylesheet">
+  <!-- Preload + Load Material Symbols Rounded -->
+  <link rel="preload" href="https://fonts.gstatic.com/s/materialsymbolsrounded/v143/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2" as="font" type="font/woff2" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,700,1,0" rel="stylesheet">
 
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Bodunde CMS — Admin</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Bodunde CMS — Admin</title>
 
-<style>
-  :root{
-    --bg:#FAFAFB; --panel:#FFFFFF; --panel-2:#FFFFFF; --soft:#F6F7F9; --line:#EAEAEE;
-    --text:#0B0B0B; --muted:rgba(11,11,11,.55);
-    --accent:#FF4D00; --accent-2:#FF8C00;
-    --green:#16A34A; --red:#DC2626; --shadow:0 10px 28px rgba(0,0,0,.06);
-    --r:14px;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{margin:0;background:var(--bg);color:var(--text);
-    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial; line-height:1.5}
-  a{color:inherit;text-decoration:none}
-  button{font-family:inherit}
+  <style>
+    :root{
+      --bg:#FAFAFB; --panel:#FFFFFF; --panel-2:#FFFFFF; --soft:#F6F7F9; --line:#EAEAEE;
+      --text:#0B0B0B; --muted:rgba(11,11,11,.55);
+      --accent:#FF4D00; --accent-2:#FF8C00;
+      --green:#16A34A; --red:#DC2626; --shadow:0 10px 28px rgba(0,0,0,.06);
+      --r:14px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--text);
+      font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial; line-height:1.5}
+    a{color:inherit;text-decoration:none}
+    button{font-family:inherit}
 
-  /* Layout */
-  .app{display:grid;grid-template-columns:260px 1fr;min-height:100%}
-  .side{background:var(--panel-2);border-right:1px solid var(--line);padding:18px;position:sticky;top:0;height:100dvh}
-  .brand{display:flex;align-items:center;gap:10px;margin-bottom:16px}
-  .brand .logo{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:linear-gradient(120deg,var(--accent),var(--accent-2));box-shadow:0 6px 16px rgba(255,77,0,.25)}
-  .brand .logo svg{width:20px;height:20px;fill:#fff}
-  .brand .name{font-weight:900}
-  .mutey{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.12em;margin:12px 0 8px}
-  .nav{display:flex;flex-direction:column;gap:6px}
-  .nav a{padding:10px 12px;border-radius:10px;color:#222;display:flex;align-items:center;gap:10px;border:1px solid transparent;transition:.18s}
-  .nav a:hover{background:#FFF7F2;border-color:#FFE3D4}
-  .nav a.active{background:linear-gradient(120deg,var(--accent),var(--accent-2));color:#fff;font-weight:800;box-shadow:0 8px 20px rgba(255,77,0,.25)}
-  .nav a svg{width:16px;height:16px;fill:currentColor;opacity:.9}
+    /* Layout */
+    .app{display:grid;grid-template-columns:260px 1fr;min-height:100%}
+    .side{background:var(--panel-2);border-right:1px solid var(--line);padding:18px;position:sticky;top:0;height:100dvh}
+    .brand{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+    .brand .logo{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:linear-gradient(120deg,var(--accent),var(--accent-2));box-shadow:0 6px 16px rgba(255,77,0,.25)}
+    .brand .logo svg{width:20px;height:20px;fill:#fff}
+    .brand .name{font-weight:900}
+    .mutey{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.12em;margin:12px 0 8px}
+    .nav{display:flex;flex-direction:column;gap:6px}
+    .nav a{padding:10px 12px;border-radius:10px;color:#222;display:flex;align-items:center;gap:10px;border:1px solid transparent;transition:.18s}
+    .nav a:hover{background:#FFF7F2;border-color:#FFE3D4}
+    .nav a.active{background:linear-gradient(120deg,var(--accent),var(--accent-2));color:#fff;font-weight:800;box-shadow:0 8px 20px rgba(255,77,0,.25)}
+    .nav a svg{width:16px;height:16px;fill:currentColor;opacity:.9}
 
-  .main{padding:22px;display:grid;gap:18px}
-  .topbar{display:flex;align-items:center;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow)}
-  .btn,.ghost{border:0;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:800}
-  .btn{background:linear-gradient(120deg,var(--accent),var(--accent-2));color:#fff;box-shadow:0 10px 28px rgba(255,77,0,.25)}
-  .ghost{background:#fff;color:#111;border:1px solid var(--line)}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
-  .pad{padding:18px}
+    .main{padding:22px;display:grid;gap:18px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow)}
+    .btn,.ghost{border:0;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:800}
+    .btn{background:linear-gradient(120deg,var(--accent),var(--accent-2));color:#fff;box-shadow:0 10px 28px rgba(255,77,0,.25)}
+    .ghost{background:#fff;color:#111;border:1px solid var(--line)}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+    .pad{padding:18px}
 
-  /* Tables */
-  .toolbar{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:10px}
-  .search,.select{padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#fff}
-  table{width:100%;border-collapse:collapse;font-size:14px}
-  thead th{color:#444;text-align:left;padding:12px;background:#FCFCFD;border-bottom:1px solid var(--line)}
-  tbody td{padding:12px;border-bottom:1px solid var(--line);color:#222;vertical-align:top}
-  tbody tr:hover{background:var(--soft)}
-  .tag{display:inline-block;padding:6px 10px;border-radius:999px;background:#FFF1E6;color:#A24300;font-weight:700;font-size:12px;border:1px solid #FFD9C2}
-  .status{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:#EEF2FF;border:1px solid #DDE3FF;color:#334155;font-weight:700;font-size:12px}
-  .status[data-s="hidden"]{background:#FEF3C7;border-color:#FDE68A;color:#92400E}
-  .status[data-s="draft"]{background:#E5E7EB;border-color:#D1D5DB;color:#374151}
-  .tools{display:flex;gap:8px;flex-wrap:wrap}
-  .tiny{font-size:12px;padding:8px 10px}
+    /* Tables */
+    .toolbar{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .search,.select{padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#fff}
+    table{width:100%;border-collapse:collapse;font-size:14px}
+    thead th{color:#444;text-align:left;padding:12px;background:#FCFCFD;border-bottom:1px solid var(--line)}
+    tbody td{padding:12px;border-bottom:1px solid var(--line);color:#222;vertical-align:top}
+    tbody tr:hover{background:var(--soft)}
+    .tag{display:inline-block;padding:6px 10px;border-radius:999px;background:#FFF1E6;color:#A24300;font-weight:700;font-size:12px;border:1px solid #FFD9C2}
+    .status{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:#EEF2FF;border:1px solid #DDE3FF;color:#334155;font-weight:700;font-size:12px}
+    .status[data-s="hidden"]{background:#FEF3C7;border-color:#FDE68A;color:#92400E}
+    .status[data-s="draft"]{background:#E5E7EB;border-color:#D1D5DB;color:#374151}
+    .tools{display:flex;gap:8px;flex-wrap:wrap}
+    .tiny{font-size:12px;padding:8px 10px}
 
-  /* Forms */
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  @media(max-width:1000px){.app{grid-template-columns:1fr}.side{position:relative;height:auto}.grid2{grid-template-columns:1fr}}
-  label{font-size:12px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.08em}
-  .field{width:100%;padding:12px 14px;border-radius:10px;background:#fff;border:1px solid var(--line);color:#111;outline:none}
-  .field:focus{border-color:#FFD3BE;box-shadow:0 0 0 4px rgba(255,141,79,.12)}
-  textarea.field{min-height:120px;resize:vertical}
-  .row{display:grid;gap:6px}
-  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    /* Forms */
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:1000px){.app{grid-template-columns:1fr}.side{position:relative;height:auto}.grid2{grid-template-columns:1fr}}
+    label{font-size:12px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+    .field{width:100%;padding:12px 14px;border-radius:10px;background:#fff;border:1px solid var(--line);color:#111;outline:none}
+    .field:focus{border-color:#FFD3BE;box-shadow:0 0 0 4px rgba(255,141,79,.12)}
+    textarea.field{min-height:120px;resize:vertical}
+    .row{display:grid;gap:6px}
+    .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 
-  /* Sections + Rich Editor */
-  .sections{display:flex;flex-direction:column;gap:12px}
-  .section{border:1px dashed var(--line);background:#FFFDFB;border-radius:12px;padding:12px}
-  .s-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-  .s-title{font-weight:900;color:#222}
-  .s-tools{display:flex;gap:6px}
-  .iconbtn{border:1px solid var(--line);background:#fff;color:#111;border-radius:8px;padding:6px 8px;cursor:pointer}
-  .iconbtn:hover{background:#FFF6F0;border-color:#FFD9C2}
-/* Force orange color for toolbar icons */
-.rte .btn svg,
-.rte .btn svg * {
-  color: var(--accent);
-  fill: var(--accent) !important;
-  stroke: var(--accent) !important;
-}
+    /* Sections + Rich Editor */
+    .sections{display:flex;flex-direction:column;gap:12px}
+    .section{border:1px dashed var(--line);background:#FFFDFB;border-radius:12px;padding:12px}
+    .s-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+    .s-title{font-weight:900;color:#222}
+    .s-tools{display:flex;gap:6px}
+    .iconbtn{border:1px solid var(--line);background:#fff;color:#111;border-radius:8px;padding:6px 8px;cursor:pointer}
+    .iconbtn:hover{background:#FFF6F0;border-color:#FFD9C2}
 
-  /* RTE bar */
-  .rte{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px 8px;margin-bottom:6px}
-  .rte .dropdown{position:relative}
-  .rte .dd-btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 10px;cursor:pointer;font-weight:700}
-  .rte .dd{position:absolute;top:100%;left:0;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:6px;display:none;z-index:50}
-  .rte .dd button{display:block;width:100%;text-align:left;border:0;background:transparent;padding:8px 10px;border-radius:8px;cursor:pointer}
-  .rte .dd button:hover{background:#FFF6F0}
-  .rte .btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;min-width:32px;min-height:32px}
-  .rte .btn:hover{background:#FFF6F0;border-color:#FFD9C2}
-  .rte .btn svg{width:16px;height:16px;display:block;color:inherit}
-  .rte .btn svg *{fill:currentColor!important;stroke:currentColor!important}
-  .rich{border:1px solid var(--line);border-radius:10px;padding:12px;min-height:120px;background:#fff}
-  .rich:focus{outline:2px solid rgba(255,141,79,.22)}
-/* Material Symbols setup */
-.material-symbols-rounded{
-  font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 0, 'opsz' 24;
-  font-size: 20px; line-height: 1; display: inline-block;
-  color: var(--accent); /* your orange */
-}
-.fonts-loaded .material-symbols-rounded {
-  visibility: visible;
-}
+    /* RTE */
+    .rte{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px 8px;margin-bottom:6px}
+    .rte .dropdown{position:relative}
+    .rte .dd-btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 10px;cursor:pointer;font-weight:700}
+    .rte .dd{position:absolute;top:100%;left:0;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:6px;display:none;z-index:50}
+    .rte .dd button{display:block;width:100%;text-align:left;border:0;background:transparent;padding:8px 10px;border-radius:8px;cursor:pointer}
+    .rte .dd button:hover{background:#FFF6F0}
+    .rte .btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;min-width:32px;min-height:32px}
+    .rte .btn:hover{background:#FFF6F0;border-color:#FFD9C2}
+    .rte .btn svg{width:16px;height:16px;display:block}
+    .rich{border:1px solid var(--line);border-radius:10px;padding:12px;min-height:120px;background:#fff}
+    .rich:focus{outline:2px solid rgba(255,141,79,.22)}
 
-/* Make the toolbar look like your mock */
-.rte{
-  background: linear-gradient(180deg, rgba(255,77,0,.04), rgba(255,77,0,.02));
-  border: 1px solid rgba(255,77,0,.12); border-radius: 12px; padding: 8px 10px;
-  display:flex; gap:8px; align-items:center;
-}
-.rte .btn{
-  width:38px;height:38px;border-radius:10px;background:#fff;
-  border:1px solid rgba(255,77,0,.18);
-  display:flex;align-items:center;justify-content:center;cursor:pointer;
-  transition:.2s; box-shadow:0 1px 3px rgba(255,77,0,.06);
-}
-.rte .btn:hover{ background:rgba(255,77,0,.06); border-color:rgba(255,77,0,.35); transform:translateY(-1px); }
-.rte .dd-btn{
-  display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;
-  background:#fff;border:1px solid rgba(255,77,0,.2); font-weight:700; cursor:pointer;
-}
-.rte .dd{ position:absolute; top:100%; left:0; background:#fff; border:1px solid rgba(255,77,0,.2);
-  border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.08); padding:6px; display:none; z-index:50;}
-.rte .dd button{ display:block; width:100%; padding:8px 10px; border:0; background:transparent; text-align:left; border-radius:8px; cursor:pointer;}
-.rte .dd button:hover{ background:rgba(255,77,0,.07); }
+    .material-symbols-rounded{
+      font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 0, 'opsz' 24;
+      font-size: 20px; line-height: 1; display: inline-block; color: var(--accent);
+    }
 
-  /* Uploader (no preview) */
-  .uploader{border:2px dashed #E9E1DA;border-radius:12px;padding:16px;background:#FFFBF8}
-  .uploader p{margin:6px 0 0;font-size:13px;color:#A24300}
+    /* Uploader */
+    .uploader{border:2px dashed #E9E1DA;border-radius:12px;padding:16px;background:#FFFBF8}
+    .uploader p{margin:6px 0 0;font-size:13px;color:#A24300}
 
-  /* Gate */
-  .gate{position:fixed;inset:0;background:rgba(255,255,255,.82);backdrop-filter:saturate(1.2) blur(6px);display:flex;align-items:center;justify-content:center;z-index:1000}
-  .login{width:min(460px,94vw);background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
-  .login-head{background:linear-gradient(120deg,var(--accent),var(--accent-2));padding:16px;font-weight:900;text-align:center;color:#fff}
-  .login-body{padding:16px}
-</style>
+    /* Gate */
+    .gate{position:fixed;inset:0;background:rgba(255,255,255,.82);backdrop-filter:saturate(1.2) blur(6px);display:flex;align-items:center;justify-content:center;z-index:1000}
+    .login{width:min(460px,94vw);background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+    .login-head{background:linear-gradient(120deg,var(--accent),var(--accent-2));padding:16px;font-weight:900;text-align:center;color:#fff}
+    .login-body{padding:16px}
+
+    /* ===== ABOUT TAB POLISH (clean, consistent UI) ===== */
+    .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:1000px){.about-grid{grid-template-columns:1fr}}
+    .about-stack{display:grid;gap:10px}
+    .muted{color:var(--muted);font-size:13px}
+    .hr{height:1px;background:var(--line);margin:12px 0}
+    .mini{font-size:12px}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:#fff}
+    .chip{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border:1px dashed #FFD7C6;background:#FFF6F0;border-radius:999px;font-weight:700}
+    .list{display:grid;gap:8px}
+    .inline-tools{display:flex;gap:8px;flex-wrap:wrap}
+    .ghost.danger{border-color:#f8c5c5;color:#b80f0f}
+    .subtle{color:#666}
+  </style>
 </head>
 <body>
 
@@ -370,26 +350,113 @@
       </div>
     </section>
 
-    <!-- Placeholders (kept) -->
     <!-- Home Page Settings -->
-<section class="card" id="panel_home" style="display:none">
-  <div class="pad">
-    <div style="font-size:18px;font-weight:900;margin-bottom:10px">Home Page Settings</div>
+    <section class="card" id="panel_home" style="display:none">
+      <div class="pad">
+        <div style="font-size:18px;font-weight:900;margin-bottom:10px">Home Page Settings</div>
 
-    <div class="row"><label>Hero Title</label><input id="h_title" class="field" placeholder="UI/UX Designer & Developer"></div>
-    <div class="row"><label>Hero Subtitle</label><textarea id="h_sub" class="field" placeholder="Short line below title…"></textarea></div>
-    <div class="row"><label>Pill Text</label><input id="h_pill" class="field" placeholder="Design + Code"></div>
+        <div class="row"><label>Hero Title</label><input id="h_title" class="field" placeholder="UI/UX Designer & Developer"></div>
+        <div class="row"><label>Hero Subtitle</label><textarea id="h_sub" class="field" placeholder="Short line below title…"></textarea></div>
+        <div class="row"><label>Pill Text</label><input id="h_pill" class="field" placeholder="Design + Code"></div>
 
-    <div class="row"><label>Projects Section Title</label><input id="h_proj_title" class="field" placeholder="Some of my latest work"></div>
-    <div class="row"><label>Button Text</label><input id="h_button" class="field" placeholder="See All Work"></div>
+        <div class="row"><label>Projects Section Title</label><input id="h_proj_title" class="field" placeholder="Some of my latest work"></div>
+        <div class="row"><label>Button Text</label><input id="h_button" class="field" placeholder="See All Work"></div>
 
-    <div class="bar" style="margin-top:16px">
-      <button class="btn tiny" id="h_save">Save Home Settings</button>
-      <span id="h_ok" style="display:none;color:var(--green);font-weight:800">Saved ✓</span>
-    </div>
-  </div>
-</section>
-    <section class="card" id="panel_about" style="display:none"><div class="pad">About settings — (unchanged)</div></section>
+        <div class="bar" style="margin-top:16px">
+          <button class="btn tiny" id="h_save">Save Home Settings</button>
+          <span id="h_ok" style="display:none;color:var(--green);font-weight:800">Saved ✓</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================
+         ABOUT PAGE CMS TAB (Styled + Autosave)
+    ========================= -->
+    <section class="card" id="panel_about" style="display:none">
+      <div class="pad">
+        <div class="toolbar" style="margin-bottom:6px">
+          <div>
+            <div style="font-size:18px;font-weight:900">About Page</div>
+            <div class="muted">Edit the content below. Changes auto-save to <code>cms_about</code>.</div>
+          </div>
+          <div class="inline-tools">
+            <button class="ghost tiny" id="about_export">Export</button>
+            <button class="ghost tiny danger" id="about_reset">Reset</button>
+          </div>
+        </div>
+
+        <!-- Hero -->
+        <div class="about-stack">
+          <div class="pill"><span class="material-symbols-rounded">bolt</span><strong>Hero</strong></div>
+          <div class="about-grid">
+            <div class="row"><label>Hero Title</label><input id="about_hero_title" class="field" placeholder="About"></div>
+            <div class="row"><label>Hero Description</label><textarea id="about_hero_desc" class="field" rows="2" placeholder="Short intro paragraph"></textarea></div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <!-- Profile -->
+        <div class="about-stack">
+          <div class="pill"><span class="material-symbols-rounded">person</span><strong>Profile</strong></div>
+          <div class="about-grid">
+            <div class="row"><label>Name</label><input id="about_name" class="field" placeholder="Your full name"></div>
+            <div class="row"><label>Role</label><input id="about_role" class="field" placeholder="UI/UX Designer • Front-end Developer"></div>
+            <div class="row"><label>Profile Image URL</label><input id="about_image" class="field" placeholder="https://…yourphoto.jpg"></div>
+            <div class="row"><label>Résumé Link</label><input id="about_resume" class="field" placeholder="resume.pdf"></div>
+            <div class="row"><label>Contact Link</label><input id="about_contact" class="field" placeholder="contact.html"></div>
+            <div class="row"><label>Random Fact</label><input id="about_random" class="field" placeholder="Something fun about you"></div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <!-- Facts -->
+        <div class="about-stack">
+          <div class="pill"><span class="material-symbols-rounded">workspace_premium</span><strong>Facts</strong><span class="subtle mini"> (Experience / Projects / Case studies)</span></div>
+          <div id="facts_list" class="list"></div>
+          <button type="button" class="ghost tiny" id="add_fact">+ Add Fact</button>
+        </div>
+
+        <div class="hr"></div>
+
+        <!-- Skills -->
+        <div class="about-stack">
+          <div class="pill"><span class="material-symbols-rounded">sell</span><strong>Skills (Tags)</strong></div>
+          <div id="skills_list" class="list"></div>
+          <button type="button" class="ghost tiny" id="add_skill">+ Add Skill</button>
+        </div>
+
+        <div class="hr"></div>
+
+        <!-- Gallery -->
+        <div class="about-stack">
+          <div class="pill"><span class="material-symbols-rounded">image</span><strong>Mini Gallery</strong><span class="subtle mini"> (3 images)</span></div>
+          <div id="gallery_list" class="list"></div>
+          <button type="button" class="ghost tiny" id="add_gallery">+ Add Image</button>
+        </div>
+
+        <div class="hr"></div>
+
+        <!-- Progress Bars -->
+        <div class="about-stack">
+          <div class="pill"><span class="material-symbols-rounded">bar_chart</span><strong>Progress Bars</strong></div>
+          <div id="progress_list" class="list"></div>
+          <button type="button" class="ghost tiny" id="add_progress">+ Add Progress</button>
+        </div>
+
+        <div class="hr"></div>
+
+        <!-- Features -->
+        <div class="about-stack">
+          <div class="pill"><span class="material-symbols-rounded">star</span><strong>Featured Cards</strong></div>
+          <div id="features_list" class="list"></div>
+          <button type="button" class="ghost tiny" id="add_feature">+ Add Feature</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact / 404 placeholders (unchanged) -->
     <section class="card" id="panel_contact" style="display:none"><div class="pad">Contact settings — (unchanged)</div></section>
     <section class="card" id="panel_four" style="display:none"><div class="pad">404 settings — (unchanged)</div></section>
   </main>
@@ -411,7 +478,7 @@
 
 <script>
 /* ===== Storage Keys ===== */
-const LS_PROJECTS='cms_projects', LS_BLOGS='cms_blogs', LS_PROFILE='cms_profile';
+const LS_PROJECTS='cms_projects', LS_BLOGS='cms_blogs', LS_PROFILE='cms_profile', LS_HOME='cms_home', LS_ABOUT='cms_about';
 
 /* ===== Tiny Store ===== */
 const Store={
@@ -446,12 +513,14 @@ $('#logout').onclick=()=>{ $('#gate').style.display='flex'; sessionStorage.remov
 $('#nav').addEventListener('click',e=>{
   const a=e.target.closest('a'); if(!a) return; e.preventDefault();
   $$('.nav a').forEach(x=>x.classList.remove('active')); a.classList.add('active');
-  $$('section.card').forEach(p=>p.style.display='none'); const key=a.dataset.panel; $('#panel_'+key).style.display='block';
-if(key==='portfolio') renderProjects(); 
-if(key==='blog') renderBlogs(); 
-if(key==='profile') loadProfile();
-if(key==='home') loadHome();
+  $$('section.card').forEach(p=>p.style.display='none');
+  const key=a.dataset.panel; const panel=$('#panel_'+key); if(panel) panel.style.display='block';
 
+  if(key==='portfolio') renderProjects();
+  if(key==='blog') renderBlogs();
+  if(key==='profile') loadProfile();
+  if(key==='home') loadHome();
+  if(key==='about') loadAbout();         // <= show & hydrate About only on click
 });
 
 /* ===== Search + Filters ===== */
@@ -598,7 +667,7 @@ function saveBlog(id){
   else { Store.putBlog(obj); backTo('blog'); }
 }
 
-/* ===== Add Section UI (Option A + visible icons) ===== */
+/* ===== Sections Builder (shared) ===== */
 function addSectionUI(host,type,value='',alt=''){
   const el=document.createElement('div'); el.className='section';
   el.innerHTML=`<div class="s-head">
@@ -620,54 +689,28 @@ function addSectionUI(host,type,value='',alt=''){
     if(hasText){
       body.innerHTML=`
         <div class="rte">
-<!-- Dropdown (left) -->
-<div class="dropdown">
-  <button class="dd-btn" type="button" data-ddbtn>
-    <span data-ddlabel>${kind==='h2'?'Heading':'Paragraph'}</span>
-    <span class="material-symbols-rounded">arrow_drop_down</span>
-  </button>
-  <div class="dd" data-dd>
-    <button type="button" data-type="p">Paragraph</button>
-    <button type="button" data-type="h2">Heading</button>
-    <button type="button" data-type="img">Image</button>
-  </div>
-</div>
-
-<!-- Material Symbols toolbar -->
-<button class="btn" data-cmd="bold" title="Bold">
-  <span class="material-symbols-rounded">format_bold</span>
-</button>
-<button class="btn" data-cmd="italic" title="Italic">
-  <span class="material-symbols-rounded">format_italic</span>
-</button>
-<button class="btn" data-cmd="underline" title="Underline">
-  <span class="material-symbols-rounded">format_underlined</span>
-</button>
-<button class="btn" data-link title="Link">
-  <span class="material-symbols-rounded">link</span>
-</button>
-<button class="btn" data-cmd="insertUnorderedList" title="Bulleted list">
-  <span class="material-symbols-rounded">format_list_bulleted</span>
-</button>
-<button class="btn" data-cmd="insertOrderedList" title="Numbered list">
-  <span class="material-symbols-rounded">format_list_numbered</span>
-</button>
-<button class="btn" data-cmd="justifyLeft" title="Align left">
-  <span class="material-symbols-rounded">format_align_left</span>
-</button>
-<button class="btn" data-cmd="justifyCenter" title="Align center">
-  <span class="material-symbols-rounded">format_align_center</span>
-</button>
-<button class="btn" data-cmd="justifyRight" title="Align right">
-  <span class="material-symbols-rounded">format_align_right</span>
-</button>
-<button class="btn" data-cmd="undo" title="Undo">
-  <span class="material-symbols-rounded">undo</span>
-</button>
-<button class="btn" data-cmd="redo" title="Redo">
-  <span class="material-symbols-rounded">redo</span>
-</button>
-
+          <div class="dropdown">
+            <button class="dd-btn" type="button" data-ddbtn>
+              <span data-ddlabel>${kind==='h2'?'Heading':'Paragraph'}</span>
+              <span class="material-symbols-rounded">arrow_drop_down</span>
+            </button>
+            <div class="dd" data-dd>
+              <button type="button" data-type="p">Paragraph</button>
+              <button type="button" data-type="h2">Heading</button>
+              <button type="button" data-type="img">Image</button>
+            </div>
+          </div>
+          <button class="btn" data-cmd="bold" title="Bold"><span class="material-symbols-rounded">format_bold</span></button>
+          <button class="btn" data-cmd="italic" title="Italic"><span class="material-symbols-rounded">format_italic</span></button>
+          <button class="btn" data-cmd="underline" title="Underline"><span class="material-symbols-rounded">format_underlined</span></button>
+          <button class="btn" data-link title="Link"><span class="material-symbols-rounded">link</span></button>
+          <button class="btn" data-cmd="insertUnorderedList" title="Bulleted list"><span class="material-symbols-rounded">format_list_bulleted</span></button>
+          <button class="btn" data-cmd="insertOrderedList" title="Numbered list"><span class="material-symbols-rounded">format_list_numbered</span></button>
+          <button class="btn" data-cmd="justifyLeft" title="Align left"><span class="material-symbols-rounded">format_align_left</span></button>
+          <button class="btn" data-cmd="justifyCenter" title="Align center"><span class="material-symbols-rounded">format_align_center</span></button>
+          <button class="btn" data-cmd="justifyRight" title="Align right"><span class="material-symbols-rounded">format_align_right</span></button>
+          <button class="btn" data-cmd="undo" title="Undo"><span class="material-symbols-rounded">undo</span></button>
+          <button class="btn" data-cmd="redo" title="Redo"><span class="material-symbols-rounded">redo</span></button>
         </div>
         <div class="rich" contenteditable="true" data-editor>${value||''}</div>`;
 
@@ -699,7 +742,7 @@ function addSectionUI(host,type,value='',alt=''){
           <div class="dropdown">
             <button class="dd-btn" type="button" data-ddbtn>
               <span data-ddlabel>Image</span>
-              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg>
+              <span class="material-symbols-rounded">arrow_drop_down</span>
             </button>
             <div class="dd" data-dd>
               <button type="button" data-type="p">Paragraph</button>
@@ -719,10 +762,7 @@ function addSectionUI(host,type,value='',alt=''){
 
       const ddBtn=body.querySelector('[data-ddbtn]'), dd=body.querySelector('[data-dd]');
       ddBtn.onclick=()=>{ dd.style.display=dd.style.display==='block'?'none':'block'; };
-      dd.querySelectorAll('button').forEach(b=> b.onclick=()=>{
-        dd.style.display='none';
-        const t=b.getAttribute('data-type'); if(t==='img')return; render(t);
-      });
+      dd.querySelectorAll('button').forEach(b=> b.onclick=()=>{ dd.style.display='none'; const t=b.getAttribute('data-type'); if(t==='img')return; render(t); });
 
       body.querySelector('.s-file').addEventListener('change',e=>{
         const f=e.target.files?.[0]; if(!f) return;
@@ -781,9 +821,8 @@ $('#s_save').onclick=()=>{
 $('#s_avatar_file').addEventListener('change',e=>{
   const f=e.target.files?.[0]; if(!f) return; const r=new FileReader(); r.onload=()=>$('#s_avatar').value=r.result; r.readAsDataURL(f);
 });
-/* ===== Home Settings ===== */
-const LS_HOME='cms_home';
 
+/* ===== Home Settings ===== */
 function loadHome(){
   const h=Store.read(LS_HOME,'{}');
   $('#h_title').value=h.title||'';
@@ -805,9 +844,9 @@ $('#h_save').onclick=()=>{
   setTimeout(()=>$('#h_ok').style.display='none',1200);
 };
 
-/* ===== Export / Import ===== */
+/* ===== Export / Import (global) ===== */
 $('#exportBtn').onclick=()=>{
-  const data={projects:Store.projects(), blogs:Store.blogs(), profile:Store.profile()};
+  const data={projects:Store.projects(), blogs:Store.blogs(), profile:Store.profile(), about:JSON.parse(localStorage.getItem(LS_ABOUT)||'{}'), home:Store.read(LS_HOME,'{}')};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='bodunde-cms.json'; a.click(); URL.revokeObjectURL(url);
 };
@@ -815,8 +854,15 @@ $('#importFile').addEventListener('change',e=>{
   const f=e.target.files?.[0]; if(!f) return; const r=new FileReader();
   r.onload=()=>{ try{ const j=JSON.parse(r.result);
     if(Array.isArray(j)) localStorage.setItem(LS_PROJECTS,JSON.stringify(j));
-    else{ if(j.projects) localStorage.setItem(LS_PROJECTS,JSON.stringify(j.projects)); if(j.blogs) localStorage.setItem(LS_BLOGS,JSON.stringify(j.blogs)); if(j.profile) localStorage.setItem(LS_PROFILE,JSON.stringify(j.profile)); }
-    renderProjects(); renderBlogs(); loadProfile(); alert('Imported successfully'); } catch(_){ alert('Import failed'); } };
+    else{
+      if(j.projects) localStorage.setItem(LS_PROJECTS,JSON.stringify(j.projects));
+      if(j.blogs) localStorage.setItem(LS_BLOGS,JSON.stringify(j.blogs));
+      if(j.profile) localStorage.setItem(LS_PROFILE,JSON.stringify(j.profile));
+      if(j.about) localStorage.setItem(LS_ABOUT,JSON.stringify(j.about));
+      if(j.home) localStorage.setItem(LS_HOME,JSON.stringify(j.home));
+    }
+    renderProjects(); renderBlogs(); loadProfile(); alert('Imported successfully');
+  } catch(_){ alert('Import failed'); } };
   r.readAsText(f);
 });
 
@@ -827,6 +873,134 @@ $('#importFile').addEventListener('change',e=>{
   localStorage.setItem(LS_BLOGS,JSON.stringify(fix(Store.blogs())));
   renderProjects(); renderBlogs();
 })();
+
+/* =========================
+   ABOUT TAB: AUTOSAVE + UI
+========================= */
+const About = {
+  el: {
+    facts: null, skills: null, gallery: null, progress: null, features: null
+  },
+  addFact(){ this.el.facts.insertAdjacentHTML('beforeend',`
+    <div class="about-grid" data-item="fact">
+      <div class="row"><label>Label</label><input class="field" placeholder="Experience"></div>
+      <div class="row"><label>Value</label><input class="field" placeholder="2+ yrs"></div>
+      <div class="row" style="align-self:end"><button class="ghost tiny" data-remove>Remove</button></div>
+    </div>`); },
+  addSkill(){ this.el.skills.insertAdjacentHTML('beforeend',`
+    <div class="about-grid" data-item="skill">
+      <div class="row"><label>Skill</label><input class="field" placeholder="Figma"></div>
+      <div class="row" style="align-self:end"><button class="ghost tiny" data-remove>Remove</button></div>
+    </div>`); },
+  addGallery(){ this.el.gallery.insertAdjacentHTML('beforeend',`
+    <div class="about-grid" data-item="gallery">
+      <div class="row"><label>Image URL</label><input class="field" placeholder="https://…"></div>
+      <div class="row" style="align-self:end"><button class="ghost tiny" data-remove>Remove</button></div>
+    </div>`); },
+  addProgress(){ this.el.progress.insertAdjacentHTML('beforeend',`
+    <div class="about-grid" data-item="progress">
+      <div class="row"><label>Label</label><input class="field" placeholder="Figma"></div>
+      <div class="row"><label>Percent</label><input class="field" type="number" min="0" max="100" placeholder="95"></div>
+      <div class="row"><label>Color</label><input class="field" placeholder="#FF4D00"></div>
+      <div class="row" style="align-self:end"><button class="ghost tiny" data-remove>Remove</button></div>
+    </div>`); },
+  addFeature(){ this.el.features.insertAdjacentHTML('beforeend',`
+    <div class="about-grid" data-item="feature">
+      <div class="row"><label>Image URL</label><input class="field" placeholder="https://…"></div>
+      <div class="row"><label>Title</label><input class="field" placeholder="My Story"></div>
+      <div class="row"><label>Description</label><textarea class="field" rows="2" placeholder="…"></textarea></div>
+      <div class="row"><label>Link URL</label><input class="field" placeholder="blog.html#my-story"></div>
+      <div class="row"><label>Link Text</label><input class="field" placeholder="View Story"></div>
+      <div class="row" style="align-self:end"><button class="ghost tiny" data-remove>Remove</button></div>
+    </div>`); },
+
+  gather(){
+    const get = id => $(id)?.value?.trim() || '';
+    const list = (root,sel)=>[...root.querySelectorAll(sel)];
+    const about = {
+      about_hero_title: get('#about_hero_title'),
+      about_hero_desc:  get('#about_hero_desc'),
+      about_name:       get('#about_name'),
+      about_role:       get('#about_role'),
+      about_image:      get('#about_image'),
+      about_resume:     get('#about_resume'),
+      about_contact:    get('#about_contact'),
+      about_random:     get('#about_random'),
+      about_facts:   list(this.el.facts,'[data-item="fact"]').map(n=>({label:n.querySelectorAll('input')[0].value.trim(), k:n.querySelectorAll('input')[1].value.trim()})),
+      about_skills:  list(this.el.skills,'[data-item="skill"]').map(n=>n.querySelector('input').value.trim()).filter(Boolean),
+      about_gallery: list(this.el.gallery,'[data-item="gallery"]').map(n=>n.querySelector('input').value.trim()).filter(Boolean),
+      about_progress:list(this.el.progress,'[data-item="progress"]').map(n=>({label:n.querySelectorAll('input')[0].value.trim(), percent:Number(n.querySelectorAll('input')[1].value||0), color:n.querySelectorAll('input')[2].value.trim()})),
+      about_features:list(this.el.features,'[data-item="feature"]').map(n=>({img:n.querySelectorAll('input,textarea')[0].value.trim(), title:n.querySelectorAll('input,textarea')[1].value.trim(), desc:n.querySelectorAll('input,textarea')[2].value.trim(), link:n.querySelectorAll('input,textarea')[3].value.trim(), linkText:n.querySelectorAll('input,textarea')[4].value.trim()}))
+    };
+    return about;
+  },
+
+  fill(saved){
+    const set = (id,v)=>{const el=$(id); if(el) el.value=v||'';}
+    set('#about_hero_title', saved.about_hero_title);
+    set('#about_hero_desc',  saved.about_hero_desc);
+    set('#about_name',       saved.about_name);
+    set('#about_role',       saved.about_role);
+    set('#about_image',      saved.about_image);
+    set('#about_resume',     saved.about_resume);
+    set('#about_contact',    saved.about_contact);
+    set('#about_random',     saved.about_random);
+
+    // lists
+    this.el.facts.innerHTML=''; (saved.about_facts||[]).forEach(f=>{ this.addFact(); const last=this.el.facts.lastElementChild; last.querySelectorAll('input')[0].value=f.label||''; last.querySelectorAll('input')[1].value=f.k||''; });
+    this.el.skills.innerHTML=''; (saved.about_skills||[]).forEach(s=>{ this.addSkill(); const last=this.el.skills.lastElementChild; last.querySelector('input').value=s||''; });
+    this.el.gallery.innerHTML=''; (saved.about_gallery||[]).forEach(g=>{ this.addGallery(); const last=this.el.gallery.lastElementChild; last.querySelector('input').value=g||''; });
+    this.el.progress.innerHTML=''; (saved.about_progress||[]).forEach(p=>{ this.addProgress(); const last=this.el.progress.lastElementChild; last.querySelectorAll('input')[0].value=p.label||''; last.querySelectorAll('input')[1].value=p.percent||0; last.querySelectorAll('input')[2].value=p.color||''; });
+    this.el.features.innerHTML=''; (saved.about_features||[]).forEach(f=>{ this.addFeature(); const last=this.el.features.lastElementChild; const inputs=last.querySelectorAll('input,textarea'); inputs[0].value=f.img||''; inputs[1].value=f.title||''; inputs[2].value=f.desc||''; inputs[3].value=f.link||''; inputs[4].value=f.linkText||''; });
+  }
+};
+
+function loadAbout(){
+  // hook lists
+  About.el.facts = $('#facts_list');
+  About.el.skills = $('#skills_list');
+  About.el.gallery = $('#gallery_list');
+  About.el.progress = $('#progress_list');
+  About.el.features = $('#features_list');
+
+  // buttons
+  $('#add_fact').onclick=()=>{ About.addFact(); autosaveAbout(); };
+  $('#add_skill').onclick=()=>{ About.addSkill(); autosaveAbout(); };
+  $('#add_gallery').onclick=()=>{ About.addGallery(); autosaveAbout(); };
+  $('#add_progress').onclick=()=>{ About.addProgress(); autosaveAbout(); };
+  $('#add_feature').onclick=()=>{ About.addFeature(); autosaveAbout(); };
+
+  // list remove (event delegation)
+  $('#panel_about').addEventListener('click',e=>{
+    if(e.target.matches('[data-remove]')){ e.target.closest('[data-item]').remove(); autosaveAbout(); }
+  });
+
+  // autosave on any input change / typing (WhatsApp style)
+  $('#panel_about').addEventListener('input', (e)=> {
+    if(e.target.matches('input,textarea,select,div[contenteditable]')) autosaveAbout();
+  });
+
+  // export about only
+  $('#about_export').onclick=()=>{
+    const data = About.gather();
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='about.json'; a.click(); URL.revokeObjectURL(url);
+  };
+
+  // reset about only
+  $('#about_reset').onclick=()=>{
+    if(confirm('Clear About Page data only?')){ localStorage.removeItem(LS_ABOUT); About.fill({}); autosaveAbout(); alert('About cleared'); }
+  };
+
+  // hydrate
+  const saved = JSON.parse(localStorage.getItem(LS_ABOUT)||'{}');
+  About.fill(saved);
+}
+
+function autosaveAbout(){
+  const payload = About.gather();
+  localStorage.setItem(LS_ABOUT, JSON.stringify(payload));
+}
 </script>
 </body>
 </html>
