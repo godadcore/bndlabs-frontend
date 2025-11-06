@@ -93,6 +93,20 @@
   /* Reveal */
   .reveal{opacity:0;transform:translateY(12px);transition:opacity .5s ease, transform .5s ease}
   .reveal.show{opacity:1;transform:translateY(0)}
+  /* Fix: make 'Recent Articles' responsive on mobile */
+@media (max-width: 900px) {
+  .recent {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  .recent {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
 </style>
 </head>
 <body class="body-offset">
