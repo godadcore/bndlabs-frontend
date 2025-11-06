@@ -171,120 +171,67 @@
     box-shadow:0 1px 4px rgba(0,0,0,0.06);
   }
 
-  /* PORTFOLIO GRID */
-  .portfolio-grid{
-    max-width:var(--max-width);
-    margin:60px auto;
-    padding:0 24px;
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-    gap:28px;
-  }
- /* === PORTFOLIO CARDS (UPDATED TO MATCH BRAND STYLE) === */
-.portfolio-item {
-  background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  position: relative;
-}
-
-.portfolio-item img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  display: block;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.portfolio-content {
-  padding: 18px;
-  transition: all 0.3s ease;
-}
-
-.portfolio-content h3 {
-  margin: 0 0 6px;
-  font-size: 18px;
-  font-weight: 700;
-  color: #0b0b0b;
-  transition: color 0.3s ease;
-}
-
-.portfolio-content p {
-  margin: 0;
-  color: rgba(11, 11, 11, 0.6);
-  font-size: 14px;
-  transition: color 0.3s ease;
-}
-
-/* Hover effect — brand color orange */
-.portfolio-item:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 14px 30px rgba(255, 77, 0, 0.15);
-  background: #FF4D00;
-}
-
-.portfolio-item:hover h3,
-.portfolio-item:hover p {
-  color: #fff;
-}/* === PORTFOLIO CARDS (FINAL WHITE STYLE) === */
-.portfolio-grid {
+ /* === Portfolio grid aligned with hero === */
+.portfolio-grid{
   max-width: var(--max-width);
   margin: 60px auto;
-  padding: 0 24px;
+  padding: 0 24px;              /* same left/right padding as hero */
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(3, minmax(0,1fr));  /* force column grid */
   gap: 28px;
-  justify-items: start; /* ensures cards start from left */
+  justify-items: stretch;       /* cards start at left, fill the column */
 }
 
-.portfolio-item {
-  background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  width: 100%;
-  text-align: left;
+/* responsive columns */
+@media (max-width: 1000px){
+  .portfolio-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media (max-width: 640px){
+  .portfolio-grid{ grid-template-columns: 1fr; }
 }
 
-.portfolio-item img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  display: block;
-  border-bottom: 1px solid #f2f2f2;
+/* === Card (keeps WHITE on hover) === */
+.portfolio-item{
+  background:#fff;              /* stays white */
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 6px 20px rgba(0,0,0,.05);
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.portfolio-item a{ display:block; color:inherit; text-decoration:none; }
+
+.portfolio-item img{
+  display:block;
+  width:100%;
+  height:200px;
+  object-fit:cover;
+  border-bottom:1px solid #f2f2f2;
 }
 
-.portfolio-content {
-  padding: 18px;
+.portfolio-content{
+  background:#fff;              /* lock white */
+  padding:18px;
 }
 
-.portfolio-content h3 {
-  margin: 0 0 6px;
-  font-size: 18px;
-  font-weight: 700;
-  color: #0b0b0b;
-  transition: color 0.3s ease;
+.portfolio-content h3{
+  margin:0 0 6px;
+  font-size:18px;
+  font-weight:700;
+  color:#0b0b0b;
+  transition:color .25s ease;
+}
+.portfolio-content p{
+  margin:0;
+  font-size:14px;
+  color:rgba(11,11,11,.6);
 }
 
-.portfolio-content p {
-  margin: 0;
-  color: rgba(11, 11, 11, 0.6);
-  font-size: 14px;
-  transition: color 0.3s ease;
+/* Hover: glow + orange title ONLY (no orange background) */
+.portfolio-item:hover{
+  transform:translateY(-6px);
+  box-shadow:0 12px 26px rgba(255,77,0,.25);
 }
-
-/* Hover effect — clean white card, orange shadow */
-.portfolio-item:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 26px rgba(255, 77, 0, 0.25);
-}
-
-.portfolio-item:hover h3 {
+.portfolio-item:hover .portfolio-content h3{
   color: var(--primary);
 }
 
@@ -494,17 +441,21 @@ revealOnScroll(); // trigger on load
       const end = Math.min(start + perPage, data.length);
       const projects = data.slice(start, end);
 
-      projects.forEach(proj=>{
-        // Match your real HTML
-        const item = document.createElement('div');
-        item.className = 'portfolio-item';
-item.innerHTML = `
-  <img src="${proj.hero || 'https://via.placeholder.com/800x500?text=No+Image'}" alt="${proj.title || 'Project Image'}">
-  <div class="portfolio-content">
-    <h3>${proj.title || 'Untitled Project'}</h3>
-    <p>${proj.tag || ''}</p>
-  </div>
-`;
+      projects.forEach((proj) => {
+  const card = document.createElement('div');
+  card.className = 'portfolio-item';
+  card.innerHTML = `
+    <a href="project-monitor.html?id=${encodeURIComponent(proj.id)}">
+      <img src="${proj.hero || ''}" alt="${proj.title || 'Project'}" loading="lazy">
+      <div class="portfolio-content">
+        <h3>${proj.title || 'Untitled Project'}</h3>
+        <p>${proj.tag || ''}</p>
+      </div>
+    </a>
+  `;
+  container.appendChild(card);
+});
+
 const link = document.createElement('a');
 link.href = "project-monitor.html?id=" + encodeURIComponent(proj.id);
 link.style.display = 'block';
