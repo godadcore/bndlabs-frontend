@@ -44,18 +44,16 @@
   .menu-toggle{display:block;background:transparent;border:0;color:#fff;font-size:22px;cursor:pointer}
   .body-offset{padding-top:86px;}
 
-  /* HERO */
-  .hero{padding:24px 0 12px}
-  .hero-card{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.06);padding:28px 24px;margin-bottom:20px}
-  .post-title{font-family:"SF Pro Display",-apple-system,BlinkMacSystemFont,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:40px;line-height:1.15;margin:0 0 8px;background:var(--primary-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  /* HERO (updated layout) */
+  .hero{padding:24px 0 12px;text-align:center}
+  .hero-card{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.06);padding:48px 24px;margin-bottom:20px}
+  .post-title{font-family:"SF Pro Display",-apple-system,BlinkMacSystemFont,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:42px;line-height:1.15;margin:0 0 8px;background:var(--primary-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
   .post-sub{color:var(--light-muted);font-size:18px;margin:8px 0 14px}
-  .post-meta{display:flex;gap:10px;flex-wrap:wrap;color:var(--light-faint);font-size:14px}
-  .hero-illustration{margin-top:18px}
-  .hero-illustration img{width:100%;height:auto;border-radius:16px;box-shadow:0 18px 50px rgba(0,0,0,.10)}
+  .post-meta{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;color:var(--light-faint);font-size:14px}
 
   /* ARTICLE */
   .article{padding:18px 0 32px}
-  .article h2{font-size:24px;margin:28px 0 10px;font-family:"SF Pro Display",-apple-system,BlinkMacSystemFont,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+  .article h2{font-size:24px;margin:28px 0 10px;font-family:"SF Pro Display",-apple-system,BlinkMacSystemFont,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;text-align:left}
   .article p{color:var(--light-muted);margin:10px 0}
   .article .illustration{margin:18px 0}
   .article .illustration img{width:100%;height:auto;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
@@ -116,18 +114,13 @@
           <span id="post_date">Date</span><span>•</span>
           <span id="post_tag">Category</span>
         </div>
-        <div class="hero-illustration reveal" id="post_hero_wrap" style="display:none">
-          <img id="post_hero" src="" alt="Post illustration">
-        </div>
       </div>
     </div>
   </section>
 
   <!-- ARTICLE BODY -->
   <section class="article">
-    <div class="container" id="article_body">
-      <!-- dynamic sections inserted here: h2 / p / img / quote -->
-    </div>
+    <div class="container" id="article_body"></div>
   </section>
 
   <!-- RECENT ARTICLES -->
@@ -155,7 +148,6 @@
 </footer>
 
 <script>
-  // Menu bubble
   const menuToggle = document.getElementById('menuToggle');
   const nav = document.querySelector('.nav');
   menuToggle.addEventListener('click', () => nav.classList.toggle('active'));
@@ -163,31 +155,23 @@
     if (!nav.contains(e.target) && !menuToggle.contains(e.target)) nav.classList.remove('active');
   });
 
-  // Blog Details CMS loader
   (function(){
     const key='cms_blogs';
     const params=new URLSearchParams(location.search);
     const id=params.get('id');
 
     const posts = readPosts();
-    if(!posts.length) return; // stays with placeholders if no data
+    if(!posts.length) return;
 
-    // pick current post: id match, else newest
     const post = posts.find(p=>String(p.id)===String(id)) || posts[0];
 
-    // Fill hero
     setText('#post_title', post.title);
     setText('#post_sub', post.subtitle);
     setText('#post_author', post.author);
     setText('#post_date', post.date);
     setText('#post_tag', post.tag || post.category);
-    if(post.hero){
-      const hero = document.getElementById('post_hero');
-      hero.src = post.hero;
-      document.getElementById('post_hero_wrap').style.display='block';
-    }
 
-    // Article sections (picture first, then heading, then paragraph where grouped)
+    // body render: use innerHTML for formatted text
     const body = document.getElementById('article_body');
     body.innerHTML = '';
     const items = Array.isArray(post.sections)?post.sections:[];
@@ -195,20 +179,18 @@
     while(i<items.length){
       const s = items[i];
       if(s.type==='h2'){
-        const h2=document.createElement('h2');h2.className='reveal';h2.textContent=s.value||'';body.appendChild(h2); i++;
+        const h2=document.createElement('h2');h2.className='reveal';h2.innerHTML=s.value||'';body.appendChild(h2);i++;
       }else if(s.type==='p'){
-        const p=document.createElement('p');p.className='reveal';p.textContent=s.value||'';body.appendChild(p); i++;
+        const p=document.createElement('p');p.className='reveal';p.innerHTML=s.value||'';body.appendChild(p);i++;
       }else if(s.type==='img'){
         const wrap=document.createElement('div');wrap.className='illustration reveal';
-        wrap.innerHTML = `<img src="${escapeAttr(s.value||'')}" alt="${escapeAttr(s.alt||'')}">`;
-        body.appendChild(wrap); i++;
+        wrap.innerHTML = `<img src="${escapeAttr(s.value||'')}" alt="${escapeAttr(s.alt||'')}">`;body.appendChild(wrap);i++;
       }else if(s.type==='quote'){
         const q=document.createElement('blockquote');q.className='reveal';q.style.cssText='border-left:4px solid rgba(0,0,0,.1);margin:14px 0;padding:10px 14px;color:var(--light-muted)';
-        q.textContent=s.value||''; body.appendChild(q); i++;
-      }else{ i++; }
+        q.innerHTML=s.value||'';body.appendChild(q);i++;
+      }else{i++;}
     }
 
-    // Recent list (simple underlined links)
     const recent = posts.filter(p=>String(p.id)!==String(post.id));
     if(recent.length){
       const list = document.getElementById('recent_list');
@@ -221,13 +203,12 @@
       });
     }
 
-    // Reveal
-    const observer = new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');observer.unobserve(e.target);}});},{threshold:.12});
+    const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');observer.unobserve(e.target);}});},{threshold:.12});
     document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
 
     function readPosts(){
       try{
-        const arr = JSON.parse(localStorage.getItem(key)||'[]');
+        const arr=JSON.parse(localStorage.getItem(key)||'[]');
         arr.sort((a,b)=>{
           const au=a.updated||Date.parse(a.date||0)||0;
           const bu=b.updated||Date.parse(b.date||0)||0;
