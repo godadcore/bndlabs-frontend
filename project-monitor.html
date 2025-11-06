@@ -340,6 +340,61 @@
   if(d.intro){ const el = document.querySelector('[data-cms="proj_intro_img"]'); if(el) el.src = d.intro; }
 })();
 </script>
+<script>
+/* ===== PROJECT DETAIL PAGE LOADER =====
+   Reads a single project by ID from localStorage.cms_projects
+   and fills your UI sections dynamically.
+*/
+
+(function(){
+  // Parse project ID from URL (?id=xxx)
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  if(!id){ 
+    document.body.innerHTML = '<p style="text-align:center; margin-top:100px;">Project ID not found.</p>';
+    return;
+  }
+
+  // Load from CMS
+  const data = JSON.parse(localStorage.getItem('cms_projects') || '[]');
+  const project = data.find(p => p.id === id);
+  if(!project){
+    document.body.innerHTML = '<p style="text-align:center; margin-top:100px;">Project not found.</p>';
+    return;
+  }
+
+  // Fill hero section
+  const set = (sel, val)=>{ const el=document.querySelector(sel); if(el && val) el.textContent=val; };
+  const setImg=(sel, val)=>{ const el=document.querySelector(sel); if(el && val) el.src=val; };
+
+  set('[data-cms="proj_title"]', project.title);
+  set('[data-cms="proj_tag"]', project.tag);
+  set('[data-cms="proj_date"]', project.date);
+  set('[data-cms="proj_desc"]', project.desc);
+  setImg('[data-cms="proj_hero"]', project.hero);
+
+  // Fill sections (like Discovery, Problem, etc.)
+  const secWrap = document.querySelector('.project-sections') || document.getElementById('project-sections');
+  if(secWrap && Array.isArray(project.sections)){
+    secWrap.innerHTML = '';
+    project.sections.forEach(sec=>{
+      const block = document.createElement('section');
+      block.className = 'project-section';
+      let html = '';
+      if(sec.type === 'header'){
+        html = `<h2 class="section-heading">${sec.content}</h2>`;
+      } else if(sec.type === 'text'){
+        html = `<p class="section-text">${sec.content}</p>`;
+      } else if(sec.type === 'image'){
+        html = `<div class="section-image"><img src="${sec.content}" alt=""></div>`;
+      }
+      block.innerHTML = html;
+      secWrap.appendChild(block);
+    });
+  }
+
+})();
+</script>
 
 </body>
 </html>
