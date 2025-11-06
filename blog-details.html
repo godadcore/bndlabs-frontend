@@ -95,9 +95,10 @@
 
 <main>
   <div class="post-header">
-    <h1 id="post_title">Post Title</h1>
-    <p id="post_desc" style="color:var(--muted);max-width:720px;margin-bottom:10px;">Short description here.</p>
-    <div class="meta">
+<h1 id="post_title">Post Title</h1>
+<h2 id="post_subtitle" style="color:var(--faint);font-weight:400;font-size:20px;margin-bottom:6px;">Subtitle goes here</h2>
+<p id="post_desc" style="color:var(--muted);max-width:720px;margin-bottom:10px;">Short description here.</p>
+<div class="meta">
       <div class="author">
         <img id="author_img" src="" alt="Author" />
         <span id="author_name">Author Name</span>
@@ -135,6 +136,7 @@
 
   // Populate header
   setText('#post_title', post.title);
+  setText('#post_subtitle', post.subtitle || '');
   setText('#post_desc', post.desc);
   setText('#post_date', post.date);
   setText('#post_tag', post.tag);
