@@ -4,97 +4,106 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-<title>Monitor App Design — Bodunde</title>
-<meta name="description" content="Case study: Monitor app design — UI/UX process and interaction details by Bodunde.">
+<title>Project Details — Bodunde</title>
+<meta name="description" content="Dynamic project detail page — Bodunde.">
 
-<link rel="icon" type="image/png" href="favicon.png">
+<link rel="icon" type="image/png" href="favicon.png" />
 
 <style>
   :root{
     --primary:#FF4D00;
     --primary-2:#FF8C00;
     --primary-gradient:linear-gradient(120deg,#FF4D00,#FF8C00);
-    --light-bg:#FFFFFF;
-    --light-text:#0B0B0B;
-    --light-muted:rgba(11,11,11,0.65);
-    --light-faint:rgba(11,11,11,0.55);
+    --light-bg:#fff;
+    --alt-bg:#f8f7f5;
+    --text:#0B0B0B;
+    --muted:rgba(11,11,11,.65);
+    --faint:rgba(11,11,11,.55);
     --max-width:1100px;
-    --alt:#f8f7f5;
   }
+
   *{box-sizing:border-box;margin:0;padding:0}
   body{
     font-family:"SF Pro Text",-apple-system,BlinkMacSystemFont,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-    background:var(--light-bg);color:var(--light-text);
-    line-height:1.5;-webkit-font-smoothing:antialiased;
+    background:var(--light-bg);color:var(--text);line-height:1.6;
+    -webkit-font-smoothing:antialiased;
   }
-  a{color:inherit;text-decoration:none}
-  img{max-width:100%;display:block;border-radius:12px}
+  img{max-width:100%;display:block;border-radius:14px}
+  a{text-decoration:none;color:inherit}
 
+  /* ===== HEADER ===== */
   header{
-    display:flex;align-items:center;justify-content:space-between;
-    position:fixed;top:0;left:0;right:0;z-index:2000;
-    background:rgba(0,0,0,0.9);backdrop-filter:blur(10px);
+    position:fixed;top:0;left:0;right:0;z-index:1000;
+    display:flex;justify-content:space-between;align-items:center;
+    background:rgba(0,0,0,.9);backdrop-filter:blur(10px);
     color:#fff;padding:18px 36px;border-bottom:1px solid rgba(255,255,255,.06);
   }
   .brand{display:flex;align-items:center;gap:10px}
   .brand-text .name{font-weight:700;font-size:20px;color:#fff}
   .logo svg{width:40px;height:40px;fill:#fff}
-  .nav{display:none;flex-direction:column;align-items:flex-end;position:absolute;top:64px;right:20px;width:220px;
-    background:rgba(20,20,20,0.92);backdrop-filter:blur(10px);border-radius:20px;padding:16px 12px;gap:10px;box-shadow:0 10px 30px rgba(0,0,0,.35);}
+  .menu-toggle{display:block;background:transparent;border:0;color:#fff;font-size:22px;cursor:pointer}
+  .nav{
+    display:none;flex-direction:column;align-items:flex-end;
+    position:absolute;top:64px;right:20px;width:220px;
+    background:rgba(20,20,20,0.92);backdrop-filter:blur(10px);
+    border-radius:20px;padding:16px 12px;gap:10px;
+    box-shadow:0 10px 30px rgba(0,0,0,.35);
+  }
   .nav.active{display:flex}
-  .nav a{background:rgba(255,255,255,.08);color:#fff;padding:12px 0;border-radius:999px;width:100%;text-align:center;font-weight:500;transition:.2s;}
+  .nav a{
+    background:rgba(255,255,255,.08);color:#fff;
+    padding:12px 0;border-radius:999px;width:100%;text-align:center;
+    font-weight:500;transition:.2s;
+  }
   .nav a:hover{background:rgba(255,255,255,.18);transform:translateY(-1px)}
   .nav a.active{background:var(--primary-gradient);color:#fff;font-weight:700}
-  .menu-toggle{display:block;background:transparent;border:0;color:#fff;font-size:22px;cursor:pointer}
 
   .container{max-width:var(--max-width);margin:0 auto;padding:0 36px}
   .pad-top{padding-top:96px}
 
   /* ===== HERO ===== */
-  .hero{position:relative;overflow:hidden;background:var(--light-bg)}
-  .hero-inner{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center;min-height:520px;}
+  .hero{background:var(--light-bg);overflow:hidden}
+  .hero-inner{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center;min-height:520px}
   .hero h1{
     font-family:"SF Pro Display",-apple-system,BlinkMacSystemFont,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-    font-size:72px;letter-spacing:-1px;margin:0 0 8px;
+    font-size:72px;letter-spacing:-1px;margin:0 0 10px;
   }
-  .hero p.lead{color:var(--light-muted);font-size:20px;max-width:560px;margin:0 0 18px}
-  .meta{display:flex;gap:18px;color:var(--light-faint);font-size:14px;margin-top:6px}
-  .hero-art-wrapper{position:relative}
+  .hero p.lead{color:var(--muted);font-size:20px;max-width:540px;margin:0 0 18px}
+  .meta{display:flex;gap:14px;color:var(--faint);font-size:14px;margin-top:8px}
+  .hero-art-wrapper{display:flex;justify-content:flex-end}
   .hero-art{
-    width:520px;max-width:100%;
-    will-change:transform;
-    box-shadow:0 18px 60px rgba(0,0,0,.12);
-    border-radius:28px;
+    width:520px;max-width:100%;height:auto;object-fit:cover;
+    border-radius:28px;box-shadow:0 18px 60px rgba(0,0,0,.12);
   }
-
-  .divider{height:22px;background:linear-gradient(#fff,#fff0),linear-gradient(#fff0,#f2f1ef)}
 
   /* ===== SECTIONS ===== */
-  section.block{padding:64px 0}
-  section.block.alt{background:var(--alt)}
+  section.block{padding:80px 0;transition:all .3s ease}
+  section.block.alt{background:var(--alt-bg)}
   .block h2{
-    font-size:28px;margin:0 0 10px;
+    font-size:28px;margin:0 0 12px;
     font-family:"SF Pro Display",-apple-system,BlinkMacSystemFont,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   }
-  .block p{color:var(--light-muted);max-width:820px;margin-bottom:24px;} /* small pixel gap */
-  .big-image{margin-top:0}
-  .big-image img{width:100%;height:auto;border-radius:18px;margin-top:20px;}
-  .two-up{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:20px;}
-  @media(max-width:900px){.hero-inner{grid-template-columns:1fr}.two-up{grid-template-columns:1fr}}
+  .block p{color:var(--muted);max-width:820px;margin-bottom:24px}
+  .block img{margin-top:20px}
+  .two-up{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:24px}
+  @media(max-width:900px){.hero-inner{grid-template-columns:1fr;text-align:center}.two-up{grid-template-columns:1fr}}
 
-  /* ===== MORE ===== */
-  .more-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin-top:18px}
-  .more-item{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:14px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.06);transition:transform .2s, box-shadow .2s;}
+  /* ===== MORE FROM PORTFOLIO ===== */
+  .more-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin-top:26px}
+  .more-item{
+    background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:14px;overflow:hidden;
+    box-shadow:0 6px 18px rgba(0,0,0,.06);transition:transform .2s,box-shadow .2s;
+  }
   .more-item:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(0,0,0,.09)}
   .more-item img{height:160px;width:100%;object-fit:cover;border-radius:0}
   .more-item .p{padding:12px 14px}
   .more-item .p h3{margin:0 0 4px;font-size:18px}
-  .more-item .p small{color:var(--light-faint)}
+  .more-item .p small{color:var(--faint)}
 
-  footer{background:#f6f3ef;color:var(--light-faint);padding:20px;margin-top:40px}
+  /* ===== FOOTER ===== */
+  footer{background:#f6f3ef;color:var(--faint);padding:20px;margin-top:40px}
   .footer-inner{max-width:var(--max-width);margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;text-align:center;padding:0 36px}
-  .footer-nav{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
-  .socials{display:flex;gap:10px;align-items:center}
+  .socials{display:flex;gap:10px}
   .socials a svg{width:18px;height:18px;fill:#000}
 </style>
 </head>
@@ -102,9 +111,7 @@
 <body>
 <header>
   <div class="brand">
-    <div class="logo">
-      <svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-2.9h2v-2.2c0-2 1.2-3.1 3-3.1.9 0 1.8.1 2 .1v2.3h-1.1c-1 0-1.3.6-1.3 1.2v1.7h2.6l-.4 2.9h-2.2v7A10 10 0 0 0 22 12z" fill="currentColor"/></svg>
-    </div>
+    <div class="logo"><svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-2.9h2v-2.2c0-2 1.2-3.1 3-3.1.9 0 1.8.1 2 .1v2.3h-1.1c-1 0-1.3.6-1.3 1.2v1.7h2.6l-.4 2.9h-2.2v7A10 10 0 0 0 22 12z" fill="currentColor"/></svg></div>
     <div class="brand-text"><div class="name">Bodunde</div></div>
   </div>
   <nav class="nav">
@@ -112,34 +119,33 @@
     <a href="about.html">About</a>
     <a class="active" href="portfolio.html">Portfolio</a>
     <a href="blog.html">Blog</a>
-    <a href="contact.html" class="cta">Contact Me</a>
+    <a href="contact.html">Contact</a>
   </nav>
   <button class="menu-toggle" id="menuToggle">☰</button>
 </header>
 
 <main class="pad-top">
+  <!-- HERO -->
   <section class="hero">
     <div class="container hero-inner">
       <div>
-        <h1 id="h_title">Portfolio.</h1>
-        <p class="lead" id="h_desc">Creative agency product design case study.</p>
-        <div class="meta"><span id="h_tag">Design</span><span>•</span><span id="h_date">2024</span></div>
+        <h1 id="proj_title">Portfolio.</h1>
+        <p class="lead" id="proj_desc">A creative agency design showcase.</p>
+        <div class="meta"><span id="proj_tag">UI/UX Design</span><span>•</span><span id="proj_date">2025</span></div>
       </div>
       <div class="hero-art-wrapper">
-        <img class="hero-art" id="h_image"
-             src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=80"
-             alt="Project hero mockup">
+        <img class="hero-art" id="proj_image" src="" alt="Project Hero">
       </div>
     </div>
   </section>
 
-  <div class="divider"></div>
+  <!-- DYNAMIC SECTIONS -->
+  <div id="sections"></div>
 
-  <div id="sectionsMount"></div>
-
+  <!-- MORE PROJECTS -->
   <section class="block">
     <div class="container">
-      <h2>MORE FROM MY PORTFOLIO</h2>
+      <h2>More from my portfolio</h2>
       <div class="more-grid" id="moreGrid"></div>
     </div>
   </section>
@@ -147,86 +153,67 @@
 
 <footer>
   <div class="footer-inner">
-    <div style="font-size:14px">© 2025 <strong>Bodunde</strong>. Designed & coded with ❤️ in Lagos.</div>
-    <div class="socials">
-      <a href="#"><svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-2.9h2v-2.2c0-2 1.2-3.1 3-3.1.9 0 1.8.1 2 .1v2.3h-1.1c-1 0-1.3.6-1.3 1.2v1.7h2.6l-.4 2.9h-2.2v7A10 10 0 0 0 22 12z"/></svg></a>
-    </div>
+    <div>© 2025 <strong>Bodunde</strong>. Designed & coded with ❤️ in Lagos.</div>
+    <div class="socials"><a href="#"><svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.1 1.5 4.4 4.4 0 0 0-7.5 3v1A10.7 10.7 0 0 1 3 4s-4 9 5 13a11.6 11.6 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.1-.8A7.7 7.7 0 0 0 23 3z"/></svg></a></div>
   </div>
 </footer>
 
 <script>
-const menuToggle=document.getElementById("menuToggle");
-const nav=document.querySelector(".nav");
-menuToggle.addEventListener("click",()=>nav.classList.toggle("active"));
-const art=document.querySelector(".hero-art");
-window.addEventListener("scroll",()=>{const y=window.scrollY||window.pageYOffset;art.style.transform=`translateY(${Math.min(40,y*0.08)}px)`;},{passive:true});
-</script>
+/* Mobile nav */
+const menuToggle=document.getElementById('menuToggle');
+const nav=document.querySelector('.nav');
+menuToggle.addEventListener('click',()=>nav.classList.toggle('active'));
 
-<script>
+/* Dynamic project loader */
 (function(){
   const params=new URLSearchParams(location.search);
   const id=params.get('id');
-  const projects=JSON.parse(localStorage.getItem('cms_projects')||'[]');
-  if(!projects.length)return;
-  const proj=id?projects.find(p=>p.id===id):projects[0];
-  if(!proj)return;
+  const list=JSON.parse(localStorage.getItem('cms_projects')||'[]');
+  const project=list.find(p=>p.id===id)||list[0];
+  if(!project)return;
 
-  const set=(sel,val)=>{const el=document.querySelector(sel);if(el&&val)el.textContent=val;}
-  const setImg=(sel,val)=>{const el=document.querySelector(sel);if(el&&val)el.src=val;}
+  document.getElementById('proj_title').textContent=project.title||'Project';
+  document.getElementById('proj_desc').textContent=project.desc||'';
+  document.getElementById('proj_tag').textContent=project.tag||'';
+  document.getElementById('proj_date').textContent=project.date||'';
+  document.getElementById('proj_image').src=project.hero||'';
 
-  set('#h_title',proj.title||'Portfolio.');
-  set('#h_desc',proj.desc||'');
-  set('#h_tag',proj.tag||'');
-  set('#h_date',proj.date||'');
-  setImg('#h_image',proj.hero||'');
-
-  const wrap=document.getElementById('sectionsMount');
-  let alt=false;let i=0;const secs=proj.sections||[];
-
-  while(i<secs.length){
-    const s=secs[i];
+  const secWrap=document.getElementById('sections');
+  let alt=false;let i=0;
+  while(i<project.sections.length){
+    const s=project.sections[i];
     if(s.type==='h2'||s.type==='p'){
-      let heading='',body='';
-      if(s.type==='h2')heading=s.value;
-      if(s.type==='p')body=s.value;
+      let header='',para='';
+      if(s.type==='h2')header=s.value;
+      if(s.type==='p')para=s.value;
       const imgs=[];let j=i+1;
-      while(j<secs.length&&secs[j].type==='img'&&imgs.length<2){imgs.push(secs[j]);j++;}
-      const block=document.createElement('section');
-      block.className='block'+(alt?' alt':'');
-      block.innerHTML=`
-        <div class="container">
-          ${heading?`<h2>${escapeHtml(heading)}</h2>`:''}
-          ${body?`<p>${escapeHtml(body)}</p>`:''}
+      while(j<project.sections.length&&project.sections[j].type==='img'&&imgs.length<2){imgs.push(project.sections[j]);j++;}
+      const sec=document.createElement('section');
+      sec.className='block'+(alt?' alt':'');
+      sec.innerHTML=`<div class="container">
+          ${header?`<h2>${escapeHtml(header)}</h2>`:''}
+          ${para?`<p>${escapeHtml(para)}</p>`:''}
           ${imgs.length===2?`<div class="two-up">
-              <img src="${escapeAttr(imgs[0].value)}" alt="${escapeAttr(imgs[0].alt||'')}">
-              <img src="${escapeAttr(imgs[1].value)}" alt="${escapeAttr(imgs[1].alt||'')}">
-            </div>`:
-            imgs.length===1?`<div class="big-image"><img src="${escapeAttr(imgs[0].value)}" alt="${escapeAttr(imgs[0].alt||'')}"></div>`:''}
+            <img src="${escapeAttr(imgs[0].value)}" alt="">
+            <img src="${escapeAttr(imgs[1].value)}" alt="">
+          </div>`:imgs.length===1?`<img src="${escapeAttr(imgs[0].value)}" alt="">`:''}
         </div>`;
-      wrap.appendChild(block);alt=!alt;i=j;continue;
-    }
-    if(s.type==='img'){
-      const block=document.createElement('section');
-      block.className='block'+(alt?' alt':'');
-      block.innerHTML=`<div class="container"><div class="big-image"><img src="${escapeAttr(s.value)}" alt="${escapeAttr(s.alt||'')}"></div></div>`;
-      wrap.appendChild(block);alt=!alt;i++;continue;
+      secWrap.appendChild(sec);
+      alt=!alt;i=j;continue;
     }
     i++;
   }
 
   const more=document.getElementById('moreGrid');
-  if(more){
-    const others=projects.filter(p=>p.id!==proj.id).slice(0,3);
-    others.forEach(p=>{
-      const a=document.createElement('a');
-      a.className='more-item';
-      a.href=`project-monitor.html?id=${encodeURIComponent(p.id)}`;
-      a.innerHTML=`
-        <img src="${escapeAttr(p.hero||'')}" alt="${escapeAttr(p.title||'Project')}">
-        <div class="p"><h3>${escapeHtml(p.title||'Untitled')}</h3><small>${escapeHtml(p.tag||'')}</small></div>`;
-      more.appendChild(a);
-    });
-  }
+  const others=list.filter(p=>p.id!==project.id).slice(0,3);
+  others.forEach(p=>{
+    const a=document.createElement('a');
+    a.className='more-item';
+    a.href=`project-monitor.html?id=${encodeURIComponent(p.id)}`;
+    a.innerHTML=`<img src="${escapeAttr(p.hero||'')}" alt="">
+    <div class="p"><h3>${escapeHtml(p.title||'')}</h3><small>${escapeHtml(p.tag||'')}</small></div>`;
+    more.appendChild(a);
+  });
 
   function escapeHtml(s){return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
   function escapeAttr(s){return (s||'').replace(/"/g,'&quot;');}
