@@ -437,8 +437,15 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
       section.innerHTML = `
         <div class="container">
           ${imgsHTML}
-          ${h2 ? `<h2>${escapeHtml(h2)}</h2>` : ''}
-          ${p ? `<p>${escapeHtml(p)}</p>` : ''}
+          ${h2 ? `<h2>${h2}</h2>` : ''}
+${p ? `<p>${p}</p>` : ''}
+
+function safeHTML(value) {
+  return (value || '').replace(/<script.*?>.*?<\/script>/gi, ''); // strips any script tag
+}
+${h2 ? `<h2>${safeHTML(h2)}</h2>` : ''}
+${p ? `<p>${safeHTML(p)}</p>` : ''}
+
         </div>
       `;
       host.appendChild(section);
