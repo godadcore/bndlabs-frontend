@@ -434,17 +434,11 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
         </div>`;
       }
 
-      section.innerHTML = `
-        <div class="container">
-          ${imgsHTML}
-          ${h2 ? `<h2>${h2}</h2>` : ''}
-${p ? `<p>${p}</p>` : ''}
-
-function safeHTML(value) {
-  return (value || '').replace(/<script.*?>.*?<\/script>/gi, ''); // strips any script tag
-}
-${h2 ? `<h2>${safeHTML(h2)}</h2>` : ''}
-${p ? `<p>${safeHTML(p)}</p>` : ''}
+     section.innerHTML = `
+  <div class="container">
+    ${imgsHTML}
+    ${h2 ? `<h2>${cleanRich(h2)}</h2>` : ''}
+    ${p  ? `<div class="rte-body">${cleanRich(p)}</div>` : ''}
 
         </div>
       `;
@@ -463,7 +457,23 @@ ${p ? `<p>${safeHTML(p)}</p>` : ''}
   function escapeHtml(s){ return String(s||'').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
   function escapeAttr(s){ return String(s||'').replace(/"/g,'&quot;'); }
   function safeParse(json){ try{ return JSON.parse(json||''); } catch(e){ return null; } }
+  function decodeHtml(str){
+  const t = document.createElement('textarea');
+  t.innerHTML = String(str || '');
+  return t.value;
+}
+
+function stripScripts(html){
+  return String(html || '').replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '');
+}
+
+function cleanRich(val){
+  // 1) decode &lt;b&gt; → <b> so your saved formatting shows
+  // 2) strip scripts for safety
+  return stripScripts(decodeHtml(val));
+}
 })();
+
 </script>
 </body>
 </html>
