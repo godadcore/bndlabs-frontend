@@ -21,7 +21,6 @@
 <meta name="twitter:description" content="UI/UX design insights and creative articles by Bodunde.">
 <meta name="twitter:image" content="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=1200&q=80">
 
-<!-- Favicon + PWA -->
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="favicon.png">
 <link rel="manifest" href="manifest.json">
@@ -40,177 +39,57 @@
 
   *{box-sizing:border-box}
   body{
-    margin:0;
-    font-family:"SF Pro Text",-apple-system,BlinkMacSystemFont,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-    background:var(--light-bg);
-    color:var(--light-text);
-    line-height:1.5;
-    overflow-x:hidden;
+    margin:0;font-family:"SF Pro Text",-apple-system,BlinkMacSystemFont,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    background:var(--light-bg);color:var(--light-text);line-height:1.5;overflow-x:hidden;
   }
   a{color:inherit;text-decoration:none}
   img{max-width:100%;display:block;border-radius:12px}
 
-  /* ===== HEADER (reused) ===== */
+  /* HEADER */
   header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    position:fixed;
-    top:0;left:0;right:0;
-    z-index:2000;
-    background:rgba(0,0,0,0.9);
-    backdrop-filter:blur(10px);
-    color:#fff;
-    padding:18px 36px;
-    border-bottom:1px solid rgba(255,255,255,.06);
+    display:flex;align-items:center;justify-content:space-between;position:fixed;top:0;left:0;right:0;z-index:2000;
+    background:rgba(0,0,0,0.9);backdrop-filter:blur(10px);color:#fff;padding:18px 36px;border-bottom:1px solid rgba(255,255,255,.06);
   }
   .brand{display:flex;align-items:center;gap:10px}
   .brand-text .name{font-weight:700;font-size:20px;color:#fff}
   .logo svg{width:40px;height:40px;fill:#fff}
-  .nav{
-    display:none;
-    flex-direction:column;
-    align-items:flex-end;
-    position:absolute;
-    top:64px;
-    right:20px;
-    width:220px;
-    background:rgba(20,20,20,0.92);
-    backdrop-filter:blur(10px);
-    border-radius:20px;
-    padding:16px 12px;
-    gap:10px;
-    box-shadow:0 10px 30px rgba(0,0,0,.35);
-  }
+  .nav{display:none;flex-direction:column;align-items:flex-end;position:absolute;top:64px;right:20px;width:220px;background:rgba(20,20,20,0.92);backdrop-filter:blur(10px);border-radius:20px;padding:16px 12px;gap:10px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
   .nav.active{display:flex}
-  .nav a{
-    background:rgba(255,255,255,.08);
-    color:#fff;
-    padding:12px 0;
-    border-radius:999px;
-    width:100%;
-    text-align:center;
-    font-weight:500;
-    transition:.2s;
-  }
+  .nav a{background:rgba(255,255,255,.08);color:#fff;padding:12px 0;border-radius:999px;width:100%;text-align:center;font-weight:500;transition:.2s}
   .nav a:hover{background:rgba(255,255,255,.18);transform:translateY(-1px)}
   .nav a.active{background:var(--primary-gradient);color:#fff;font-weight:700}
-  .menu-toggle{
-    display:block;
-    background:transparent;
-    border:0;
-    color:#fff;
-    font-size:22px;
-    cursor:pointer;
-  }
+  .menu-toggle{display:block;background:transparent;border:0;color:#fff;font-size:22px;cursor:pointer}
 
-  /* ===== BLOG BODY ===== */
+  /* BODY */
   main{padding-top:120px;}
-  .blog-container{
-    max-width:var(--max-width);
-    margin:0 auto;
-    padding:0 36px 80px;
-    display:flex;
-    flex-direction:column;
-    gap:60px;
-  }
+  .blog-container{max-width:var(--max-width);margin:0 auto;padding:0 36px 80px;display:flex;flex-direction:column;gap:60px}
 
-  .blog-card{
-    background:#fff;
-    border-radius:20px;
-    box-shadow:0 10px 30px rgba(0,0,0,.08);
-    overflow:hidden;
-    transform:translateX(-120px);
-    opacity:0;
-    transition:
-      transform 0.8s cubic-bezier(0.16,1,0.3,1),
-      opacity 0.8s ease,
-      box-shadow 0.3s ease,
-      transform 0.15s ease-in-out;
-    cursor:pointer;
-  }
-
-  /* ✨ Glow on hover */
-  .blog-card:hover{
-    box-shadow:0 0 25px rgba(255, 77, 0, 0.4), 0 6px 20px rgba(0,0,0,.1);
-    transform:translateX(0) scale(1.02);
-  }
-
-  /* 🖱️ Click effect */
-  .blog-card:active{
-    transform:scale(0.98);
-    box-shadow:0 0 15px rgba(255, 77, 0, 0.3);
-  }
-
-  .blog-card.visible{
-    transform:translateX(0);
-    opacity:1;
-  }
-
+  .blog-card{background:#fff;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.08);overflow:hidden;transform:translateX(-120px);opacity:0;transition:transform 0.8s cubic-bezier(0.16,1,0.3,1),opacity 0.8s ease,box-shadow 0.3s ease,transform 0.15s ease-in-out;cursor:pointer}
+  .blog-card:hover{box-shadow:0 0 25px rgba(255, 77, 0, 0.4), 0 6px 20px rgba(0,0,0,.1);transform:translateX(0) scale(1.02)}
+  .blog-card:active{transform:scale(0.98);box-shadow:0 0 15px rgba(255, 77, 0, 0.3)}
+  .blog-card.visible{transform:translateX(0);opacity:1}
   .blog-card img{width:100%;height:auto;display:block}
-  .blog-card-content{
-    padding:28px;
-  }
-  .blog-card h2{
-    font-family:"SF Pro Display",-apple-system,BlinkMacSystemFont,system-ui;
-    font-size:32px;
-    margin:0 0 8px;
-  }
-  .blog-card p.subtitle{color:var(--light-muted);margin:0 0 18px;font-size:18px;}
-  .author{
-    display:flex;
-    align-items:center;
-    gap:10px;
-  }
-  .author img{
-    width:44px;height:44px;border-radius:50%;object-fit:cover;
-  }
-  .author .meta{font-size:14px;color:var(--light-faint);}
+  .blog-card-content{padding:28px}
+  .blog-card h2{font-family:"SF Pro Display",-apple-system,BlinkMacSystemFont,system-ui;font-size:32px;margin:0 0 8px}
+  .blog-card p.subtitle{color:var(--light-muted);margin:0 0 18px;font-size:18px}
+  .author{display:flex;align-items:center;gap:10px}
+  .author img{width:44px;height:44px;border-radius:50%;object-fit:cover}
+  .author .meta{font-size:14px;color:var(--light-faint)}
 
-  /* ===== FOOTER ===== */
-/* FOOTER */
-  footer{
-    background:#f6f3ef;
-    color:var(--light-faint);
-    padding:20px;
-    margin-top:40px;
-  }
-  .footer-inner{
-    max-width:var(--max-width);
-    margin:0 auto;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    flex-wrap:wrap;
-    gap:12px;
-    text-align:center;
-  }
-  .footer-left{font-size:14px;}
-  .footer-nav{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
-  .footer-nav a{color:var(--light-faint);font-size:14px;text-transform:capitalize;}
-  .socials{display:flex;gap:10px;align-items:center;justify-content:center;}
-  .socials a{
-    width:36px;height:36px;
-    border-radius:999px;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    border:1px solid rgba(0,0,0,0.1);
-  }
-  .socials a svg{width:18px;height:18px;fill:#000;}
-  @media(max-width:720px){
-    .footer-inner{flex-direction:column;gap:10px;}
-  }
-/* === Scroll Reveal Base === */
-.reveal {
-  opacity: 0;
-  transform: translateY(40px);
-  transition: all 0.8s ease-out;
-}
-.reveal.active {
-  opacity: 1;
-  transform: translateY(0);
-}
+  /* FOOTER */
+  footer{background:#f6f3ef;color:var(--light-faint);padding:20px;margin-top:40px}
+  .footer-inner{max-width:var(--max-width);margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;text-align:center}
+  .footer-left{font-size:14px}
+  .footer-nav{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+  .footer-nav a{color:var(--light-faint);font-size:14px;text-transform:capitalize}
+  .socials{display:flex;gap:10px;align-items:center;justify-content:center}
+  .socials a{width:36px;height:36px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,0.1)}
+  .socials a svg{width:18px;height:18px;fill:#000}
+  @media(max-width:720px){.footer-inner{flex-direction:column;gap:10px}}
+
+  /* Reveal */
+  .reveal{opacity:0;transform:translateY(40px);transition:all .8s ease-out}
+  .reveal.active{opacity:1;transform:translateY(0)}
 </style>
 </head>
 <body>
@@ -218,9 +97,7 @@
 <header>
   <div class="brand">
     <div class="logo">
-      <svg viewBox="0 0 24 24">
-        <path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-2.9h2v-2.2c0-2 1.2-3.1 3-3.1.9 0 1.8.1 2 .1v2.3h-1.1c-1 0-1.3.6-1.3 1.2v1.7h2.6l-.4 2.9h-2.2v7A10 10 0 0 0 22 12z" fill="currentColor"/>
-      </svg>
+      <svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-2.9h2v-2.2c0-2 1.2-3.1 3-3.1.9 0 1.8.1 2 .1v2.3h-1.1c-1 0-1.3.6-1.3 1.2v1.7h2.6l-.4 2.9h-2.2v7A10 10 0 0 0 22 12z" fill="currentColor"/></svg>
     </div>
     <div class="brand-text"><div class="name">Bodunde</div></div>
   </div>
@@ -237,7 +114,10 @@
 </header>
 
 <main>
-  <div class="blog-container">
+  <div class="blog-container" id="blogList"></div>
+
+  <!-- Fallback static cards (shown only if no CMS posts) -->
+  <div class="blog-container" id="staticPosts">
     <!-- Blog 1 -->
     <div class="blog-card">
       <img src="https://images.unsplash.com/photo-1602526218894-17e6e8b47e3e?auto=format&fit=crop&w=1600&q=80" alt="Blog Thumbnail 1">
@@ -263,92 +143,86 @@
         </div>
       </div>
     </div>
-
-    <!-- Blog 3 -->
-    <div class="blog-card">
-      <img src="https://images.unsplash.com/photo-1596495577886-d920f1fb7238?auto=format&fit=crop&w=1600&q=80" alt="Blog Thumbnail 3">
-      <div class="blog-card-content">
-        <h2>Building a strong personal design system</h2>
-        <p class="subtitle">A breakdown of how to design, organize, and maintain your own design language system.</p>
-        <div class="author">
-          <img src="https://images.unsplash.com/photo-1595152772835-219674b2a8a6?auto=format&fit=crop&w=400&q=80" alt="Author">
-          <div class="meta"><strong>Bodunde</strong><br>15 August 2025</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Blog 4 -->
-    <div class="blog-card">
-      <img src="https://images.unsplash.com/photo-1593642634367-d91a135587b5?auto=format&fit=crop&w=1600&q=80" alt="Blog Thumbnail 4">
-      <div class="blog-card-content">
-        <h2>From sketches to screens: turning ideas into interfaces</h2>
-        <p class="subtitle">A look into my workflow from wireframing to prototyping and final pixel-perfect execution.</p>
-        <div class="author">
-          <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=400&q=80" alt="Author">
-          <div class="meta"><strong>Bodunde</strong><br>25 September 2025</div>
-        </div>
-      </div>
-    </div>
+    <!-- …keep your other 2 static cards here as fallback… -->
   </div>
 </main>
 
-  <footer>
-    <div class="footer-inner">
-      <div class="footer-left">© 2025 <strong>Bodunde</strong>. Designed & coded by Godadcore.</div>
-      <div class="socials">
-        <a href="#"><svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-2.9h2v-2.2c0-2 1.2-3.1 3-3.1.9 0 1.8.1 2 .1v2.3h-1.1c-1 0-1.3.6-1.3 1.2v1.7h2.6l-.4 2.9h-2.2v7A10 10 0 0 0 22 12z"/></svg></a>
-        <a href="#"><svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.1 1.5 4.4 4.4 0 0 0-7.5 3v1A10.7 10.7 0 0 1 3 4s-4 9 5 13a11.6 11.6 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.1-.8A7.7 7.7 0 0 0 23 3z"/></svg></a>
-        <a href="#"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1.3 14h-2.6v-6h2.6v6zm0-7.3h-2.6V7h2.6v1.7z"/></svg></a>
-      </div>
-      <nav class="footer-nav">
-        <a href="About.html">About</a>
-        <a href="portfolio.html">Portfolio</a>
-        <a href="blog.html">Blog</a>
-        <a href="contact.html">Contact</a>
-      </nav>
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">© 2025 <strong>Bodunde</strong>. Designed & coded by Godadcore.</div>
+    <div class="socials">
+      <a href="#"><svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-2.9h2v-2.2c0-2 1.2-3.1 3-3.1.9 0 1.8.1 2 .1v2.3h-1.1c-1 0-1.3.6-1.3 1.2v1.7h2.6l-.4 2.9h-2.2v7A10 10 0 0 0 22 12z"/></svg></a>
+      <a href="#"><svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.1 1.5 4.4 4.4 0 0 0-7.5 3v1A10.7 10.7 0 0 1 3 4s-4 9 5 13a11.6 11.6 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.1-.8A7.7 7.7 0 0 0 23 3z"/></svg></a>
+      <a href="#"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1.3 14h-2.6v-6h2.6v6zm0-7.3h-2.6V7h2.6v1.7z"/></svg></a>
     </div>
-  </footer>
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').catch(console.error);
-  }
-</script>
+    <nav class="footer-nav">
+      <a href="About.html">About</a>
+      <a href="portfolio.html">Portfolio</a>
+      <a href="blog.html">Blog</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+</footer>
 
 <script>
+  // Menu
   const menuToggle = document.getElementById("menuToggle");
   const nav = document.querySelector(".nav");
   if(menuToggle){ menuToggle.addEventListener("click", () => nav.classList.toggle("active")); }
 
-  const cards = document.querySelectorAll('.blog-card');
-  const revealCards = () => {
-    cards.forEach(card => {
-      const rect = card.getBoundingClientRect();
-      if(rect.top < window.innerHeight - 100){
-        card.classList.add('visible');
-      }
+  // CMS render (from localStorage)
+  (function(){
+    const key = 'cms_blogs';
+    const list = getPosts();
+    const host = document.getElementById('blogList');
+    const fallback = document.getElementById('staticPosts');
+
+    if(!list.length){ fallback.style.display='block'; return; }
+    fallback.style.display='none';
+
+    list.forEach(post=>{
+      const card = document.createElement('a');
+      card.className='blog-card reveal';
+      card.href = `blog-details.html?id=${encodeURIComponent(post.id)}`;
+      card.innerHTML = `
+        <img src="${escapeAttr(post.hero||'')}" alt="">
+        <div class="blog-card-content">
+          <h2>${escapeHtml(post.title||'Untitled')}</h2>
+          ${post.subtitle?`<p class="subtitle">${escapeHtml(post.subtitle)}</p>`:''}
+          <div class="author">
+            <img src="${escapeAttr(post.authorAvatar||'https://via.placeholder.com/88')}" alt="">
+            <div class="meta"><strong>${escapeHtml(post.author||'')}</strong><br>${escapeHtml(post.date||'')}</div>
+          </div>
+        </div>`;
+      host.appendChild(card);
     });
-  };
-  window.addEventListener('scroll', revealCards);
-  revealCards();
-</script>
-<script>
-// === Scroll Reveal Animation ===
-const revealElements = document.querySelectorAll(".reveal");
 
-const revealOnScroll = () => {
-  const windowHeight = window.innerHeight;
-  revealElements.forEach(el => {
-    const revealTop = el.getBoundingClientRect().top;
-    const revealPoint = 120; // how early to trigger animation
-    if (revealTop < windowHeight - revealPoint) {
-      el.classList.add("active");
+    // reveal on scroll
+    const cards = document.querySelectorAll('.blog-card');
+    const revealCards = () => {
+      cards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        if(rect.top < window.innerHeight - 100){ card.classList.add('visible'); }
+      });
+    };
+    window.addEventListener('scroll', revealCards);
+    revealCards();
+
+    function getPosts(){
+      try{
+        const arr = JSON.parse(localStorage.getItem(key)||'[]');
+        // sort by updated desc if present, otherwise by date desc
+        arr.sort((a,b)=>{
+          const au=a.updated||Date.parse(a.date||0)||0;
+          const bu=b.updated||Date.parse(b.date||0)||0;
+          return bu-au;
+        });
+        return arr;
+      }catch(e){ return [] }
     }
-  });
-};
-
-window.addEventListener("scroll", revealOnScroll);
-revealOnScroll(); // trigger on load
+    function escapeHtml(s){return String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+    function escapeAttr(s){return String(s||'').replace(/"/g,'&quot;');}
+  })();
 </script>
-
 </body>
 </html>

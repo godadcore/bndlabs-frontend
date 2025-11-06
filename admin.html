@@ -1,113 +1,151 @@
 <!doctype html>
 <html lang="en">
 <head>
+    <!-- Preload + Load Material Symbols Rounded -->
+<link rel="preload" href="https://fonts.gstatic.com/s/materialsymbolsrounded/v143/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2" as="font" type="font/woff2" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,700,1,0" rel="stylesheet">
+
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Bodunde CMS — Admin</title>
-<meta name="description" content="Private admin panel for Bodunde site." />
 
 <style>
   :root{
-    --bg:#0B0D12;         /* app background (dark) */
-    --panel:#121520;      /* cards/panels */
-    --panel-2:#0F1320;    /* sidebar */
-    --soft:#1A2030;       /* table rows / inputs */
-    --line:#22283A;       /* borders */
-    --text:#E9EEF9;       /* primary text */
-    --muted:#9AA6BF;      /* secondary text */
-    --accent:#FF4D00;     /* brand orange */
-    --accent-2:#FF8C00;
-    --green:#22C55E;
-    --red:#EF4444;
+    --bg:#FAFAFB; --panel:#FFFFFF; --panel-2:#FFFFFF; --soft:#F6F7F9; --line:#EAEAEE;
+    --text:#0B0B0B; --muted:rgba(11,11,11,.55);
+    --accent:#FF4D00; --accent-2:#FF8C00;
+    --green:#16A34A; --red:#DC2626; --shadow:0 10px 28px rgba(0,0,0,.06);
     --r:14px;
-    --shadow:0 14px 40px rgba(0,0,0,.35);
   }
   *{box-sizing:border-box}
   html,body{height:100%}
-  body{
-    margin:0;background:var(--bg);color:var(--text);
-    font-family:ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    -webkit-font-smoothing:antialiased; line-height:1.5;
-  }
+  body{margin:0;background:var(--bg);color:var(--text);
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial; line-height:1.5}
   a{color:inherit;text-decoration:none}
+  button{font-family:inherit}
 
-  /* ===== Layout */
-  .app{display:grid; grid-template-columns:260px 1fr; min-height:100%}
-  .side{
-    background:var(--panel-2); border-right:1px solid var(--line);
-    padding:18px; position:sticky; top:0; height:100dvh;
-  }
-  .brand{display:flex; align-items:center; gap:10px; margin-bottom:16px}
-  .brand .logo svg{width:28px;height:28px;fill:#fff}
-  .brand .name{font-weight:900; letter-spacing:.3px}
-  .side .mutey{color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.12em; margin:12px 0 8px}
-  .nav{display:flex; flex-direction:column; gap:6px}
-  .nav a{
-    padding:10px 12px; border-radius:10px; color:#D6DDF0; display:flex; align-items:center; gap:10px;
-  }
-  .nav a.active{background:linear-gradient(120deg,var(--accent),var(--accent-2)); color:#fff; font-weight:800}
+  /* Layout */
+  .app{display:grid;grid-template-columns:260px 1fr;min-height:100%}
+  .side{background:var(--panel-2);border-right:1px solid var(--line);padding:18px;position:sticky;top:0;height:100dvh}
+  .brand{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+  .brand .logo{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:linear-gradient(120deg,var(--accent),var(--accent-2));box-shadow:0 6px 16px rgba(255,77,0,.25)}
+  .brand .logo svg{width:20px;height:20px;fill:#fff}
+  .brand .name{font-weight:900}
+  .mutey{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.12em;margin:12px 0 8px}
+  .nav{display:flex;flex-direction:column;gap:6px}
+  .nav a{padding:10px 12px;border-radius:10px;color:#222;display:flex;align-items:center;gap:10px;border:1px solid transparent;transition:.18s}
+  .nav a:hover{background:#FFF7F2;border-color:#FFE3D4}
+  .nav a.active{background:linear-gradient(120deg,var(--accent),var(--accent-2));color:#fff;font-weight:800;box-shadow:0 8px 20px rgba(255,77,0,.25)}
   .nav a svg{width:16px;height:16px;fill:currentColor;opacity:.9}
 
-  .main{padding:22px; display:grid; gap:18px}
-  .topbar{display:flex; align-items:center; justify-content:space-between}
-  .btn, .ghost{
-    border:0; border-radius:10px; padding:10px 14px; cursor:pointer; font-weight:800;
-  }
-  .btn{background:linear-gradient(120deg,var(--accent),var(--accent-2)); color:#fff; box-shadow:0 10px 28px rgba(255,77,0,.25)}
-  .ghost{background:transparent; color:#fff; border:1px solid var(--line)}
-  .ok{color:var(--green); font-weight:800; display:none}
-  .err{color:var(--red); font-weight:800; display:none}
-
-  .card{
-    background:var(--panel); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow);
-  }
+  .main{padding:22px;display:grid;gap:18px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow)}
+  .btn,.ghost{border:0;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:800}
+  .btn{background:linear-gradient(120deg,var(--accent),var(--accent-2));color:#fff;box-shadow:0 10px 28px rgba(255,77,0,.25)}
+  .ghost{background:#fff;color:#111;border:1px solid var(--line)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
   .pad{padding:18px}
 
-  /* table */
-  table{width:100%; border-collapse:collapse; font-size:14px}
-  thead th{color:#BFD0F5; text-align:left; padding:12px; background:#12192B; border-bottom:1px solid var(--line)}
-  tbody td{padding:12px; border-bottom:1px solid var(--line); color:#E6EDFF}
+  /* Tables */
+  .toolbar{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .search,.select{padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#fff}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  thead th{color:#444;text-align:left;padding:12px;background:#FCFCFD;border-bottom:1px solid var(--line)}
+  tbody td{padding:12px;border-bottom:1px solid var(--line);color:#222;vertical-align:top}
   tbody tr:hover{background:var(--soft)}
-  .tag{display:inline-block; padding:6px 10px; border-radius:999px; background:#1E2436; color:#CBD6F0; font-weight:700; font-size:12px}
+  .tag{display:inline-block;padding:6px 10px;border-radius:999px;background:#FFF1E6;color:#A24300;font-weight:700;font-size:12px;border:1px solid #FFD9C2}
+  .status{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:#EEF2FF;border:1px solid #DDE3FF;color:#334155;font-weight:700;font-size:12px}
+  .status[data-s="hidden"]{background:#FEF3C7;border-color:#FDE68A;color:#92400E}
+  .status[data-s="draft"]{background:#E5E7EB;border-color:#D1D5DB;color:#374151}
+  .tools{display:flex;gap:8px;flex-wrap:wrap}
+  .tiny{font-size:12px;padding:8px 10px}
 
-  .tools{display:flex; gap:8px}
-  .tiny{font-size:12px; padding:8px 10px}
+  /* Forms */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:1000px){.app{grid-template-columns:1fr}.side{position:relative;height:auto}.grid2{grid-template-columns:1fr}}
+  label{font-size:12px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+  .field{width:100%;padding:12px 14px;border-radius:10px;background:#fff;border:1px solid var(--line);color:#111;outline:none}
+  .field:focus{border-color:#FFD3BE;box-shadow:0 0 0 4px rgba(255,141,79,.12)}
+  textarea.field{min-height:120px;resize:vertical}
+  .row{display:grid;gap:6px}
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 
-  /* editor */
-  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
-  @media(max-width:900px){ .app{grid-template-columns:1fr} .side{position:relative; height:auto} .grid2{grid-template-columns:1fr} }
-  label{font-size:12px; color:var(--muted); font-weight:800; text-transform:uppercase; letter-spacing:.08em}
-  .field, .select{
-    width:100%; padding:12px 14px; border-radius:10px; background:var(--soft); border:1px solid var(--line);
-    color:#DDE7FF; outline:none;
-  }
-  textarea.field{min-height:120px; resize:vertical}
-  .row{display:grid; gap:6px}
-  .bar{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+  /* Sections + Rich Editor */
+  .sections{display:flex;flex-direction:column;gap:12px}
+  .section{border:1px dashed var(--line);background:#FFFDFB;border-radius:12px;padding:12px}
+  .s-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .s-title{font-weight:900;color:#222}
+  .s-tools{display:flex;gap:6px}
+  .iconbtn{border:1px solid var(--line);background:#fff;color:#111;border-radius:8px;padding:6px 8px;cursor:pointer}
+  .iconbtn:hover{background:#FFF6F0;border-color:#FFD9C2}
+/* Force orange color for toolbar icons */
+.rte .btn svg,
+.rte .btn svg * {
+  color: var(--accent);
+  fill: var(--accent) !important;
+  stroke: var(--accent) !important;
+}
 
-  .sections{display:flex; flex-direction:column; gap:12px}
-  .section{
-    border:1px dashed var(--line); background:#0F1422; border-radius:12px; padding:12px;
-  }
-  .s-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:8px}
-  .s-title{font-weight:900}
-  .s-tools{display:flex; gap:6px}
-  .iconbtn{border:1px solid var(--line); background:transparent; color:#DDE7FF; border-radius:8px; padding:6px 8px; cursor:pointer}
+  /* RTE bar */
+  .rte{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px 8px;margin-bottom:6px}
+  .rte .dropdown{position:relative}
+  .rte .dd-btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 10px;cursor:pointer;font-weight:700}
+  .rte .dd{position:absolute;top:100%;left:0;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:6px;display:none;z-index:50}
+  .rte .dd button{display:block;width:100%;text-align:left;border:0;background:transparent;padding:8px 10px;border-radius:8px;cursor:pointer}
+  .rte .dd button:hover{background:#FFF6F0}
+  .rte .btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;min-width:32px;min-height:32px}
+  .rte .btn:hover{background:#FFF6F0;border-color:#FFD9C2}
+  .rte .btn svg{width:16px;height:16px;display:block;color:inherit}
+  .rte .btn svg *{fill:currentColor!important;stroke:currentColor!important}
+  .rich{border:1px solid var(--line);border-radius:10px;padding:12px;min-height:120px;background:#fff}
+  .rich:focus{outline:2px solid rgba(255,141,79,.22)}
+/* Material Symbols setup */
+.material-symbols-rounded{
+  font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 0, 'opsz' 24;
+  font-size: 20px; line-height: 1; display: inline-block;
+  color: var(--accent); /* your orange */
+}
+.fonts-loaded .material-symbols-rounded {
+  visibility: visible;
+}
 
-  /* gate */
-  .gate{
-    position:fixed; inset:0; background:rgba(0,0,0,.88); display:flex; align-items:center; justify-content:center; z-index:1000;
-  }
-  .login{width:min(440px,94vw); background:#101420; border:1px solid var(--line); border-radius:16px; overflow:hidden; box-shadow:var(--shadow)}
-  .login-head{background:linear-gradient(120deg,var(--accent),var(--accent-2)); padding:16px; font-weight:900; text-align:center}
+/* Make the toolbar look like your mock */
+.rte{
+  background: linear-gradient(180deg, rgba(255,77,0,.04), rgba(255,77,0,.02));
+  border: 1px solid rgba(255,77,0,.12); border-radius: 12px; padding: 8px 10px;
+  display:flex; gap:8px; align-items:center;
+}
+.rte .btn{
+  width:38px;height:38px;border-radius:10px;background:#fff;
+  border:1px solid rgba(255,77,0,.18);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:.2s; box-shadow:0 1px 3px rgba(255,77,0,.06);
+}
+.rte .btn:hover{ background:rgba(255,77,0,.06); border-color:rgba(255,77,0,.35); transform:translateY(-1px); }
+.rte .dd-btn{
+  display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;
+  background:#fff;border:1px solid rgba(255,77,0,.2); font-weight:700; cursor:pointer;
+}
+.rte .dd{ position:absolute; top:100%; left:0; background:#fff; border:1px solid rgba(255,77,0,.2);
+  border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.08); padding:6px; display:none; z-index:50;}
+.rte .dd button{ display:block; width:100%; padding:8px 10px; border:0; background:transparent; text-align:left; border-radius:8px; cursor:pointer;}
+.rte .dd button:hover{ background:rgba(255,77,0,.07); }
+
+  /* Uploader (no preview) */
+  .uploader{border:2px dashed #E9E1DA;border-radius:12px;padding:16px;background:#FFFBF8}
+  .uploader p{margin:6px 0 0;font-size:13px;color:#A24300}
+
+  /* Gate */
+  .gate{position:fixed;inset:0;background:rgba(255,255,255,.82);backdrop-filter:saturate(1.2) blur(6px);display:flex;align-items:center;justify-content:center;z-index:1000}
+  .login{width:min(460px,94vw);background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+  .login-head{background:linear-gradient(120deg,var(--accent),var(--accent-2));padding:16px;font-weight:900;text-align:center;color:#fff}
   .login-body{padding:16px}
 </style>
 </head>
 <body>
 
 <div class="app">
-
-  <!-- ===== Sidebar -->
+  <!-- Sidebar -->
   <aside class="side">
     <div class="brand">
       <div class="logo">
@@ -118,21 +156,20 @@
 
     <div class="mutey">Manage</div>
     <nav class="nav" id="nav">
-      <a href="#" data-panel="portfolio" class="active">
-        <svg viewBox="0 0 24 24"><path d="M4 6h16v12H4zM9 6V4h6v2"/></svg> Portfolio
-      </a>
-      <a href="#" data-panel="home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9H3z"/></svg> Home</a>
-      <a href="#" data-panel="about"><svg viewBox="0 0 24 24"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm-8 9c0-3.3 3.6-6 8-6s8 2.7 8 6"/></svg> About</a>
+      <a href="#" data-panel="portfolio" class="active"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4zM9 6V4h6v2" /></svg> Portfolio</a>
       <a href="#" data-panel="blog"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zM7 8h10M7 12h10M7 16h6"/></svg> Blog</a>
+      <a href="#" data-panel="profile"><svg viewBox="0 0 24 24"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm-8 9c0-3.3 3.6-6 8-6s8 2.7 8 6"/></svg> Profile / Settings</a>
+      <a href="#" data-panel="home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9H3z"/></svg> Home</a>
+      <a href="#" data-panel="about"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/></svg> About</a>
       <a href="#" data-panel="contact"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4zM7 9h10M7 13h7"/></svg> Contact</a>
       <a href="#" data-panel="four"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM9 9l6 6M15 9l-6 6"/></svg> 404</a>
     </nav>
   </aside>
 
-  <!-- ===== Main -->
+  <!-- Main -->
   <main class="main">
     <div class="topbar">
-      <div style="font-weight:900">Portfolio Manager</div>
+      <div style="font-weight:900">Admin Dashboard</div>
       <div class="bar">
         <button id="exportBtn" class="ghost tiny">Export JSON</button>
         <label for="importFile" class="ghost tiny" style="cursor:pointer">Import JSON</label>
@@ -141,432 +178,611 @@
       </div>
     </div>
 
-    <!-- ===== Portfolio LIST -->
+    <!-- Projects list -->
     <section class="card" id="panel_portfolio">
       <div class="pad">
-        <div class="bar" style="justify-content:space-between; margin-bottom:10px">
+        <div class="toolbar">
           <div>
-            <div style="font-size:18px; font-weight:900">Projects</div>
-            <div style="color:var(--muted); font-size:13px">Add, edit, delete. Sorted by last update (newest first).</div>
+            <div style="font-size:18px;font-weight:900">Projects</div>
+            <div style="color:var(--muted);font-size:13px">Newest first, edit or hide.</div>
           </div>
-          <button class="btn tiny" id="addBtn">➕ Add Project</button>
+          <div class="bar">
+            <input id="projSearch" class="search" placeholder="Search projects…">
+            <select id="projFilter" class="select">
+              <option value="">All statuses</option><option value="active">Active</option><option value="draft">Draft</option><option value="hidden">Hidden</option>
+            </select>
+            <button class="btn tiny" id="addProjBtn">➕ Add Project</button>
+          </div>
         </div>
-
-        <!-- Keep this table wrapper (class "preview" is for border styling here only) -->
-        <div class="preview" style="border-radius:12px">
-          <table id="projTable">
-            <thead>
-              <tr>
-                <th style="width:34px">#</th>
-                <th>Title</th>
-                <th style="width:140px">Tag</th>
-                <th style="width:120px">Date</th>
-                <th style="width:160px">Updated</th>
-                <th style="width:180px">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="projBody"></tbody>
-          </table>
-        </div>
+        <table>
+          <thead><tr>
+            <th style="width:34px">#</th><th>Title</th><th style="width:120px">Status</th><th style="width:100px">Views</th>
+            <th style="width:140px">Tag</th><th style="width:120px">Date</th><th style="width:160px">Updated</th><th style="width:260px">Actions</th>
+          </tr></thead>
+          <tbody id="projBody"></tbody>
+        </table>
       </div>
     </section>
 
-    <!-- ===== Editor (Add/Edit) -->
-    <section class="card" id="panel_editor" style="display:none">
+    <!-- Blog list -->
+    <section class="card" id="panel_blog" style="display:none">
       <div class="pad">
-        <div class="bar" style="justify-content:space-between; margin-bottom:6px">
-          <div style="font-size:18px; font-weight:900" id="editorTitle">New Project</div>
+        <div class="toolbar">
+          <div>
+            <div style="font-size:18px;font-weight:900">Blog Posts</div>
+            <div style="color:var(--muted);font-size:13px">Image → Heading → Paragraph blocks (rich-text).</div>
+          </div>
           <div class="bar">
-            <button class="ghost tiny" id="backBtn">⟵ Back to list</button>
-            <button class="ghost tiny" id="deleteBtn" style="display:none;color:var(--red);border-color:#432">Delete</button>
-            <button class="btn tiny" id="saveBtn">Save</button>
+            <input id="blogSearch" class="search" placeholder="Search posts…">
+            <select id="blogFilter" class="select">
+              <option value="">All statuses</option><option value="active">Active</option><option value="draft">Draft</option><option value="hidden">Hidden</option>
+            </select>
+            <button class="btn tiny" id="addBlogBtn">➕ Add Post</button>
+          </div>
+        </div>
+        <table>
+          <thead><tr>
+            <th style="width:34px">#</th><th>Title</th><th style="width:120px">Status</th><th style="width:100px">Views</th>
+            <th style="width:140px">Category</th><th style="width:120px">Date</th><th style="width:160px">Updated</th><th style="width:260px">Actions</th>
+          </tr></thead>
+          <tbody id="blogBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Project editor -->
+    <section class="card" id="panel_editor_proj" style="display:none">
+      <div class="pad">
+        <div class="bar" style="justify-content:space-between;margin-bottom:6px">
+          <div style="font-size:18px;font-weight:900" id="editorProjTitle">New Project</div>
+          <div class="bar">
+            <button class="ghost tiny" data-back="proj">⟵ Back</button>
+            <button class="ghost tiny" id="delProjBtn" style="display:none;color:var(--red);border-color:#432">Delete</button>
+            <button class="btn tiny" id="saveProjBtn">Save</button>
           </div>
         </div>
 
         <div class="grid2">
-          <div class="row">
-            <label>Project Title</label>
-            <input id="f_title" class="field" placeholder="Monitor app design">
-          </div>
-          <div class="row">
-            <label>Tag</label>
-            <input id="f_tag" class="field" placeholder="Product design">
-          </div>
+          <div class="row"><label>Project Title</label><input id="p_title" class="field" placeholder="Monitor app design"></div>
+          <div class="row"><label>Tag</label><input id="p_tag" class="field" placeholder="Product design"></div>
         </div>
 
         <div class="grid2" style="margin-top:10px">
+          <div class="row"><label>Date</label><input id="p_date" class="field" placeholder="July 2014"></div>
           <div class="row">
-            <label>Date</label>
-            <input id="f_date" class="field" placeholder="July 2014">
-          </div>
-          <div class="row">
-            <label>Hero Image (URL or upload)</label>
-            <div class="bar" style="gap:8px">
-              <input id="f_hero" class="field" placeholder="https://…">
-              <input id="f_hero_file" type="file" accept="image/*" class="ghost tiny" style="padding:9px 10px">
+            <label>Hero Image</label>
+            <div class="uploader">
+              <div class="bar" style="gap:8px"><input id="p_hero" class="field" placeholder="https://…"><input id="p_hero_file" type="file" accept="image/*" class="ghost tiny" style="padding:9px 10px"></div>
+              <p>Upload a file or drag and drop — PNG, JPG, SVG up to 1 MB</p>
             </div>
           </div>
         </div>
 
-        <div class="row" style="margin-top:10px">
-          <label>Short Description</label>
-          <textarea id="f_desc" class="field" placeholder="A short summary shown at the top…"></textarea>
+        <div class="grid2" style="margin-top:10px">
+          <div class="row"><label>Status</label><select id="p_status" class="field"><option value="active">Active</option><option value="draft">Draft</option><option value="hidden">Hidden</option></select></div>
+          <div class="row"><label>Views</label><input id="p_views" class="field" type="number" min="0" value="0"></div>
         </div>
+
+        <div class="row" style="margin-top:10px"><label>Short Description</label><textarea id="p_desc" class="field" placeholder="A short summary shown at the top…"></textarea></div>
 
         <div class="bar" style="margin-top:14px">
           <div style="font-weight:900">Sections</div>
-          <select id="addType" class="select" style="max-width:220px">
-            <option value="h2">Header</option>
-            <option value="p">Paragraph</option>
-            <option value="img">Image</option>
+          <select id="p_addType" class="field" style="max-width:240px">
+            <option value="p">Paragraph</option><option value="h2">Heading</option><option value="img">Image</option>
           </select>
-          <button class="ghost tiny" id="addSectionBtn">Add Section</button>
+          <button class="ghost tiny" id="p_addSectionBtn">Add Section</button>
         </div>
 
-        <div class="sections" id="sections" style="margin-top:10px"></div>
+        <div class="sections" id="p_sections" style="margin-top:10px"></div>
+      </div>
+    </section>
+
+    <!-- Blog editor -->
+    <section class="card" id="panel_editor_blog" style="display:none">
+      <div class="pad">
+        <div class="bar" style="justify-content:space-between;margin-bottom:6px">
+          <div style="font-size:18px;font-weight:900" id="editorBlogTitle">New Blog Post</div>
+          <div class="bar">
+            <button class="ghost tiny" data-back="blog">⟵ Back</button>
+            <button class="ghost tiny" id="delBlogBtn" style="display:none;color:var(--red);border-color:#432">Delete</button>
+            <button class="btn tiny" id="saveBlogBtn">Save</button>
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="row"><label>Title</label><input id="b_title" class="field" placeholder="Designing for emotion"></div>
+          <div class="row"><label>Category / Tag</label><input id="b_tag" class="field" placeholder="UI/UX"></div>
+        </div>
+
+        <div class="grid2" style="margin-top:10px">
+          <div class="row"><label>Date</label><input id="b_date" class="field" placeholder="02 July 2025"></div>
+          <div class="row">
+            <label>Hero Image</label>
+            <div class="uploader">
+              <div class="bar" style="gap:8px"><input id="b_hero" class="field" placeholder="https://…"><input id="b_hero_file" type="file" accept="image/*" class="ghost tiny" style="padding:9px 10px"></div>
+              <p>Upload a file or drag and drop — PNG, JPG, SVG up to 1 MB</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid2" style="margin-top:10px">
+          <div class="row"><label>Status</label><select id="b_status" class="field"><option value="active">Active</option><option value="draft">Draft</option><option value="hidden">Hidden</option></select></div>
+          <div class="row"><label>Views</label><input id="b_views" class="field" type="number" min="0" value="0"></div>
+        </div>
+
+        <div class="row" style="margin-top:10px"><label>Subtitle</label><input id="b_sub" class="field" placeholder="Short subheading for the article"></div>
+
+        <div class="bar" style="margin-top:14px">
+          <div style="font-weight:900">Sections</div>
+          <select id="b_addType" class="field" style="max-width:240px">
+            <option value="p">Paragraph</option><option value="h2">Heading</option><option value="img">Image</option>
+          </select>
+          <button class="ghost tiny" id="b_addSectionBtn">Add Section</button>
+        </div>
+
+        <div class="sections" id="b_sections" style="margin-top:10px"></div>
+      </div>
+    </section>
+
+    <!-- Profile / Settings -->
+    <section class="card" id="panel_profile" style="display:none">
+      <div class="pad">
+        <div style="font-size:18px;font-weight:900;margin-bottom:10px">Profile / Settings</div>
+
+        <div class="grid2">
+          <div class="row"><label>Your Name</label><input id="s_name" class="field" placeholder="Bodunde"></div>
+          <div class="row"><label>Profession / Title</label><input id="s_title" class="field" placeholder="Product Designer & Front-end Developer"></div>
+        </div>
+
+        <div class="grid2" style="margin-top:10px">
+          <div class="row"><label>Years of Experience</label><input id="s_years" class="field" type="number" min="0" placeholder="6"></div>
+          <div class="row"><label>Location</label><input id="s_location" class="field" placeholder="Lagos, Nigeria"></div>
+        </div>
+
+        <div class="grid2" style="margin-top:10px">
+          <div class="row"><label>Email</label><input id="s_email" class="field" placeholder="you@example.com"></div>
+          <div class="row"><label>Phone</label><input id="s_phone" class="field" placeholder="+234 …"></div>
+        </div>
+
+        <div class="row" style="margin-top:10px"><label>Short Bio</label><textarea id="s_bio" class="field" placeholder="A concise about-you paragraph."></textarea></div>
+
+        <div class="row" style="margin-top:10px">
+          <label>Profile Photo</label>
+          <div class="uploader">
+            <div class="bar" style="gap:8px"><input id="s_avatar" class="field" placeholder="https://…"><input id="s_avatar_file" type="file" accept="image/*" class="ghost tiny" style="padding:9px 10px"></div>
+            <p>Upload a file or drag and drop — PNG, JPG, SVG up to 1 MB</p>
+          </div>
+        </div>
+
+        <div class="grid2" style="margin-top:10px">
+          <div class="row"><label>X (formerly Twitter)</label><input id="s_x" class="field" placeholder="https://x.com/…"></div>
+          <div class="row"><label>Instagram</label><input id="s_instagram" class="field" placeholder="https://instagram.com/…"></div>
+        </div>
+        <div class="grid2" style="margin-top:10px">
+          <div class="row"><label>Behance</label><input id="s_behance" class="field" placeholder="https://behance.net/…"></div>
+          <div class="row"><label>LinkedIn</label><input id="s_linkedin" class="field" placeholder="https://linkedin.com/in/…"></div>
+        </div>
 
         <div class="bar" style="margin-top:16px">
-          <span class="ok" id="saveOk">Saved ✓</span>
-          <span class="err" id="saveErr">Save failed</span>
+          <button class="btn tiny" id="s_save">Save Profile</button>
+          <span id="s_ok" style="display:none;color:var(--green);font-weight:800">Saved ✓</span>
         </div>
       </div>
     </section>
 
-    <!-- Placeholder panels (coming soon) -->
-    <section class="card" id="panel_home" style="display:none"><div class="pad">Home settings — coming soon.</div></section>
-    <section class="card" id="panel_about" style="display:none"><div class="pad">About settings — coming soon.</div></section>
-    <section class="card" id="panel_blog" style="display:none"><div class="pad">Blog settings — coming soon.</div></section>
-    <section class="card" id="panel_contact" style="display:none"><div class="pad">Contact settings — coming soon.</div></section>
-    <section class="card" id="panel_four" style="display:none"><div class="pad">404 settings — coming soon.</div></section>
-
+    <!-- Placeholders (kept) -->
+    <section class="card" id="panel_home" style="display:none"><div class="pad">Home settings — (unchanged)</div></section>
+    <section class="card" id="panel_about" style="display:none"><div class="pad">About settings — (unchanged)</div></section>
+    <section class="card" id="panel_contact" style="display:none"><div class="pad">Contact settings — (unchanged)</div></section>
+    <section class="card" id="panel_four" style="display:none"><div class="pad">404 settings — (unchanged)</div></section>
   </main>
 </div>
 
-<!-- ===== Password Gate -->
+<!-- Password Gate -->
 <div class="gate" id="gate">
   <div class="login">
     <div class="login-head">Bodunde Admin Login</div>
     <div class="login-body">
-      <div class="row">
-        <label>Password</label>
-        <input id="pass" type="password" class="field" placeholder="Enter password">
-      </div>
+      <div class="row"><label>Password</label><input id="pass" type="password" class="field" placeholder="Enter password"></div>
       <div class="bar" style="margin-top:10px">
         <button class="btn" id="enter">Enter</button>
-        <span style="color:var(--muted); font-size:12px">Change it inside the code: <code>PASSWORD</code></span>
+        <span style="color:var(--muted);font-size:12px">Change inside code: <code>PASSWORD</code></span>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-/* =========================
-   Tiny Store (localStorage)
-   ========================= */
-const LS_KEY = 'cms_projects';
+/* ===== Storage Keys ===== */
+const LS_PROJECTS='cms_projects', LS_BLOGS='cms_blogs', LS_PROFILE='cms_profile';
 
-const Store = {
-  all(){
-    try{
-      const arr = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
-      // sort by updated desc
-      arr.sort((a,b)=> (b.updated||0)-(a.updated||0));
-      return arr;
-    }catch(e){ return [] }
-  },
-  saveAll(list){
-    localStorage.setItem(LS_KEY, JSON.stringify(list));
-  },
-  upsert(project){
-    const list = Store.all();
-    if(!project.id){ project.id = crypto.randomUUID ? crypto.randomUUID() : String(Date.now()); }
-    project.updated = Date.now();
-    const idx = list.findIndex(x=>x.id===project.id);
-    if(idx>=0){ list[idx]=project; } else { list.unshift(project); }
-    Store.saveAll(list);
-    return project.id;
-  },
-  remove(id){
-    const list = Store.all().filter(x=>x.id!==id);
-    Store.saveAll(list);
-  },
-  byId(id){ return Store.all().find(x=>x.id===id); }
+/* ===== Tiny Store ===== */
+const Store={
+  read:(k,f)=>{try{return JSON.parse(localStorage.getItem(k)||f)}catch(e){return JSON.parse(f)}},
+  write:(k,v)=>localStorage.setItem(k,JSON.stringify(v)),
+
+  projects(){const a=this.read(LS_PROJECTS,'[]');a.sort((x,y)=>(y.updated||0)-(x.updated||0));return a},
+  putProject(p){const L=this.projects(); if(!p.id)p.id=crypto.randomUUID?crypto.randomUUID():String(Date.now()); p.updated=Date.now(); const i=L.findIndex(x=>x.id===p.id); if(i>=0)L[i]=p; else L.unshift(p); this.write(LS_PROJECTS,L); return p.id},
+  removeProject(id){this.write(LS_PROJECTS,this.projects().filter(x=>x.id!==id))},
+  byIdProject(id){return this.projects().find(x=>x.id===id)},
+
+  blogs(){const a=this.read(LS_BLOGS,'[]');a.sort((x,y)=>(y.updated||0)-(x.updated||0));return a},
+  putBlog(b){const L=this.blogs(); if(!b.id)b.id=crypto.randomUUID?crypto.randomUUID():String(Date.now()); b.updated=Date.now(); const i=L.findIndex(x=>x.id===b.id); if(i>=0)L[i]=b; else L.unshift(b); this.write(LS_BLOGS,L); return b.id},
+  removeBlog(id){this.write(LS_BLOGS,this.blogs().filter(x=>x.id!==id))},
+  byIdBlog(id){return this.blogs().find(x=>x.id===id)},
+
+  profile(){return this.read(LS_PROFILE,'{}')},
+  saveProfile(p){this.write(LS_PROFILE,p)}
 };
 
-/* =========================
-   UI Helpers
-   ========================= */
-const $ = sel => document.querySelector(sel);
-const $$ = sel => document.querySelectorAll(sel);
-function show(id){ $(id).style.display='block'; }
-function hide(id){ $(id).style.display='none'; }
-function flash(okSel, errSel, good){
-  const ok = $(okSel), er = $(errSel);
-  if(good){ ok.style.display='inline'; er.style.display='none'; setTimeout(()=>ok.style.display='none',1300); }
-  else { er.style.display='inline'; ok.style.display='none'; setTimeout(()=>er.style.display='none',1300); }
-}
+/* ===== Shortcuts ===== */
+const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+const fmtTime=t=>!t?'—':new Date(t).toLocaleString(); const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-/* =========================
-   Password Gate
-   ========================= */
-const PASSWORD = 'bodunde123'; // ← change this
-const gate = $('#gate'), pass = $('#pass'), enter = $('#enter'), logoutBtn = $('#logout');
-function openApp(){ gate.style.display='none'; sessionStorage.setItem('bod_authed','yes'); }
-function openGate(){ gate.style.display='flex'; sessionStorage.removeItem('bod_authed'); }
-if(sessionStorage.getItem('bod_authed')==='yes') openApp();
-enter.addEventListener('click',()=>{ if(pass.value.trim()===PASSWORD) openApp(); else alert('Wrong password'); });
-pass.addEventListener('keydown',e=>{ if(e.key==='Enter') enter.click(); });
-logoutBtn.addEventListener('click',openGate);
+/* ===== Password Gate ===== */
+const PASSWORD='bodunde123';
+if(sessionStorage.getItem('bod_authed')==='yes') $('#gate').style.display='none';
+$('#enter').onclick=()=>{ if($('#pass').value.trim()===PASSWORD){ $('#gate').style.display='none'; sessionStorage.setItem('bod_authed','yes'); } else alert('Wrong password'); };
+$('#logout').onclick=()=>{ $('#gate').style.display='flex'; sessionStorage.removeItem('bod_authed'); };
 
-/* =========================
-   Panels (sidebar)
-   ========================= */
-const nav = $('#nav');
-nav.addEventListener('click', (e)=>{
-  if(e.target.closest('a')){
-    e.preventDefault();
-    const a = e.target.closest('a');
-    $$('.nav a').forEach(x=>x.classList.remove('active'));
-    a.classList.add('active');
-
-    $$('[id^="panel_"]').forEach(p=>p.style.display='none');
-    const key = a.dataset.panel;
-    const panel = $('#panel_'+key);
-    if(panel) panel.style.display = 'block';
-  }
+/* ===== Nav Panels ===== */
+$('#nav').addEventListener('click',e=>{
+  const a=e.target.closest('a'); if(!a) return; e.preventDefault();
+  $$('.nav a').forEach(x=>x.classList.remove('active')); a.classList.add('active');
+  $$('section.card').forEach(p=>p.style.display='none'); const key=a.dataset.panel; $('#panel_'+key).style.display='block';
+  if(key==='portfolio') renderProjects(); if(key==='blog') renderBlogs(); if(key==='profile') loadProfile();
 });
 
-/* =========================
-   Portfolio List
-   ========================= */
-const projBody = $('#projBody');
-function renderTable(){
-  const list = Store.all();
-  projBody.innerHTML = '';
-  if(!list.length){
-    projBody.innerHTML = '<tr><td colspan="6" style="color:#9fb">No projects yet. Click “Add Project”.</td></tr>';
-    return;
-  }
+/* ===== Search + Filters ===== */
+$('#projSearch').oninput=renderProjects; $('#projFilter').onchange=renderProjects;
+$('#blogSearch').oninput=renderBlogs;   $('#blogFilter').onchange=renderBlogs;
+
+/* ===== Lists ===== */
+const projBody=$('#projBody'), blogBody=$('#blogBody');
+
+function renderProjects(){
+  const q=($('#projSearch').value||'').toLowerCase(), f=$('#projFilter').value;
+  const list=Store.projects().filter(p=>{
+    const okQ=!q || [p.title,p.tag,p.date].join(' ').toLowerCase().includes(q);
+    const okF=!f || (p.status||'active')===f; return okQ&&okF;
+  });
+  projBody.innerHTML='';
+  if(!list.length){ projBody.innerHTML='<tr><td colspan="8" style="color:#666">No projects found.</td></tr>'; return; }
   list.forEach((p,i)=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
       <td>${i+1}</td>
-      <td>${escapeHtml(p.title||'—')}</td>
-      <td><span class="tag">${escapeHtml(p.tag||'—')}</span></td>
-      <td>${escapeHtml(p.date||'—')}</td>
+      <td>${esc(p.title||'—')}</td>
+      <td><span class="status" data-s="${esc(p.status||'active')}">${(p.status||'active').toUpperCase()}</span></td>
+      <td>${Number(p.views||0)}</td>
+      <td><span class="tag">${esc(p.tag||'—')}</span></td>
+      <td>${esc(p.date||'—')}</td>
       <td>${fmtTime(p.updated)}</td>
       <td class="tools">
         <button class="ghost tiny" data-edit="${p.id}">✏️ Edit</button>
-        <button class="ghost tiny" data-del="${p.id}" style="color:var(--red); border-color:#432">🗑️ Delete</button>
-      </td>
-    `;
+        <button class="ghost tiny" data-toggle="${p.id}">${(p.status||'active')==='hidden'?'👁️ Show':'🙈 Hide'}</button>
+        <button class="ghost tiny" data-del="${p.id}" style="color:#DC2626;border-color:#F3C0C0">🗑️ Delete</button>
+      </td>`;
     projBody.appendChild(tr);
   });
 }
-function escapeHtml(s){ return (s||'').replace(/[&<>"]/g,c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c])); }
-function fmtTime(t){ if(!t) return '—'; const d = new Date(t); return d.toLocaleString(); }
+renderProjects();
 
-renderTable();
-
-projBody.addEventListener('click',(e)=>{
-  const editId = e.target.getAttribute('data-edit');
-  const delId  = e.target.getAttribute('data-del');
-  if(editId){ openEditor(Store.byId(editId)); }
-  if(delId){
-    if(confirm('Delete this project?')){
-      Store.remove(delId);
-      renderTable();
-    }
-  }
+projBody.addEventListener('click',e=>{
+  const id=e.target.getAttribute('data-edit'), del=e.target.getAttribute('data-del'), tog=e.target.getAttribute('data-toggle');
+  if(id) openProjEditor(Store.byIdProject(id));
+  if(del && confirm('Delete this project?')){ Store.removeProject(del); renderProjects(); }
+  if(tog){ const it=Store.byIdProject(tog); if(it){ it.status=(it.status==='hidden'?'active':'hidden'); Store.putProject(it); renderProjects(); } }
 });
 
-$('#addBtn').addEventListener('click', ()=> openEditor(null));
-
-/* =========================
-   Editor
-   ========================= */
-const editorTitle = $('#editorTitle');
-const f_title = $('#f_title'), f_tag=$('#f_tag'), f_date=$('#f_date'), f_desc=$('#f_desc');
-const f_hero = $('#f_hero'), f_hero_file=$('#f_hero_file');
-const sectionsHost = $('#sections');
-const saveBtn = $('#saveBtn'), backBtn=$('#backBtn'), deleteBtn=$('#deleteBtn');
-const addType = $('#addType'), addSectionBtn = $('#addSectionBtn');
-
-let currentId = null;
-function openEditor(project){
-  currentId = project ? project.id : null;
-
-  $('#panel_portfolio').style.display = 'none';
-  $('#panel_editor').style.display = 'block';
-  editorTitle.textContent = project ? 'Edit Project' : 'New Project';
-  deleteBtn.style.display = project ? 'inline-block' : 'none';
-
-  f_title.value = project?.title || '';
-  f_tag.value   = project?.tag   || '';
-  f_date.value  = project?.date  || '';
-  f_desc.value  = project?.desc  || '';
-  f_hero.value  = project?.hero  || '';
-  f_hero_file.value = '';
-  sectionsHost.innerHTML = '';
-
-  (project?.sections || []).forEach((s, idx)=> {
-    addSectionUI(s.type, s.value, s.alt, idx);
+function renderBlogs(){
+  const q=($('#blogSearch').value||'').toLowerCase(), f=$('#blogFilter').value;
+  const list=Store.blogs().filter(b=>{
+    const okQ=!q || [b.title,b.tag,b.date,b.subtitle].join(' ').toLowerCase().includes(q);
+    const okF=!f || (b.status||'active')===f; return okQ&&okF;
   });
+  blogBody.innerHTML='';
+  if(!list.length){ blogBody.innerHTML='<tr><td colspan="8" style="color:#666">No posts found.</td></tr>'; return; }
+  list.forEach((b,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td>${i+1}</td>
+      <td>${esc(b.title||'—')}</td>
+      <td><span class="status" data-s="${esc(b.status||'active')}">${(b.status||'active').toUpperCase()}</span></td>
+      <td>${Number(b.views||0)}</td>
+      <td><span class="tag">${esc(b.tag||'—')}</span></td>
+      <td>${esc(b.date||'—')}</td>
+      <td>${fmtTime(b.updated)}</td>
+      <td class="tools">
+        <button class="ghost tiny" data-bed="${b.id}">✏️ Edit</button>
+        <button class="ghost tiny" data-btoggle="${b.id}">${(b.status||'active')==='hidden'?'👁️ Show':'🙈 Hide'}</button>
+        <button class="ghost tiny" data-bdel="${b.id}" style="color:#DC2626;border-color:#F3C0C0">🗑️ Delete</button>
+      </td>`;
+    blogBody.appendChild(tr);
+  });
+}
+renderBlogs();
 
-  if(!project){ currentId = null; }
+blogBody.addEventListener('click',e=>{
+  const id=e.target.getAttribute('data-bed'), del=e.target.getAttribute('data-bdel'), tog=e.target.getAttribute('data-btoggle');
+  if(id) openBlogEditor(Store.byIdBlog(id));
+  if(del && confirm('Delete this post?')){ Store.removeBlog(del); renderBlogs(); }
+  if(tog){ const it=Store.byIdBlog(tog); if(it){ it.status=(it.status==='hidden'?'active':'hidden'); Store.putBlog(it); renderBlogs(); } }
+});
+
+/* ===== Editor: Projects ===== */
+$('#addProjBtn').onclick=()=>openProjEditor(null);
+const p_sections=$('#p_sections');
+
+function openProjEditor(project){
+  $('#panel_portfolio').style.display='none'; $('#panel_editor_proj').style.display='block';
+  $('#editorProjTitle').textContent=project?'Edit Project':'New Project';
+  $('#delProjBtn').style.display=project?'inline-block':'none';
+
+  $('#p_title').value=project?.title||''; $('#p_tag').value=project?.tag||'';
+  $('#p_date').value=project?.date||'';   $('#p_desc').value=project?.desc||'';
+  $('#p_hero').value=project?.hero||'';   $('#p_status').value=project?.status||'active';
+  $('#p_views').value=Number(project?.views||0); $('#p_hero_file').value='';
+
+  p_sections.innerHTML=''; (project?.sections||[]).forEach(s=> addSectionUI(p_sections,s.type,s.value,s.alt));
+  $('#p_addSectionBtn').onclick=()=> addSectionUI(p_sections,$('#p_addType').value,'','');
+  $('#delProjBtn').onclick=()=>{ if(project?.id && confirm('Delete this project?')){ Store.removeProject(project.id); backTo('proj'); } };
+  $('#saveProjBtn').onclick=()=> saveProject(project?.id||null);
+  document.querySelector('[data-back="proj"]').onclick=()=>backTo('proj');
 }
 
-backBtn.addEventListener('click', ()=>{
-  $('#panel_editor').style.display='none';
-  $('#panel_portfolio').style.display='block';
-  renderTable();
-});
-deleteBtn.addEventListener('click', ()=>{
-  if(currentId && confirm('Delete this project?')){
-    Store.remove(currentId);
-    backBtn.click();
-  }
-});
+function saveProject(id){
+  const obj={
+    id:id||null, title:$('#p_title').value.trim(), tag:$('#p_tag').value.trim(), date:$('#p_date').value.trim(),
+    desc:$('#p_desc').value.trim(), hero:$('#p_hero').value.trim(),
+    status:$('#p_status').value, views:Number($('#p_views').value||0),
+    sections:collectSections(p_sections)
+  };
+  const f=$('#p_hero_file').files?.[0];
+  if(f){ const r=new FileReader(); r.onload=()=>{ obj.hero=r.result; Store.putProject(obj); backTo('proj'); }; r.readAsDataURL(f); }
+  else { Store.putProject(obj); backTo('proj'); }
+}
 
-addSectionBtn.addEventListener('click', ()=>{
-  addSectionUI(addType.value, '', '');
-});
+/* ===== Editor: Blogs ===== */
+$('#addBlogBtn').onclick=()=>openBlogEditor(null);
+const b_sections=$('#b_sections');
 
-/* ===== No image preview version ===== */
-function addSectionUI(type, value='', alt='', forceIndex=null){
-  const block = document.createElement('div');
-  block.className = 'section';
-  const idx = forceIndex ?? sectionsHost.children.length;
+function openBlogEditor(post){
+  $('#panel_blog').style.display='none'; $('#panel_editor_blog').style.display='block';
+  $('#editorBlogTitle').textContent=post?'Edit Blog Post':'New Blog Post';
+  $('#delBlogBtn').style.display=post?'inline-block':'none';
 
-  block.innerHTML = `
-    <div class="s-head">
+  $('#b_title').value=post?.title||''; $('#b_tag').value=post?.tag||'';
+  $('#b_date').value=post?.date||'';   $('#b_sub').value=post?.subtitle||'';
+  $('#b_hero').value=post?.hero||'';   $('#b_status').value=post?.status||'active';
+  $('#b_views').value=Number(post?.views||0); $('#b_hero_file').value='';
+
+  b_sections.innerHTML=''; (post?.sections||[]).forEach(s=> addSectionUI(b_sections,s.type,s.value,s.alt));
+  $('#b_addSectionBtn').onclick=()=> addSectionUI(b_sections,$('#b_addType').value,'','');
+  $('#delBlogBtn').onclick=()=>{ if(post?.id && confirm('Delete this post?')){ Store.removeBlog(post.id); backTo('blog'); } };
+  $('#saveBlogBtn').onclick=()=> saveBlog(post?.id||null);
+  document.querySelector('[data-back="blog"]').onclick=()=>backTo('blog');
+}
+
+function saveBlog(id){
+  const prof=Store.profile();
+  const obj={
+    id:id||null, title:$('#b_title').value.trim(), tag:$('#b_tag').value.trim(), date:$('#b_date').value.trim(),
+    subtitle:$('#b_sub').value.trim(), hero:$('#b_hero').value.trim(),
+    status:$('#b_status').value, views:Number($('#b_views').value||0),
+    sections:collectSections(b_sections), author:prof.name||'', authorAvatar:prof.avatar||''
+  };
+  const f=$('#b_hero_file').files?.[0];
+  if(f){ const r=new FileReader(); r.onload=()=>{ obj.hero=r.result; Store.putBlog(obj); backTo('blog'); }; r.readAsDataURL(f); }
+  else { Store.putBlog(obj); backTo('blog'); }
+}
+
+/* ===== Add Section UI (Option A + visible icons) ===== */
+function addSectionUI(host,type,value='',alt=''){
+  const el=document.createElement('div'); el.className='section';
+  el.innerHTML=`<div class="s-head">
       <div class="s-title">${type.toUpperCase()}</div>
       <div class="s-tools">
         <button class="iconbtn" data-up>⬆</button>
         <button class="iconbtn" data-down>⬇</button>
-        <button class="iconbtn" data-remove style="color:var(--red)">✖</button>
+        <button class="iconbtn" data-remove style="color:#DC2626">✖</button>
       </div>
     </div>
-    <div class="row">
-      ${type==='h2' ? `
-        <label>Heading Text</label>
-        <input class="field s-val" placeholder="Section title" value="${escapeAttr(value)}">
-      ` : type==='p' ? `
-        <label>Paragraph</label>
-        <textarea class="field s-val" placeholder="Write the content…">${escapeHtml(value)}</textarea>
-      ` : `
-        <label>Image (URL or upload)</label>
-        <div class="bar">
-          <input class="field s-val" placeholder="https://…" value="${escapeAttr(value)}">
-          <input type="file" accept="image/*" class="ghost tiny s-file" style="padding:9px 10px">
-        </div>
-        <div class="row" style="margin-top:6px">
-          <label>Alt text</label>
-          <input class="field s-alt" placeholder="Describe the image" value="${escapeAttr(alt)}">
-        </div>
-      `}
-    </div>
-  `;
+    <div class="row s-body"></div>`;
+  const body=el.querySelector('.s-body');
 
-  const btnUp = block.querySelector('[data-up]');
-  const btnDown = block.querySelector('[data-down]');
-  const btnRemove = block.querySelector('[data-remove]');
-  btnUp.addEventListener('click', ()=> moveSection(block, -1));
-  btnDown.addEventListener('click', ()=> moveSection(block, +1));
-  btnRemove.addEventListener('click', ()=> block.remove());
+  function render(kind){
+    body.innerHTML='';
+    el.querySelector('.s-title').textContent=(kind==='h2'?'H2':kind.toUpperCase());
 
-  // File → dataURL (no preview shown)
-  const file = block.querySelector('.s-file');
-  if(file){
-    file.addEventListener('change', e=>{
-      const f = e.target.files?.[0];
-      if(!f) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        block.querySelector('.s-val').value = reader.result; // keep storing DataURL/URL
+    const hasText = kind==='p' || kind==='h2';
+    if(hasText){
+      body.innerHTML=`
+        <div class="rte">
+<!-- Dropdown (left) -->
+<div class="dropdown">
+  <button class="dd-btn" type="button" data-ddbtn>
+    <span data-ddlabel>${kind==='h2'?'Heading':'Paragraph'}</span>
+    <span class="material-symbols-rounded">arrow_drop_down</span>
+  </button>
+  <div class="dd" data-dd>
+    <button type="button" data-type="p">Paragraph</button>
+    <button type="button" data-type="h2">Heading</button>
+    <button type="button" data-type="img">Image</button>
+  </div>
+</div>
+
+<!-- Material Symbols toolbar -->
+<button class="btn" data-cmd="bold" title="Bold">
+  <span class="material-symbols-rounded">format_bold</span>
+</button>
+<button class="btn" data-cmd="italic" title="Italic">
+  <span class="material-symbols-rounded">format_italic</span>
+</button>
+<button class="btn" data-cmd="underline" title="Underline">
+  <span class="material-symbols-rounded">format_underlined</span>
+</button>
+<button class="btn" data-link title="Link">
+  <span class="material-symbols-rounded">link</span>
+</button>
+<button class="btn" data-cmd="insertUnorderedList" title="Bulleted list">
+  <span class="material-symbols-rounded">format_list_bulleted</span>
+</button>
+<button class="btn" data-cmd="insertOrderedList" title="Numbered list">
+  <span class="material-symbols-rounded">format_list_numbered</span>
+</button>
+<button class="btn" data-cmd="justifyLeft" title="Align left">
+  <span class="material-symbols-rounded">format_align_left</span>
+</button>
+<button class="btn" data-cmd="justifyCenter" title="Align center">
+  <span class="material-symbols-rounded">format_align_center</span>
+</button>
+<button class="btn" data-cmd="justifyRight" title="Align right">
+  <span class="material-symbols-rounded">format_align_right</span>
+</button>
+<button class="btn" data-cmd="undo" title="Undo">
+  <span class="material-symbols-rounded">undo</span>
+</button>
+<button class="btn" data-cmd="redo" title="Redo">
+  <span class="material-symbols-rounded">redo</span>
+</button>
+
+        </div>
+        <div class="rich" contenteditable="true" data-editor>${value||''}</div>`;
+
+      const ddBtn=body.querySelector('[data-ddbtn]'), dd=body.querySelector('[data-dd]'), ddLabel=body.querySelector('[data-ddlabel]');
+      ddBtn.onclick=()=>{ dd.style.display=dd.style.display==='block'?'none':'block'; };
+      dd.querySelectorAll('button').forEach(b=> b.onclick=()=>{
+        dd.style.display='none';
+        const t=b.getAttribute('data-type');
+        if(t==='p'){ ddLabel.textContent='Paragraph'; render('p'); }
+        else if(t==='h2'){ ddLabel.textContent='Heading'; render('h2'); }
+        else if(t==='img'){ render('img'); }
+      });
+
+      const area=body.querySelector('[data-editor]');
+      body.querySelectorAll('[data-cmd]').forEach(btn=>{
+        btn.onclick=()=>{ area.focus(); document.execCommand(btn.getAttribute('data-cmd'),false,null); };
+      });
+      body.querySelector('[data-link]').onclick=()=>{
+        area.focus();
+        const url=prompt('Enter URL (https://…)'); if(url) document.execCommand('createLink',false,url);
       };
-      reader.readAsDataURL(f);
-    });
+      area.addEventListener('paste',e=>{
+        e.preventDefault(); const txt=(e.clipboardData||window.clipboardData).getData('text/plain'); document.execCommand('insertText',false,txt);
+      });
+
+    } else {
+      body.innerHTML=`
+        <div class="rte">
+          <div class="dropdown">
+            <button class="dd-btn" type="button" data-ddbtn>
+              <span data-ddlabel>Image</span>
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg>
+            </button>
+            <div class="dd" data-dd>
+              <button type="button" data-type="p">Paragraph</button>
+              <button type="button" data-type="h2">Heading</button>
+              <button type="button" data-type="img">Image</button>
+            </div>
+          </div>
+        </div>
+        <div class="uploader">
+          <div class="bar" style="gap:8px">
+            <input class="field s-val" placeholder="https://…" value="${esc(value)}">
+            <input type="file" accept="image/*" class="ghost tiny s-file" style="padding:9px 10px">
+          </div>
+          <p>Upload a file or drag and drop — PNG, JPG, SVG up to 1 MB</p>
+        </div>
+        <div class="row" style="margin-top:6px"><label>Alt text</label><input class="field s-alt" placeholder="Describe the image" value="${esc(alt)}"></div>`;
+
+      const ddBtn=body.querySelector('[data-ddbtn]'), dd=body.querySelector('[data-dd]');
+      ddBtn.onclick=()=>{ dd.style.display=dd.style.display==='block'?'none':'block'; };
+      dd.querySelectorAll('button').forEach(b=> b.onclick=()=>{
+        dd.style.display='none';
+        const t=b.getAttribute('data-type'); if(t==='img')return; render(t);
+      });
+
+      body.querySelector('.s-file').addEventListener('change',e=>{
+        const f=e.target.files?.[0]; if(!f) return;
+        const r=new FileReader(); r.onload=()=>{ body.querySelector('.s-val').value=r.result; }; r.readAsDataURL(f);
+      });
+    }
   }
+  render(type);
 
-  sectionsHost.appendChild(block);
+  el.querySelector('[data-up]').onclick=()=>{ const i=[...host.children].indexOf(el); if(i>0) host.insertBefore(el,host.children[i-1]); };
+  el.querySelector('[data-down]').onclick=()=>{ const i=[...host.children].indexOf(el); if(i<host.children.length-1) host.insertBefore(el,host.children[i+2]||null); };
+  el.querySelector('[data-remove]').onclick=()=> el.remove();
+
+  host.appendChild(el);
 }
 
-function moveSection(block, dir){
-  const parent = sectionsHost;
-  const i = Array.from(parent.children).indexOf(block);
-  const j = i + dir;
-  if(j<0 || j>=parent.children.length) return;
-  parent.insertBefore(block, parent.children[dir>0 ? j+1 : j]);
-}
-
-function escapeAttr(s){ return (s||'').replace(/"/g,'&quot;'); }
-
-/* Save */
-saveBtn.addEventListener('click', ()=>{
-  const project = {
-    id: currentId,
-    title: f_title.value.trim(),
-    tag:   f_tag.value.trim(),
-    date:  f_date.value.trim(),
-    desc:  f_desc.value.trim(),
-    hero:  f_hero.value.trim(),
-    sections: []
-  };
-  sectionsHost.querySelectorAll('.section').forEach(sec=>{
-    const kind = sec.querySelector('.s-title').textContent.toLowerCase();
-    const valEl = sec.querySelector('.s-val');
-    const altEl = sec.querySelector('.s-alt');
-    project.sections.push({
-      type: kind==='header' ? 'h2' : (kind.includes('paragraph') ? 'p' : (kind.includes('img') ? 'img' : (['h2','p','img'].includes(kind)?kind:'p'))),
-      value: (valEl?.value || '').trim(),
-      alt: (altEl?.value || '').trim()
-    });
+function collectSections(host){
+  const out=[];
+  host.querySelectorAll('.section').forEach(sec=>{
+    const kind=sec.querySelector('.s-title').textContent.trim().toLowerCase();
+    const k = (kind==='h2' || kind==='heading') ? 'h2' : kind;
+    if(k==='img'){
+      const v=sec.querySelector('.s-val')?.value||''; const alt=sec.querySelector('.s-alt')?.value||'';
+      if(v||alt) out.push({type:'img', value:v, alt});
+    }else{
+      const html=sec.querySelector('[data-editor]')?.innerHTML.trim()||'';
+      if(html) out.push({type:k, value:html});
+    }
   });
-
-  // hero upload to dataURL if file selected (no hero preview)
-  const hf = f_hero_file.files?.[0];
-  if(hf){
-    const reader = new FileReader();
-    reader.onload = ()=>{ project.hero = reader.result; persist(project); };
-    reader.readAsDataURL(hf);
-  }else{
-    persist(project);
-  }
-});
-
-function persist(project){
-  if(!project.title){ alert('Title is required'); return; }
-  Store.upsert(project);
-  flash('#saveOk','#saveErr',true);
-  setTimeout(()=> backBtn.click(), 400);
+  return out;
 }
 
-/* =========================
-   Import / Export
-   ========================= */
-$('#exportBtn').addEventListener('click', ()=>{
-  const data = JSON.stringify(Store.all(), null, 2);
-  const blob = new Blob([data], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'bodunde-projects.json';
-  document.body.appendChild(a); a.click(); a.remove();
-  URL.revokeObjectURL(url);
-});
-$('#importFile').addEventListener('change', (e)=>{
-  const f = e.target.files?.[0];
-  if(!f) return;
-  const reader = new FileReader();
-  reader.onload = ()=>{
-    try{
-      const arr = JSON.parse(reader.result);
-      if(Array.isArray(arr)){ Store.saveAll(arr); renderTable(); alert('Imported successfully'); }
-      else alert('Invalid JSON');
-    }catch(err){ alert('Import failed'); }
+function backTo(which){
+  if(which==='proj'){ $('#panel_editor_proj').style.display='none'; $('#panel_portfolio').style.display='block'; renderProjects(); }
+  if(which==='blog'){ $('#panel_editor_blog').style.display='none'; $('#panel_blog').style.display='block'; renderBlogs(); }
+}
+
+/* ===== Profile ===== */
+function loadProfile(){
+  const p=Store.profile();
+  $('#s_name').value=p.name||''; $('#s_title').value=p.title||''; $('#s_years').value=p.years||'';
+  $('#s_location').value=p.location||''; $('#s_email').value=p.email||''; $('#s_phone').value=p.phone||'';
+  $('#s_bio').value=p.bio||''; $('#s_avatar').value=p.avatar||'';
+  $('#s_x').value=p.x||''; $('#s_instagram').value=p.instagram||''; $('#s_behance').value=p.behance||''; $('#s_linkedin').value=p.linkedin||'';
+}
+$('#s_save').onclick=()=>{
+  const prof={
+    name:$('#s_name').value.trim(), title:$('#s_title').value.trim(), years:Number($('#s_years').value||0),
+    location:$('#s_location').value.trim(), email:$('#s_email').value.trim(), phone:$('#s_phone').value.trim(),
+    bio:$('#s_bio').value.trim(), avatar:$('#s_avatar').value.trim(),
+    x:$('#s_x').value.trim(), instagram:$('#s_instagram').value.trim(),
+    behance:$('#s_behance').value.trim(), linkedin:$('#s_linkedin').value.trim()
   };
-  reader.readAsText(f);
+  Store.saveProfile(prof); $('#s_ok').style.display='inline'; setTimeout(()=>$('#s_ok').style.display='none',1200);
+};
+$('#s_avatar_file').addEventListener('change',e=>{
+  const f=e.target.files?.[0]; if(!f) return; const r=new FileReader(); r.onload=()=>$('#s_avatar').value=r.result; r.readAsDataURL(f);
 });
+
+/* ===== Export / Import ===== */
+$('#exportBtn').onclick=()=>{
+  const data={projects:Store.projects(), blogs:Store.blogs(), profile:Store.profile()};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='bodunde-cms.json'; a.click(); URL.revokeObjectURL(url);
+};
+$('#importFile').addEventListener('change',e=>{
+  const f=e.target.files?.[0]; if(!f) return; const r=new FileReader();
+  r.onload=()=>{ try{ const j=JSON.parse(r.result);
+    if(Array.isArray(j)) localStorage.setItem(LS_PROJECTS,JSON.stringify(j));
+    else{ if(j.projects) localStorage.setItem(LS_PROJECTS,JSON.stringify(j.projects)); if(j.blogs) localStorage.setItem(LS_BLOGS,JSON.stringify(j.blogs)); if(j.profile) localStorage.setItem(LS_PROFILE,JSON.stringify(j.profile)); }
+    renderProjects(); renderBlogs(); loadProfile(); alert('Imported successfully'); } catch(_){ alert('Import failed'); } };
+  r.readAsText(f);
+});
+
+/* ===== Init (ensure fields on legacy data) ===== */
+(function init(){
+  const fix=(arr)=> (arr||[]).map(x=>({views:0,status:'active',...x}));
+  localStorage.setItem(LS_PROJECTS,JSON.stringify(fix(Store.projects())));
+  localStorage.setItem(LS_BLOGS,JSON.stringify(fix(Store.blogs())));
+  renderProjects(); renderBlogs();
+})();
 </script>
 </body>
 </html>
