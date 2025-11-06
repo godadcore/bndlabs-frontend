@@ -93,8 +93,6 @@
   .s-title{font-weight:900}
   .s-tools{display:flex; gap:6px}
   .iconbtn{border:1px solid var(--line); background:transparent; color:#DDE7FF; border-radius:8px; padding:6px 8px; cursor:pointer}
-  .preview{border:1px solid var(--line); border-radius:10px; overflow:hidden}
-  .preview img{display:block; width:100%; height:auto}
 
   /* gate */
   .gate{
@@ -154,6 +152,7 @@
           <button class="btn tiny" id="addBtn">➕ Add Project</button>
         </div>
 
+        <!-- Keep this table wrapper (class "preview" is for border styling here only) -->
         <div class="preview" style="border-radius:12px">
           <table id="projTable">
             <thead>
@@ -166,9 +165,7 @@
                 <th style="width:180px">Actions</th>
               </tr>
             </thead>
-            <tbody id="projBody">
-              <!-- rows filled by JS -->
-            </tbody>
+            <tbody id="projBody"></tbody>
           </table>
         </div>
       </div>
@@ -226,9 +223,7 @@
           <button class="ghost tiny" id="addSectionBtn">Add Section</button>
         </div>
 
-        <div class="sections" id="sections" style="margin-top:10px">
-          <!-- dynamic section blocks -->
-        </div>
+        <div class="sections" id="sections" style="margin-top:10px"></div>
 
         <div class="bar" style="margin-top:16px">
           <span class="ok" id="saveOk">Saved ✓</span>
@@ -334,9 +329,7 @@ nav.addEventListener('click', (e)=>{
     $$('.nav a').forEach(x=>x.classList.remove('active'));
     a.classList.add('active');
 
-    // hide all panels
     $$('[id^="panel_"]').forEach(p=>p.style.display='none');
-    // show chosen
     const key = a.dataset.panel;
     const panel = $('#panel_'+key);
     if(panel) panel.style.display = 'block';
@@ -375,7 +368,6 @@ function fmtTime(t){ if(!t) return '—'; const d = new Date(t); return d.toLoca
 
 renderTable();
 
-/* actions in table */
 projBody.addEventListener('click',(e)=>{
   const editId = e.target.getAttribute('data-edit');
   const delId  = e.target.getAttribute('data-del');
@@ -402,36 +394,26 @@ const addType = $('#addType'), addSectionBtn = $('#addSectionBtn');
 
 let currentId = null;
 function openEditor(project){
-  // reset editor completely every time
   currentId = project ? project.id : null;
 
-  // show editor, hide table
   $('#panel_portfolio').style.display = 'none';
   $('#panel_editor').style.display = 'block';
   editorTitle.textContent = project ? 'Edit Project' : 'New Project';
   deleteBtn.style.display = project ? 'inline-block' : 'none';
 
-  // clear fields
   f_title.value = project?.title || '';
   f_tag.value   = project?.tag   || '';
   f_date.value  = project?.date  || '';
   f_desc.value  = project?.desc  || '';
   f_hero.value  = project?.hero  || '';
-  f_hero_file.value = '';  // clear any previous file input
+  f_hero_file.value = '';
   sectionsHost.innerHTML = '';
 
-  // always reset any previous data listeners
-  sectionsHost.querySelectorAll('*').forEach(n => n.remove?.());
-
-  // render sections if editing
   (project?.sections || []).forEach((s, idx)=> {
     addSectionUI(s.type, s.value, s.alt, idx);
   });
 
-  // 🧩 fix: if creating new project, clear previous id fully
-  if(!project){
-    currentId = null;
-  }
+  if(!project){ currentId = null; }
 }
 
 backBtn.addEventListener('click', ()=>{
@@ -450,11 +432,12 @@ addSectionBtn.addEventListener('click', ()=>{
   addSectionUI(addType.value, '', '');
 });
 
+/* ===== No image preview version ===== */
 function addSectionUI(type, value='', alt='', forceIndex=null){
   const block = document.createElement('div');
   block.className = 'section';
   const idx = forceIndex ?? sectionsHost.children.length;
-  // header
+
   block.innerHTML = `
     <div class="s-head">
       <div class="s-title">${type.toUpperCase()}</div>
@@ -481,13 +464,10 @@ function addSectionUI(type, value='', alt='', forceIndex=null){
           <label>Alt text</label>
           <input class="field s-alt" placeholder="Describe the image" value="${escapeAttr(alt)}">
         </div>
-        <div class="preview" style="margin-top:8px; ${value ? '' : 'display:none'}">
-          <img src="${escapeAttr(value)}" alt="">
-        </div>
       `}
     </div>
   `;
-  // attach events
+
   const btnUp = block.querySelector('[data-up]');
   const btnDown = block.querySelector('[data-down]');
   const btnRemove = block.querySelector('[data-remove]');
@@ -495,7 +475,7 @@ function addSectionUI(type, value='', alt='', forceIndex=null){
   btnDown.addEventListener('click', ()=> moveSection(block, +1));
   btnRemove.addEventListener('click', ()=> block.remove());
 
-  // file to dataURL for images
+  // File → dataURL (no preview shown)
   const file = block.querySelector('.s-file');
   if(file){
     file.addEventListener('change', e=>{
@@ -503,20 +483,9 @@ function addSectionUI(type, value='', alt='', forceIndex=null){
       if(!f) return;
       const reader = new FileReader();
       reader.onload = () => {
-        const url = reader.result;
-        block.querySelector('.s-val').value = url;
-        const pv = block.querySelector('.preview');
-        pv.style.display='block';
-        pv.querySelector('img').src = url;
+        block.querySelector('.s-val').value = reader.result; // keep storing DataURL/URL
       };
       reader.readAsDataURL(f);
-    });
-    // live preview on URL input change
-    block.querySelector('.s-val').addEventListener('input', e=>{
-      const url = e.target.value.trim();
-      const pv = block.querySelector('.preview');
-      if(url){ pv.style.display='block'; pv.querySelector('img').src = url; }
-      else { pv.style.display='none'; }
     });
   }
 
@@ -544,7 +513,6 @@ saveBtn.addEventListener('click', ()=>{
     hero:  f_hero.value.trim(),
     sections: []
   };
-  // collect sections
   sectionsHost.querySelectorAll('.section').forEach(sec=>{
     const kind = sec.querySelector('.s-title').textContent.toLowerCase();
     const valEl = sec.querySelector('.s-val');
@@ -556,14 +524,11 @@ saveBtn.addEventListener('click', ()=>{
     });
   });
 
-  // hero upload to dataURL if file selected
+  // hero upload to dataURL if file selected (no hero preview)
   const hf = f_hero_file.files?.[0];
   if(hf){
     const reader = new FileReader();
-    reader.onload = ()=>{
-      project.hero = reader.result;
-      persist(project);
-    };
+    reader.onload = ()=>{ project.hero = reader.result; persist(project); };
     reader.readAsDataURL(hf);
   }else{
     persist(project);
@@ -571,11 +536,9 @@ saveBtn.addEventListener('click', ()=>{
 });
 
 function persist(project){
-  // minimal validation
   if(!project.title){ alert('Title is required'); return; }
   Store.upsert(project);
   flash('#saveOk','#saveErr',true);
-  // go back after a short delay
   setTimeout(()=> backBtn.click(), 400);
 }
 
