@@ -14,7 +14,7 @@
     --muted:rgba(11,11,11,0.70);
     --faint:rgba(11,11,11,0.55);
     --max-width:1100px;
-    --grey-bg:#f7f7f7; /* GREY background for alternating sections */
+    --grey-bg:#f7f7f7; /* GREY alt background */
   }
 
   *{box-sizing:border-box;margin:0;padding:0}
@@ -96,11 +96,6 @@
   @media(max-width:900px){
     .hero-inner{grid-template-columns:1fr;text-align:center}
     .two-up{grid-template-columns:1fr}
-  }
-
-  /* ===== EMPTY / ERROR STATE ===== */
-  .empty{
-    padding:90px 0;text-align:center;color:var(--muted);
   }
 
   /* ===== MORE PROJECTS ===== */
@@ -191,9 +186,9 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
 });
 
 /* ===== PROJECT DETAIL LOADER =====
-   Reads the SAME key your Admin uses: 'cms_projects'
-   Groups sections as: image(s) -> heading -> paragraph (same block)
-   Is forgiving with order: if h2/p come before img, it looks ahead to pull the next images first. */
+   Uses the same Admin store key: 'cms_projects'
+   Groups sections strictly as: image(s) -> heading -> paragraph (one block)
+   Also handles h2/p-first by looking ahead for nearest images, but layout still shows picture first. */
 (function(){
   const params = new URLSearchParams(location.search);
   const id = params.get('id');
@@ -204,6 +199,8 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
     return;
   }
 
+  // Admin sorts by updated DESC; we’ll keep that order. (Matches Admin UI.) 
+  // If the URL id is missing, use the newest.
   const project = projects.find(p => String(p.id) === String(id)) || projects[0];
   if (!project) {
     renderEmpty('Project not found. Check the URL id or create a project in Admin.');
@@ -217,47 +214,66 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
   setText('#proj_date', project.date);
   setSrc('#proj_image', project.hero);
 
-  // CONTENT
+  // CONTENT SECTIONS
   const secWrap = document.getElementById('sections');
   secWrap.innerHTML = '';
 
   const items = Array.isArray(project.sections) ? project.sections : [];
   if (!items.length) {
-    // still show a pleasant empty state beneath hero
     const empty = document.createElement('section');
     empty.className = 'block grey';
-    empty.innerHTML = `<div class="container"><div class="empty">This project has no sections yet. Add images, headers and paragraphs in Admin, then reload.</div></div>`;
+    empty.innerHTML = `<div class="container"><div class="empty" style="text-align:center;color:var(--muted)">No sections yet.</div></div>`;
     secWrap.appendChild(empty);
   } else {
     renderBlocks(items, secWrap);
   }
 
-  // MORE
+  // MORE PROJECTS — Always show 3 cards:
+  // 1) Take latest 3 by updated (Admin already keeps list sorted desc).
+  // 2) If the current is inside those 3, replace it with the next most recent.
+  // 3) If still not enough, keep pulling from the rest until we have 3 (excluding current).
   const more = document.getElementById('moreGrid');
-  const others = projects.filter(p => String(p.id) !== String(project.id)).slice(0,3);
-  others.forEach(p => {
-    const a = document.createElement('a');
-    a.className = 'more-item';
-    a.href = `project-monitor.html?id=${encodeURIComponent(p.id)}`;
-    a.innerHTML = `
-      <img src="${escapeAttr(p.hero || '')}" alt="">
-      <div class="p"><h3>${escapeHtml(p.title || '')}</h3><small>${escapeHtml(p.tag || '')}</small></div>
+  more.innerHTML = '';
+
+  const currentId = String(project.id);
+  const top3 = projects.slice(0, 3);
+  let pool = top3.filter(p => String(p.id) !== currentId);
+
+  if (pool.length < 3) {
+    // add from the rest (starting from index 3)
+    for (let i = 3; i < projects.length && pool.length < 3; i++) {
+      const p = projects[i];
+      if (String(p.id) !== currentId && !pool.some(x => String(x.id) === String(p.id))) {
+        pool.push(p);
+      }
+    }
+  }
+
+  // If still less than 3 (e.g., total < 4), we show whatever is available.
+  // Optional shuffle for slight randomness without breaking "latest" intent:
+  pool = shuffle(pool).slice(0, 3);
+
+  pool.forEach(p=>{
+    const a=document.createElement('a');
+    a.className='more-item';
+    a.href=`project-monitor.html?id=${encodeURIComponent(p.id)}`;
+    a.innerHTML=`
+      <img src="${escapeAttr(p.hero||'')}" alt="">
+      <div class="p"><h3>${escapeHtml(p.title||'')}</h3><small>${escapeHtml(p.tag||'')}</small></div>
     `;
     more.appendChild(a);
   });
 
-  /* ======= Helpers ======= */
+  /* ======= Block Renderer (image-first) ======= */
   function renderBlocks(items, host){
     let i = 0, grey = false;
     while (i < items.length) {
-      // Try to form a block with up to 2 images FIRST, then h2, then p.
       let imgs = [];
       let h2 = '';
       let p = '';
 
-      // CASE A: starts with img(s)
+      // CASE A: start with img(s)
       if (items[i]?.type === 'img') {
-        // collect up to 2 consecutive imgs
         while (i < items.length && items[i].type === 'img' && imgs.length < 2) {
           imgs.push(items[i].value || '');
           i++;
@@ -265,28 +281,22 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
         if (i < items.length && items[i].type === 'h2') { h2 = items[i].value || ''; i++; }
         if (i < items.length && items[i].type === 'p')  { p  = items[i].value || ''; i++; }
       }
-      // CASE B: starts with h2/p — be forgiving and look ahead for immediate next img(s)
+      // CASE B: start with h2/p (be forgiving; pull the nearest following images into the same block, but still render images first)
       else if (items[i]?.type === 'h2' || items[i]?.type === 'p') {
-        // gather heading and paragraph if they’re right here
         if (items[i]?.type === 'h2') { h2 = items[i].value || ''; i++; }
         if (i < items.length && items[i].type === 'p') { p = items[i].value || ''; i++; }
-        // look ahead a couple steps for img(s) to pull FIRST (so picture shows before text)
         let k = i;
         while (k < items.length && items[k].type === 'img' && imgs.length < 2) {
           imgs.push(items[k].value || '');
           k++;
         }
-        if (imgs.length) {
-          // consume the images we just pulled in
-          i = k;
-        }
+        if (imgs.length) i = k; // consume the images
       } else {
-        // unknown type; skip gracefully
-        i++;
+        i++; // unknown type, skip
         continue;
       }
 
-      if (!imgs.length && !h2 && !p) continue; // nothing gathered, move on
+      if (!imgs.length && !h2 && !p) continue;
 
       const section = document.createElement('section');
       section.className = 'block' + (grey ? ' grey' : '');
@@ -313,9 +323,10 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
     }
   }
 
+  /* ===== Helpers ===== */
   function renderEmpty(msg){
     const secWrap = document.getElementById('sections');
-    secWrap.innerHTML = `<section class="block grey"><div class="container"><div class="empty">${escapeHtml(msg)}</div></div></section>`;
+    secWrap.innerHTML = `<section class="block grey"><div class="container"><div class="empty" style="text-align:center;color:var(--muted)">${escapeHtml(msg)}</div></div></section>`;
   }
 
   function setText(sel, val){ const el = document.querySelector(sel); if (el) el.textContent = val || ''; }
@@ -323,6 +334,7 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
   function escapeHtml(s){ return String(s||'').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
   function escapeAttr(s){ return String(s||'').replace(/"/g,'&quot;'); }
   function safeParse(json){ try{ return JSON.parse(json||''); } catch(e){ return null; } }
+  function shuffle(arr){ const a = arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 })();
 </script>
 </body>
