@@ -371,7 +371,24 @@
     </section>
 
     <!-- Placeholders (kept) -->
-    <section class="card" id="panel_home" style="display:none"><div class="pad">Home settings — (unchanged)</div></section>
+    <!-- Home Page Settings -->
+<section class="card" id="panel_home" style="display:none">
+  <div class="pad">
+    <div style="font-size:18px;font-weight:900;margin-bottom:10px">Home Page Settings</div>
+
+    <div class="row"><label>Hero Title</label><input id="h_title" class="field" placeholder="UI/UX Designer & Developer"></div>
+    <div class="row"><label>Hero Subtitle</label><textarea id="h_sub" class="field" placeholder="Short line below title…"></textarea></div>
+    <div class="row"><label>Pill Text</label><input id="h_pill" class="field" placeholder="Design + Code"></div>
+
+    <div class="row"><label>Projects Section Title</label><input id="h_proj_title" class="field" placeholder="Some of my latest work"></div>
+    <div class="row"><label>Button Text</label><input id="h_button" class="field" placeholder="See All Work"></div>
+
+    <div class="bar" style="margin-top:16px">
+      <button class="btn tiny" id="h_save">Save Home Settings</button>
+      <span id="h_ok" style="display:none;color:var(--green);font-weight:800">Saved ✓</span>
+    </div>
+  </div>
+</section>
     <section class="card" id="panel_about" style="display:none"><div class="pad">About settings — (unchanged)</div></section>
     <section class="card" id="panel_contact" style="display:none"><div class="pad">Contact settings — (unchanged)</div></section>
     <section class="card" id="panel_four" style="display:none"><div class="pad">404 settings — (unchanged)</div></section>
@@ -430,7 +447,11 @@ $('#nav').addEventListener('click',e=>{
   const a=e.target.closest('a'); if(!a) return; e.preventDefault();
   $$('.nav a').forEach(x=>x.classList.remove('active')); a.classList.add('active');
   $$('section.card').forEach(p=>p.style.display='none'); const key=a.dataset.panel; $('#panel_'+key).style.display='block';
-  if(key==='portfolio') renderProjects(); if(key==='blog') renderBlogs(); if(key==='profile') loadProfile();
+if(key==='portfolio') renderProjects(); 
+if(key==='blog') renderBlogs(); 
+if(key==='profile') loadProfile();
+if(key==='home') loadHome();
+
 });
 
 /* ===== Search + Filters ===== */
@@ -760,6 +781,29 @@ $('#s_save').onclick=()=>{
 $('#s_avatar_file').addEventListener('change',e=>{
   const f=e.target.files?.[0]; if(!f) return; const r=new FileReader(); r.onload=()=>$('#s_avatar').value=r.result; r.readAsDataURL(f);
 });
+/* ===== Home Settings ===== */
+const LS_HOME='cms_home';
+
+function loadHome(){
+  const h=Store.read(LS_HOME,'{}');
+  $('#h_title').value=h.title||'';
+  $('#h_sub').value=h.sub||'';
+  $('#h_pill').value=h.pill||'';
+  $('#h_proj_title').value=h.proj_title||'';
+  $('#h_button').value=h.button||'';
+}
+$('#h_save').onclick=()=>{
+  const obj={
+    title:$('#h_title').value.trim(),
+    sub:$('#h_sub').value.trim(),
+    pill:$('#h_pill').value.trim(),
+    proj_title:$('#h_proj_title').value.trim(),
+    button:$('#h_button').value.trim()
+  };
+  Store.write(LS_HOME,obj);
+  $('#h_ok').style.display='inline';
+  setTimeout(()=>$('#h_ok').style.display='none',1200);
+};
 
 /* ===== Export / Import ===== */
 $('#exportBtn').onclick=()=>{
