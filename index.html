@@ -259,7 +259,7 @@
   <!-- PROJECTS from CMS -->
   <section class="projects-section" id="projects">
   <h2 class="projects-title" id="h_proj_title">Some of my latest work</h2>
-    <div class="projects-grid" id="projectsGrid"><!-- filled by JS --></div>
+    <div class="projects-grid" id="projectsGrid"><!-- Cards will be auto-loaded here --></div>
 
     <div class="see-all-wrap">
      <a href="portfolio.html" id="h_button" class="see-all-btn">See All Work</a>
@@ -401,7 +401,51 @@ revealOnScroll();
   }
 })();
 </script>
-
 </script>
+<script>
+(function(){
+  const homeKey = 'cms_home';
+  const projKey = 'cms_projects';
+
+  // 1️⃣ Load home text content
+  try {
+    const h = JSON.parse(localStorage.getItem(homeKey) || '{}');
+    if(h.title) document.getElementById('h_title').textContent = h.title;
+    if(h.sub) document.getElementById('h_sub').textContent = h.sub;
+    if(h.pill) document.getElementById('h_pill').textContent = h.pill;
+    if(h.proj_title) document.getElementById('h_proj_title').textContent = h.proj_title;
+
+    const btn = document.getElementById('h_button');
+    if(btn && h.button) btn.textContent = h.button;
+  } catch(e) {
+    console.warn('Home text not loaded:', e);
+  }
+
+  // 2️⃣ Load latest 3 projects as cards
+  try {
+    const cardsContainer = document.getElementById('projectCards');
+    const projects = JSON.parse(localStorage.getItem(projKey) || '[]');
+    if(!projects.length) return;
+
+    const latest = projects
+      .filter(p => p.status === 'active')
+      .sort((a,b) => (b.updated || 0) - (a.updated || 0))
+      .slice(0,3);
+
+    cardsContainer.innerHTML = latest.map(p => `
+      <a href="project-details.html?id=${p.id}" class="project-card">
+        <img src="${p.hero || ''}" alt="${p.title || ''}">
+        <div class="card-text">
+          <h3>${p.title || ''}</h3>
+          <p>${p.tag || ''}</p>
+        </div>
+      </a>
+    `).join('');
+  } catch(e) {
+    console.warn('Projects not loaded:', e);
+  }
+})();
+</script>
+
 </body>
 </html>
