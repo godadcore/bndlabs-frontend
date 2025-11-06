@@ -173,6 +173,36 @@
   @media(max-width:720px){
     .footer-inner{flex-direction:column;gap:10px;}
   }
+  /* --- RESPONSIVE TYPOGRAPHY FIX --- */
+
+/* Tablets (≤ 900px) */
+@media (max-width: 900px) {
+  .project-hero h1 {
+    font-size: 34px;      /* smaller hero title */
+    line-height: 1.2;
+  }
+  .project-hero p,
+  .project-section h2,
+  .project-section p,
+  .section-subtitle {
+    font-size: 16px;      /* reduce subtitle and body size */
+  }
+}
+
+/* Phones (≤ 600px) */
+@media (max-width: 600px) {
+  .project-hero h1 {
+    font-size: 26px;
+    line-height: 1.25;
+  }
+  .project-hero p,
+  .project-section h2,
+  .project-section p,
+  .section-subtitle {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+}
 </style>
 </head>
 
