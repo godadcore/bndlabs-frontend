@@ -402,24 +402,38 @@ const addType = $('#addType'), addSectionBtn = $('#addSectionBtn');
 
 let currentId = null;
 function openEditor(project){
+  // reset editor completely every time
   currentId = project ? project.id : null;
-  $('#panel_portfolio').style.display='none';
-  $('#panel_editor').style.display='block';
+
+  // show editor, hide table
+  $('#panel_portfolio').style.display = 'none';
+  $('#panel_editor').style.display = 'block';
   editorTitle.textContent = project ? 'Edit Project' : 'New Project';
   deleteBtn.style.display = project ? 'inline-block' : 'none';
 
-  // fill fields
+  // clear fields
   f_title.value = project?.title || '';
   f_tag.value   = project?.tag   || '';
   f_date.value  = project?.date  || '';
   f_desc.value  = project?.desc  || '';
   f_hero.value  = project?.hero  || '';
+  f_hero_file.value = '';  // clear any previous file input
   sectionsHost.innerHTML = '';
 
+  // always reset any previous data listeners
+  sectionsHost.querySelectorAll('*').forEach(n => n.remove?.());
+
+  // render sections if editing
   (project?.sections || []).forEach((s, idx)=> {
     addSectionUI(s.type, s.value, s.alt, idx);
   });
+
+  // 🧩 fix: if creating new project, clear previous id fully
+  if(!project){
+    currentId = null;
+  }
 }
+
 backBtn.addEventListener('click', ()=>{
   $('#panel_editor').style.display='none';
   $('#panel_portfolio').style.display='block';
