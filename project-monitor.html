@@ -93,9 +93,29 @@
     margin-bottom:32px;
   }
 
+  /* ===== UPDATED: horizontal image scroll for 3–4 images ===== */
+  .img-scroll{
+    display:flex;
+    overflow-x:auto;
+    gap:18px;
+    margin-bottom:36px;
+    scroll-snap-type:x mandatory;
+    padding-bottom:8px;
+  }
+  .img-scroll img{
+    flex:0 0 auto;
+    width:calc(33.333% - 12px); /* show ~3 at a time */
+    scroll-snap-align:start;
+    transition:transform .25s ease;
+  }
+  .img-scroll img:hover{transform:scale(1.02);}
+  .img-scroll::-webkit-scrollbar{height:6px;}
+  .img-scroll::-webkit-scrollbar-thumb{background:rgba(0,0,0,.2);border-radius:3px;}
+
   @media(max-width:900px){
     .hero-inner{grid-template-columns:1fr;text-align:center}
     .two-up{grid-template-columns:1fr}
+    .img-scroll img{width:80%} /* large, swipeable cards on mobile */
   }
 
   /* ===== MORE PROJECTS ===== */
@@ -188,7 +208,7 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
 /* ===== PROJECT DETAIL LOADER =====
    Uses the same Admin store key: 'cms_projects'
    Groups sections strictly as: image(s) -> heading -> paragraph (one block)
-   Also handles h2/p-first by looking ahead for nearest images, but layout still shows picture first. */
+   UPDATED: supports up to 4 images; for 3–4 images shows a smooth horizontal scroll row. */
 (function(){
   const params = new URLSearchParams(location.search);
   const id = params.get('id');
@@ -199,8 +219,7 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
     return;
   }
 
-  // Admin sorts by updated DESC; we’ll keep that order. (Matches Admin UI.) 
-  // If the URL id is missing, use the newest.
+  // If the URL id is missing, use the newest (index 0).
   const project = projects.find(p => String(p.id) === String(id)) || projects[0];
   if (!project) {
     renderEmpty('Project not found. Check the URL id or create a project in Admin.');
@@ -228,10 +247,7 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
     renderBlocks(items, secWrap);
   }
 
-  // MORE PROJECTS — Always show 3 cards:
-  // 1) Take latest 3 by updated (Admin already keeps list sorted desc).
-  // 2) If the current is inside those 3, replace it with the next most recent.
-  // 3) If still not enough, keep pulling from the rest until we have 3 (excluding current).
+  // MORE PROJECTS — Always show 3 cards (latest), excluding current
   const more = document.getElementById('moreGrid');
   more.innerHTML = '';
 
@@ -240,7 +256,7 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
   let pool = top3.filter(p => String(p.id) !== currentId);
 
   if (pool.length < 3) {
-    // add from the rest (starting from index 3)
+    // add from the rest
     for (let i = 3; i < projects.length && pool.length < 3; i++) {
       const p = projects[i];
       if (String(p.id) !== currentId && !pool.some(x => String(x.id) === String(p.id))) {
@@ -249,9 +265,7 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
     }
   }
 
-  // If still less than 3 (e.g., total < 4), we show whatever is available.
-  // Optional shuffle for slight randomness without breaking "latest" intent:
-  pool = shuffle(pool).slice(0, 3);
+  pool = pool.slice(0, 3);
 
   pool.forEach(p=>{
     const a=document.createElement('a');
@@ -272,27 +286,27 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
       let h2 = '';
       let p = '';
 
-      // CASE A: start with img(s)
+      // CASE A: start with img(s)  — UPDATED: up to 4 images
       if (items[i]?.type === 'img') {
-        while (i < items.length && items[i].type === 'img' && imgs.length < 2) {
+        while (i < items.length && items[i].type === 'img' && imgs.length < 4) { // UPDATED (2 -> 4)
           imgs.push(items[i].value || '');
           i++;
         }
         if (i < items.length && items[i].type === 'h2') { h2 = items[i].value || ''; i++; }
         if (i < items.length && items[i].type === 'p')  { p  = items[i].value || ''; i++; }
       }
-      // CASE B: start with h2/p (be forgiving; pull the nearest following images into the same block, but still render images first)
+      // CASE B: start with h2/p — still render image(s) first by looking ahead
       else if (items[i]?.type === 'h2' || items[i]?.type === 'p') {
         if (items[i]?.type === 'h2') { h2 = items[i].value || ''; i++; }
         if (i < items.length && items[i].type === 'p') { p = items[i].value || ''; i++; }
         let k = i;
-        while (k < items.length && items[k].type === 'img' && imgs.length < 2) {
+        while (k < items.length && items[k].type === 'img' && imgs.length < 4) { // UPDATED (2 -> 4)
           imgs.push(items[k].value || '');
           k++;
         }
-        if (imgs.length) i = k; // consume the images
+        if (imgs.length) i = k;
       } else {
-        i++; // unknown type, skip
+        i++; // unknown type
         continue;
       }
 
@@ -302,14 +316,19 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
       section.className = 'block' + (grey ? ' grey' : '');
       grey = !grey;
 
+      // UPDATED: choose layout
       let imgsHTML = '';
-      if (imgs.length === 2) {
+      if (imgs.length === 1) {
+        imgsHTML = `<img src="${escapeAttr(imgs[0])}" alt="">`;
+      } else if (imgs.length === 2) {
         imgsHTML = `<div class="two-up">
           <img src="${escapeAttr(imgs[0])}" alt="">
           <img src="${escapeAttr(imgs[1])}" alt="">
         </div>`;
-      } else if (imgs.length === 1) {
-        imgsHTML = `<img src="${escapeAttr(imgs[0])}" alt="">`;
+      } else if (imgs.length >= 3) { // 3–4 images → horizontal scroll strip
+        imgsHTML = `<div class="img-scroll">
+          ${imgs.map(src=>`<img src="${escapeAttr(src)}" alt="">`).join('')}
+        </div>`;
       }
 
       section.innerHTML = `
@@ -334,7 +353,6 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
   function escapeHtml(s){ return String(s||'').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
   function escapeAttr(s){ return String(s||'').replace(/"/g,'&quot;'); }
   function safeParse(json){ try{ return JSON.parse(json||''); } catch(e){ return null; } }
-  function shuffle(arr){ const a = arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 })();
 </script>
 </body>
