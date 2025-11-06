@@ -328,86 +328,10 @@ revealOnScroll();
 <!-- ===== CMS HOOKS FOR HOME + LATEST PROJECTS ===== -->
 <script>
 (function(){
-  // Read CMS: home config + projects
-  const home = safeParse(localStorage.getItem('cms_home')) || {};
-  const projects = (safeParse(localStorage.getItem('cms_projects')) || []).slice();
-
-  // 1) HERO TEXTS (title/desc/pill)
-  setText('#home_title', home.title || 'UI/UX Designer & Developer');
-  setText('#home_desc', home.desc || 'UI/UX Designer specialising in UI/UX & design systems. Front-end developer who writes clean, elegant, and efficient code.');
-  setText('#home_pill', home.pill || 'Design + Code');
-
-  // Optional: software badges (array of strings in cms_home.softwares)
-  const sw = Array.isArray(home.softwares) ? home.softwares.filter(Boolean) : [];
-  const swHost = document.getElementById('home_softwares');
-  if (sw.length && swHost){
-    swHost.style.display = 'flex';
-    swHost.innerHTML = sw.map(s=>`<span class="chip">${escapeHtml(String(s))}</span>`).join('');
-  }
-
-  // 2) LATEST PROJECTS GRID
-  const grid = document.getElementById('projectsGrid');
-  grid.innerHTML = '';
-
-  // sort newest first using updated || date
-  projects.sort((a,b)=>{
-    const au = a.updated || Date.parse(a.date||0) || 0;
-    const bu = b.updated || Date.parse(b.date||0) || 0;
-    return bu - au;
-  });
-
-  // Show however many exist (1..N). If you want a cap, change 'projects.length' to e.g. Math.min(projects.length, 6)
-  const toShow = projects.length; 
-  if(!toShow){
-    grid.innerHTML = `<div style="text-align:center;color:var(--light-muted)">No projects yet.</div>`;
-  }else{
-    for(let i=0;i<toShow;i++){
-      const p = projects[i] || {};
-      const a = document.createElement('a');
-      a.className = 'project-card';
-      a.href = `project-monitor.html?id=${encodeURIComponent(p.id)}`;
-      a.innerHTML = `
-        <img src="${escapeAttr(p.hero||'')}" alt="">
-        <div class="project-content">
-          <h3>${escapeHtml(p.title||'Untitled Project')}</h3>
-          <p>${escapeHtml(p.tag||'')}</p>
-        </div>`;
-      grid.appendChild(a);
-    }
-  }
-
-  /* Helpers */
-  function safeParse(j){ try{ return JSON.parse(j||''); }catch(_){ return null; } }
-  function setText(sel,val){ const el=document.querySelector(sel); if(el) el.textContent = val||''; }
-  function escapeHtml(s){ return String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
-  function escapeAttr(s){ return String(s||'').replace(/"/g,'&quot;'); }
-})();
-
-<script>
-(function(){
-  const key = 'cms_home';
-  try {
-    const h = JSON.parse(localStorage.getItem(key) || '{}');
-    if(h.title) document.getElementById('h_title').textContent = h.title;
-    if(h.sub) document.getElementById('h_sub').textContent = h.sub;
-    if(h.pill) document.getElementById('h_pill').textContent = h.pill;
-    if(h.proj_title) document.getElementById('h_proj_title').textContent = h.proj_title;
-
-    // ✅ Adjusted for your real HTML structure
-    const btn = document.querySelector('.see-all-btn');
-    if(btn && h.button) btn.textContent = h.button;
-  } catch(e) {
-    console.warn('Failed to load home content:', e);
-  }
-})();
-</script>
-</script>
-<script>
-(function(){
   const homeKey = 'cms_home';
   const projKey = 'cms_projects';
 
-  // 1️⃣ Load home text content
+  /* --- 1. Load Home Content --- */
   try {
     const h = JSON.parse(localStorage.getItem(homeKey) || '{}');
     if(h.title) document.getElementById('h_title').textContent = h.title;
@@ -415,35 +339,54 @@ revealOnScroll();
     if(h.pill) document.getElementById('h_pill').textContent = h.pill;
     if(h.proj_title) document.getElementById('h_proj_title').textContent = h.proj_title;
 
+    // Button
     const btn = document.getElementById('h_button');
     if(btn && h.button) btn.textContent = h.button;
+
+    // Optional software badges
+    const sw = Array.isArray(h.softwares) ? h.softwares.filter(Boolean) : [];
+    const swHost = document.getElementById('home_softwares');
+    if (sw.length && swHost){
+      swHost.style.display = 'flex';
+      swHost.innerHTML = sw.map(s=>`<span class="chip">${escapeHtml(String(s))}</span>`).join('');
+    }
   } catch(e) {
-    console.warn('Home text not loaded:', e);
+    console.warn('Home content load failed:', e);
   }
 
-  // 2️⃣ Load latest 3 projects as cards
+  /* --- 2. Load Latest 3 Projects --- */
   try {
-    const cardsContainer = document.getElementById('projectCards');
-    const projects = JSON.parse(localStorage.getItem(projKey) || '[]');
-    if(!projects.length) return;
+    const grid = document.getElementById('projectsGrid');
+    if (!grid) return;
 
+    const projects = JSON.parse(localStorage.getItem(projKey) || '[]');
+    if(!projects.length){
+      grid.innerHTML = `<div style="text-align:center;color:var(--light-muted)">No projects yet.</div>`;
+      return;
+    }
+
+    // Sort and pick 3 latest active
     const latest = projects
-      .filter(p => p.status === 'active')
+      .filter(p => (p.status || 'active') === 'active')
       .sort((a,b) => (b.updated || 0) - (a.updated || 0))
       .slice(0,3);
 
-    cardsContainer.innerHTML = latest.map(p => `
-      <a href="project-details.html?id=${p.id}" class="project-card">
-        <img src="${p.hero || ''}" alt="${p.title || ''}">
-        <div class="card-text">
-          <h3>${p.title || ''}</h3>
-          <p>${p.tag || ''}</p>
+    grid.innerHTML = latest.map(p => `
+      <a href="project-details.html?id=${encodeURIComponent(p.id)}" class="project-card">
+        <img src="${escapeAttr(p.hero || '')}" alt="${escapeAttr(p.title || '')}">
+        <div class="project-content">
+          <h3>${escapeHtml(p.title || 'Untitled Project')}</h3>
+          <p>${escapeHtml(p.tag || '')}</p>
         </div>
       </a>
     `).join('');
   } catch(e) {
-    console.warn('Projects not loaded:', e);
+    console.warn('Projects load failed:', e);
   }
+
+  /* --- Helper functions --- */
+  function escapeHtml(s){ return String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+  function escapeAttr(s){ return String(s||'').replace(/"/g,'&quot;'); }
 })();
 </script>
 
