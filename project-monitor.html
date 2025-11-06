@@ -434,14 +434,14 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
         </div>`;
       }
 
-     section.innerHTML = `
+section.innerHTML = `
   <div class="container">
     ${imgsHTML}
     ${h2 ? `<h2>${cleanRich(h2)}</h2>` : ''}
     ${p  ? `<div class="rte-body">${cleanRich(p)}</div>` : ''}
+  </div>
+`;
 
-        </div>
-      `;
       host.appendChild(section);
     }
   }
