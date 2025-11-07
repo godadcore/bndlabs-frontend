@@ -1557,5 +1557,28 @@ if (saveContactBtn) {
 }
 
 </script>
+  <!-- Firebase SDK for Browser -->
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js"></script>
+
+<script>
+  // Your Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyAjupAgXu1zNxphgWrbyYOyp0UeYkCJhO4",
+    authDomain: "bodunde-cms.firebaseapp.com",
+    databaseURL: "https://bodunde-cms-default-rtdb.firebaseio.com",
+    projectId: "bodunde-cms",
+    storageBucket: "bodunde-cms.firebasestorage.app",
+    messagingSenderId: "646132228201",
+    appId: "1:646132228201:web:dda94fe0d19291454702f8",
+    measurementId: "G-P6HV8WLRWJ"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+  // Connect to Realtime Database
+  const db = firebase.database();
+</script>
 </body>
 </html>
