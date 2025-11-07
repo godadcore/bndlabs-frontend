@@ -430,7 +430,7 @@ revealOnScroll();
 <!-- ===== CMS LOADER: reads `localStorage.cms_contact` and swaps content ===== -->
 <script>
 (function(){
-  const raw = localStorage.getItem('cms_contact');
+const raw = localStorage.getItem('contact');
   if(!raw) return;
   let data;
   try{ data = JSON.parse(raw); }catch(_){ return; }
