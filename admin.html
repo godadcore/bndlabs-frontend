@@ -251,6 +251,9 @@
             </div>
           </div>
         </div>
+        <div class="grid2" style="margin-top:10px">
+  <div class="row"><label>Project Link (Page URL)</label><input id="p_link" class="field" placeholder="project-monitor.html"></div>
+</div>
 
         <div class="grid2" style="margin-top:10px">
           <div class="row"><label>Status</label><select id="p_status" class="field"><option value="active">Active</option><option value="draft">Draft</option><option value="hidden">Hidden</option></select></div>
@@ -845,6 +848,7 @@ function openProjEditor(project){
   $('#p_date').value=project?.date||'';   $('#p_desc').value=project?.desc||'';
   $('#p_hero').value=project?.hero||'';   $('#p_status').value=project?.status||'active';
   $('#p_views').value=Number(project?.views||0); $('#p_hero_file').value='';
+  $('#p_link').value=project?.link||'';
 
   p_sections.innerHTML=''; (project?.sections||[]).forEach(s=> addSectionUI(p_sections,s.type,s.value,s.alt));
   $('#p_addSectionBtn').onclick=()=> addSectionUI(p_sections,$('#p_addType').value,'','');
@@ -854,15 +858,27 @@ function openProjEditor(project){
 }
 
 function saveProject(id){
-  const obj={
-    id:id||null, title:$('#p_title').value.trim(), tag:$('#p_tag').value.trim(), date:$('#p_date').value.trim(),
-    desc:$('#p_desc').value.trim(), hero:$('#p_hero').value.trim(),
-    status:$('#p_status').value, views:Number($('#p_views').value||0),
+  const obj = {
+    id:id||null,
+    title:$('#p_title').value.trim(),
+    tag:$('#p_tag').value.trim(),
+    date:$('#p_date').value.trim(),
+    desc:$('#p_desc').value.trim(),
+    hero:$('#p_hero').value.trim(),
+    link:$('#p_link').value.trim(), // ✅ add this line
+    status:$('#p_status').value,
+    views:Number($('#p_views').value||0),
     sections:collectSections(p_sections)
   };
-  const f=$('#p_hero_file').files?.[0];
-  if(f){ const r=new FileReader(); r.onload=()=>{ obj.hero=r.result; Store.putProject(obj); backTo('proj'); }; r.readAsDataURL(f); }
-  else { Store.putProject(obj); backTo('proj'); }
+  const f = $('#p_hero_file').files?.[0];
+  if(f){
+    const r = new FileReader();
+    r.onload = ()=>{ obj.hero=r.result; Store.putProject(obj); backTo('proj'); };
+    r.readAsDataURL(f);
+  } else {
+    Store.putProject(obj);
+    backTo('proj');
+  }
 }
 
 /* ===== Editor: Blogs ===== */
