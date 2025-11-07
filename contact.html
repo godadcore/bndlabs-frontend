@@ -427,94 +427,71 @@ window.addEventListener("scroll", revealOnScroll);
 revealOnScroll();
 </script>
 
-<!-- ===== CMS LOADER: reads `localStorage.cms_contact` and swaps content ===== -->
+<!-- ===== CMS LOADER: reads localStorage.cms_contact and swaps content ===== -->
 <script>
 (function(){
-const raw = localStorage.getItem('contact');
+  const raw = localStorage.getItem('cms_contact');   // ✅ match admin key
   if(!raw) return;
-  let data;
-  try{ data = JSON.parse(raw); }catch(_){ return; }
+  let d; try { d = JSON.parse(raw); } catch(_) { return; }
 
-  // Helpers
-  const $ = (s)=>document.querySelector(s);
-  const setText = (sel, val)=>{ if(!val) return; const el=$(sel); if(el) el.textContent = val; };
-  const setHTML = (sel, val)=>{ if(!val) return; const el=$(sel); if(el) el.innerHTML = sanitize(val); };
-  const setAttr = (sel, attr, val)=>{ if(!val) return; const el=$(sel); if(el) el.setAttribute(attr, val); };
-  const setPlaceholder = (sel, val)=>{ if(!val) return; const el=$(sel); if(el) el.placeholder = val; };
-  const sanitize = (str)=> String(str||'').replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi,'');
+  const $ = s => document.querySelector(s);
+  const setText = (sel, val) => { if(val==null) return; const el=$(sel); if(el) el.textContent = val; };
+  const setHTML = (sel, val) => { if(val==null) return; const el=$(sel); if(el) el.innerHTML = String(val).replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi,''); };
+  const setAttr = (sel, attr, val) => { if(val==null) return; const el=$(sel); if(el) el.setAttribute(attr, val); };
+  const setPH = (sel, val) => { if(val==null) return; const el=$(sel); if(el) el.placeholder = val; };
 
   // HERO
-  setText('#c_pill', data.pillText);
-  setText('#c_title', data.title);
+  setText('#c_pill',  d.c_pill);
+  setText('#c_title', d.c_title);
+  setText('#c_sub',   d.c_sub);
 
-  // Left card heading + sub
-  setText('#c_leftHeading', data.leftHeading);
-  setText('#c_leftSub', data.leftSub);
+  // FORM labels + placeholders
+  setText('label[for="firstName"]', d.c_label_first);
+  setText('label[for="lastName"]',  d.c_label_last);
+  setText('label[for="email"]',     d.c_label_email);
+  setText('label[for="message"]',   d.c_label_message);
 
-  // Form placeholders
-  setPlaceholder('#firstName', data.firstNamePH);
-  setPlaceholder('#lastName', data.lastNamePH);
-  setPlaceholder('#email', data.emailPH);
-  setPlaceholder('#message', data.messagePH);
+  setPH('#firstName', d.c_label_first);
+  setPH('#lastName',  d.c_label_last);
+  setPH('#email',     d.c_label_email);
+  setPH('#message',   d.c_label_message);
 
-  // Consents + help + button
-  setHTML('#c_updatesText', data.updatesText);
-  setHTML('#c_consentText', data.consentText);
-  setText('#c_help', data.helpText);
-  setText('#c_btnText', data.buttonText);
+  // notices / consents / button
+  setText('#c_updatesText',  d.c_consent_1);
+  setText('#c_consentText',  d.c_consent_2);
+  setText('#c_privacyNote',  d.c_privacy);   // ensure an element with this id exists
+  setText('#c_btnText',      d.c_button);
 
-  // Right: photo
-  setAttr('#c_photo','src', data.photoUrl);
-  if(data.photoAlt) setAttr('#c_photo','alt', data.photoAlt);
+  // sidebar image
+  setAttr('#c_photo','src', d.c_image);
 
-  // Quick contact title
-  setText('#c_quickTitle', data.quickTitle);
-
-  // Email
-  setText('#c_emailLabel', data.emailLabel);
-  if(data.emailValue){
-    const el = document.getElementById('c_emailValue');
-    el.textContent = data.emailValue;
-    el.href = 'mailto:' + data.emailValue;
+  // Quick contact
+  setText('#c_quickTitle',      d.c_qc_title);
+  setText('#c_emailLabel',      d.c_qc_email_label);
+  if(d.c_qc_email_value){
+    const el = $('#c_emailValue'); if(el){ el.textContent=d.c_qc_email_value; el.href='mailto:'+d.c_qc_email_value; }
   }
 
-  // Phone
-  setText('#c_phoneLabel', data.phoneLabel);
-  if(data.phoneValue){
-    const el = document.getElementById('c_phoneValue');
-    el.textContent = data.phoneValue;
-    el.href = 'tel:' + data.phoneValue.replace(/\s|\(|\)|-/g,'');
+  setText('#c_phoneLabel',      d.c_qc_phone_label);
+  if(d.c_qc_phone_value){
+    const el = $('#c_phoneValue'); if(el){ el.textContent=d.c_qc_phone_value; el.href='tel:'+d.c_qc_phone_value.replace(/\s|\(|\)|-/g,''); }
   }
 
-  // HQ
-  setText('#c_hqLabel', data.hqLabel);
-  setText('#c_hqValue', data.hqValue);
+  setText('#c_hqLabel',         d.c_qc_hq_label);
+  setText('#c_hqValue',         d.c_qc_hq_value);
 
-  // Follow title
-  setText('#c_followTitle', data.followTitle);
-
-  // Socials (optional): replace whole block if provided
-  if(Array.isArray(data.socials) && data.socials.length){
-    const mapIcon = (type)=>{
-      // default brand icons; you can override with .svg if provided in CMS
-      const icons = {
-        fb:'<svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.7v-2.9h2.7V9.5c0-2.7 1.6-4.2 4-4.2 1.1 0 2.3.2 2.3.2v2.6h-1.3c-1.3 0-1.7.8-1.7 1.6v1.9h3l-.5 2.9h-2.5v7A10 10 0 0 0 22 12Z"/></svg>',
-        x:'<svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.1 1.5 4.5 4.5 0 0 0-7.8 3v1A10.7 10.7 0 0 1 3 4s-4 9 5 13a11.6 11.6 0 0 1-7 2c9 5 20 0 20-11.5 0-.3 0-.5-.1-.8A7.7 7.7 0 0 0 23 3z"/></svg>',
-        ig:'<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1.3 14h-2.6v-6h2.6v6zm0-7.3h-2.6V7h2.6v1.7z"/></svg>'
-      };
-      return icons[type] || icons.fb;
-    };
-    const host = document.getElementById('c_socials');
-    host.innerHTML = data.socials.map(s=>{
-      const svg = s.svg ? sanitize(s.svg) : mapIcon((s.type||'').toLowerCase());
-      const label = s.label || (s.type||'Social');
-      const url = s.url || '#';
-      return `<a href="${escapeAttr(url)}" target="_blank" rel="noopener" aria-label="${escapeAttr(label)}">${svg}</a>`;
-    }).join('');
+  // Socials (optional: render if you have a #socials container)
+  if (Array.isArray(d.c_socials) && $('#socials')) {
+    const box = $('#socials'); box.innerHTML = '';
+    d.c_socials.forEach(s=>{
+      if(!s.url) return;
+      const li=document.createElement('li');
+      li.innerHTML = s.svg
+        ? `<a href="${s.url}" target="_blank" rel="noopener">${s.svg}</a>`
+        : `<a href="${s.url}" target="_blank" rel="noopener">${s.platform}</a>`;
+      box.appendChild(li);
+    });
   }
-
-  // Escape helpers for attributes
-  function escapeAttr(s){ return String(s||'').replace(/"/g,'&quot;'); }
 })();
 </script>
 
