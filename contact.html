@@ -17,7 +17,8 @@
 <!-- X -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Contact | Bodunde">
-<meta name="twitter:description" content="Get in touch with Bodunde for design collaborations and creative partnerships.">
+<meta name="twitter:description" content="Get in touch with Bodunde for design collaborations and creative partnerships.
+">
 <meta name="twitter:image" content="https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=1200&q=80">
 
 <!-- Favicon + PWA -->
@@ -88,7 +89,7 @@
   }
   .hero-card{
     position:relative;overflow:hidden;border-radius:22px;
-    background:var(--primary-gradient); /* brand orange gradient */
+    background:var(--primary-gradient);
     color:#fff;min-height:160px;display:flex;align-items:center;justify-content:center;
   }
   .hero-card::before,
@@ -98,8 +99,7 @@
   .hero-card::before{width:320px;height:320px;left:-120px;top:-120px}
   .hero-card::after{width:420px;height:420px;right:-160px;bottom:-160px}
   .hero-inner{position:relative;z-index:1;text-align:center;padding:28px 16px}
-  .pill{display:inline-block;padding:6px 12px;border-radius:999px;background:#fff;color:var(--primary);
-font-weight:700;margin-bottom:10px}
+  .pill{display:inline-block;padding:6px 12px;border-radius:999px;background:#fff;color:var(--primary);font-weight:700;margin-bottom:10px}
   .hero h1{margin:0;font-size:36px;font-weight:800;letter-spacing:-0.5px}
   @media(min-width:720px){ .hero h1{font-size:44px} }
 
@@ -135,23 +135,19 @@ font-weight:700;margin-bottom:10px}
   .field:focus, textarea:focus{border-color:#0b74ff;box-shadow:0 0 0 3px rgba(11,116,255,.12)}
   textarea{min-height:120px;resize:vertical}
 
-  /* CONSENT CHECKBOXES — aligned flush with inputs & equal spacing */
+  /* CONSENT CHECKBOXES */
   .consents{margin-top:12px}
-  /* Make each consent row fill the same left edge as inputs */
   label.cb{
     display:grid;
-    grid-template-columns:20px 1fr; /* checkbox | text */
+    grid-template-columns:20px 1fr;
     column-gap:10px;
     align-items:start;
-    margin:0; /* no leftover margins */
+    margin:0;
     color:var(--faint);
     font-size:14px;
     line-height:1.45;
   }
-  /* Uniform vertical spacing between the two */
   .consents .cb + .cb{ margin-top:12px; }
-
-  /* normalize checkbox size */
  .cb input[type="checkbox"]{
   width:18px;height:18px;margin:0;accent-color:var(--primary);
 }
@@ -178,8 +174,7 @@ font-weight:700;margin-bottom:10px}
   .info-title{font-weight:800;margin:0 0 10px}
   .row{display:flex;gap:10px;align-items:flex-start;margin:10px 0}
   .bullet{width:32px;height:32px;border-radius:10px;background:#eef5ff;display:inline-flex;align-items:center;justify-content:center;flex:none}
-  .bullet svg{width:16px;height:16px;fill:var(--primary)
-}
+  .bullet svg{width:16px;height:16px;fill:var(--primary)}
   .muted{color:var(--faint)}
   .socials{display:flex;gap:8px;margin-top:8px}
   .socials a{width:36px;height:36px;border-radius:10px;border:1px solid rgba(0,0,0,.08);display:inline-flex;align-items:center;justify-content:center}
@@ -218,16 +213,10 @@ font-weight:700;margin-bottom:10px}
   @media(max-width:720px){
     .footer-inner{flex-direction:column;gap:10px;}
   }
-/* === Scroll Reveal Base === */
-.reveal {
-  opacity: 0;
-  transform: translateY(40px);
-  transition: all 0.8s ease-out;
-}
-.reveal.active {
-  opacity: 1;
-  transform: translateY(0);
-}
+
+  /* === Scroll Reveal Base === */
+  .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s ease-out; }
+  .reveal.active { opacity: 1; transform: translateY(0); }
 </style>
 </head>
 <body class="body-offset">
@@ -242,7 +231,7 @@ font-weight:700;margin-bottom:10px}
 
   <nav class="nav" aria-label="Main">
     <a href="index.html">Home</a>
-    <a href="about.html">About</a>
+    <a href="About.html">About</a>
     <a href="portfolio.html">Portfolio</a>
     <a href="blog.html">Blog</a>
     <a href="contact.html" class="active">Contact</a>
@@ -255,8 +244,8 @@ font-weight:700;margin-bottom:10px}
 <section class="hero">
   <div class="hero-card reveal">
     <div class="hero-inner">
-      <div class="pill">WRITE TO US</div>
-      <h1>Get In Touch</h1>
+      <div class="pill" id="c_pill">WRITE TO US</div>
+      <h1 id="c_title">Get In Touch</h1>
     </div>
   </div>
 </section>
@@ -266,8 +255,8 @@ font-weight:700;margin-bottom:10px}
     <!-- LEFT: FORM -->
     <div class="card">
       <div class="pad">
-        <h2>Let’s Talk!</h2>
-        <p class="sub">Get in touch with us using the enquiry form or contact details below.</p>
+        <h2 id="c_leftHeading">Let’s Talk!</h2>
+        <p class="sub" id="c_leftSub">Get in touch with us using the enquiry form or contact details below.</p>
         <div class="divider"></div>
 
         <form id="contactForm" action="#" method="post">
@@ -284,21 +273,21 @@ font-weight:700;margin-bottom:10px}
             <textarea name="message" id="message" class="field" placeholder="Message"></textarea>
           </div>
 
-          <!-- CONSENTS (aligned with inputs) -->
+          <!-- CONSENTS -->
           <div class="consents">
             <label class="cb">
-  <input type="checkbox" id="updates" name="agree_messages">
-  <span>I agree to receive other communication messages.</span>
-</label>
-           <label class="cb">
-  <input type="checkbox" id="consent" name="agree_data">
-  <span>I give my consent to Bodunde to store my data.</span>
-</label>
+              <input type="checkbox" id="updates" name="agree_messages">
+              <span id="c_updatesText">I agree to receive other communication messages.</span>
+            </label>
+            <label class="cb">
+              <input type="checkbox" id="consent" name="agree_data">
+              <span id="c_consentText">I give my consent to Bodunde to store my data.</span>
+            </label>
           </div>
 
-          <p class="help">We respect your privacy. You can opt out at any time.</p>
+          <p class="help" id="c_help">We respect your privacy. You can opt out at any time.</p>
 
-          <button class="btn" type="submit">Send Message</button>
+          <button class="btn" type="submit" id="c_btnText">Send Message</button>
         </form>
       </div>
     </div>
@@ -306,41 +295,49 @@ font-weight:700;margin-bottom:10px}
     <!-- RIGHT: IMAGE + INFO -->
     <aside class="side-stack">
       <div class="photo">
-        <img src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?q=80&w=1400&auto=format&fit=crop" alt="Happy person on phone">
+        <img id="c_photo" src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?q=80&w=1400&auto=format&fit=crop" alt="Happy person on phone">
       </div>
 
       <div class="info-card">
         <div class="pad">
-          <h3 class="info-title">Quick Contact</h3>
+          <h3 class="info-title" id="c_quickTitle">Quick Contact</h3>
+
           <div class="row">
-            <span class="bullet"><svg viewBox="0 0 24 24"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.3 0-8 2.2-8 5v1h16v-1c0-2.8-3.7-5-8-5Z"/></svg></span>
+            <span class="bullet" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.3 0-8 2.2-8 5v1h16v-1c0-2.8-3.7-5-8-5Z"/></svg></span>
             <div>
-              <div class="muted">Email</div>
-              <div>hello@bodunde.dev</div>
+              <div class="muted" id="c_emailLabel">Email</div>
+              <div><a id="c_emailValue" href="mailto:hello@bodunde.dev">hello@bodunde.dev</a></div>
             </div>
           </div>
 
           <div class="row">
-            <span class="bullet"><svg viewBox="0 0 24 24"><path d="M6.6 10.8a15.6 15.6 0 0 0 6.6 6.6l2.2-2.2c.3-.3.8-.4 1.2-.3 1 .3 2 .5 3 .5.7 0 1.2.5 1.2 1.2V20c0 .7-.5 1.2-1.2 1.2C10.4 21.2 2.8 13.6 2.8 3.2 2.8 2.5 3.3 2 4 2h3.2c.7 0 1.2.5 1.2 1.2 0 1 .2 2 .5 3 .1.4 0 .9-.3 1.2l-2 2.4Z"/></svg></span>
+            <span class="bullet" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6.6 10.8a15.6 15.6 0 0 0 6.6 6.6l2.2-2.2c.3-.3.8-.4 1.2-.3 1 .3 2 .5 3 .5.7 0 1.2.5 1.2 1.2V20c0 .7-.5 1.2-1.2 1.2C10.4 21.2 2.8 13.6 2.8 3.2 2.8 2.5 3.3 2 4 2h3.2c.7 0 1.2.5 1.2 1.2 0 1 .2 2 .5 3 .1.4 0 .9-.3 1.2l-2 2.4Z"/></svg></span>
             <div>
-              <div class="muted">Phone Number</div>
-              <div>+234 (0) 800 000 0000</div>
+              <div class="muted" id="c_phoneLabel">Phone Number</div>
+              <div><a id="c_phoneValue" href="tel:+2348000000000">+234 (0) 800 000 0000</a></div>
             </div>
           </div>
 
           <div class="row">
-            <span class="bullet"><svg viewBox="0 0 24 24"><path d="M12 2a8 8 0 0 0-8 8c0 5.2 8 12 8 12s8-6.8 8-12a8 8 0 0 0-8-8Zm0 10.5A2.5 2.5 0 1 1 12 7.5a2.5 2.5 0 0 1 0 5Z"/></svg></span>
+            <span class="bullet" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2a8 8 0 0 0-8 8c0 5.2 8 12 8 12s8-6.8 8-12a8 8 0 0 0-8-8Zm0 10.5A2.5 2.5 0 1 1 12 7.5a2.5 2.5 0 0 1 0 5Z"/></svg></span>
             <div>
-              <div class="muted">Headquarter</div>
-              <div>Lagos, Nigeria</div>
+              <div class="muted" id="c_hqLabel">Headquarter</div>
+              <div id="c_hqValue">Lagos, Nigeria</div>
             </div>
           </div>
 
-          <div style="margin-top:10px;font-weight:800">Follow us</div>
-          <div class="socials">
-            <a href="#"><svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.7v-2.9h2.7V9.5c0-2.7 1.6-4.2 4-4.2 1.1 0 2.3.2 2.3.2v2.6h-1.3c-1.3 0-1.7.8-1.7 1.6v1.9h3l-.5 2.9h-2.5v7A10 10 0 0 0 22 12Z"/></svg></a>
-            <a href="#"><svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.1 1.5 4.5 4.5 0 0 0-7.8 3v1A10.7 10.7 0 0 1 3 4s-4 9 5 13a11.6 11.6 0 0 1-7 2c9 5 20 0 20-11.5 0-.3 0-.5-.1-.8A7.7 7.7 0 0 0 23 3z"/></svg></a>
-            <a href="#"><svg viewBox="0 0 24 24"><path d="M22.5 6.1c-.8.4-1.7.6-2.6.8a4.6 4.6 0 0 0-7.9 3v.7a13 13 0 0 1-9.5-4.8 4.6 4.6 0 0 0 1.4 6.1c-.7 0-1.4-.2-2-.5v.1c0 2.2 1.6 4.1 3.7 4.6-.6.2-1.2.2-1.8.1.5 1.8 2.3 3.2 4.3 3.3A9.2 9.2 0 0 1 2 19.6a13 13 0 0 0 7 2c8.3 0 12.8-6.9 12.8-12.8v-.6c.9-.6 1.6-1.4 2.2-2.3z"/></svg></a>
+          <div style="margin-top:10px;font-weight:800" id="c_followTitle">Follow us</div>
+          <div class="socials" id="c_socials">
+            <!-- defaults (will be replaced if cms_contact.socials exists) -->
+            <a href="#" aria-label="Facebook" data-icon="fb">
+              <svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.7v-2.9h2.7V9.5c0-2.7 1.6-4.2 4-4.2 1.1 0 2.3.2 2.3.2v2.6h-1.3c-1.3 0-1.7.8-1.7 1.6v1.9h3l-.5 2.9h-2.5v7A10 10 0 0 0 22 12Z"/></svg>
+            </a>
+            <a href="#" aria-label="Twitter/X" data-icon="x">
+              <svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.1 1.5 4.5 4.5 0 0 0-7.8 3v1A10.7 10.7 0 0 1 3 4s-4 9 5 13a11.6 11.6 0 0 1-7 2c9 5 20 0 20-11.5 0-.3 0-.5-.1-.8A7.7 7.7 0 0 0 23 3z"/></svg>
+            </a>
+            <a href="#" aria-label="Instagram" data-icon="ig">
+              <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1.3 14h-2.6v-6h2.6v6zm0-7.3h-2.6V7h2.6v1.7z"/></svg>
+            </a>
           </div>
         </div>
       </div>
@@ -348,22 +345,22 @@ font-weight:700;margin-bottom:10px}
   </div>
 </main>
 
-  <footer>
-    <div class="footer-inner">
-      <div class="footer-left">© 2025 <strong>Bodunde</strong>. Designed & coded by Godadcore.</div>
-      <div class="socials">
-        <a href="#"><svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-2.9h2v-2.2c0-2 1.2-3.1 3-3.1.9 0 1.8.1 2 .1v2.3h-1.1c-1 0-1.3.6-1.3 1.2v1.7h2.6l-.4 2.9h-2.2v7A10 10 0 0 0 22 12z"/></svg></a>
-        <a href="#"><svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.1 1.5 4.4 4.4 0 0 0-7.5 3v1A10.7 10.7 0 0 1 3 4s-4 9 5 13a11.6 11.6 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.1-.8A7.7 7.7 0 0 0 23 3z"/></svg></a>
-        <a href="#"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1.3 14h-2.6v-6h2.6v6zm0-7.3h-2.6V7h2.6v1.7z"/></svg></a>
-      </div>
-      <nav class="footer-nav">
-        <a href="About.html">About</a>
-        <a href="portfolio.html">Portfolio</a>
-        <a href="blog.html">Blog</a>
-        <a href="contact.html">Contact</a>
-      </nav>
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">© 2025 <strong>Bodunde</strong>. Designed & coded by Godadcore.</div>
+    <div class="socials">
+      <a href="#"><svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-2.9h2v-2.2c0-2 1.2-3.1 3-3.1.9 0 1.8.1 2 .1v2.3h-1.1c-1 0-1.3.6-1.3 1.2v1.7h2.6l-.4 2.9h-2.2v7A10 10 0 0 0 22 12z"/></svg></a>
+      <a href="#"><svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.1 1.5 4.4 4.4 0 0 0-7.5 3v1A10.7 10.7 0 0 1 3 4s-4 9 5 13a11.6 11.6 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.1-.8A7.7 7.7 0 0 0 23 3z"/></svg></a>
+      <a href="#"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1.3 14h-2.6v-6h2.6v6zm0-7.3h-2.6V7h2.6v1.7z"/></svg></a>
     </div>
-  </footer>
+    <nav class="footer-nav">
+      <a href="About.html">About</a>
+      <a href="portfolio.html">Portfolio</a>
+      <a href="blog.html">Blog</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+</footer>
 
 <script>
   // hamburger
@@ -382,11 +379,11 @@ font-weight:700;margin-bottom:10px}
   }
 </script>
 
+<!-- ORIGINAL VALIDATION (unchanged) -->
 <script>
 document.getElementById("contactForm").addEventListener("submit", function(event) {
-  event.preventDefault(); // stop normal form submission
+  event.preventDefault();
 
-  // get form fields
   const firstName = document.getElementById("firstName").value.trim();
   const lastName = document.getElementById("lastName").value.trim();
   const email = document.getElementById("email").value.trim();
@@ -394,47 +391,131 @@ document.getElementById("contactForm").addEventListener("submit", function(event
   const consent = document.getElementById("consent").checked;
   const updates = document.getElementById("updates").checked;
 
-  // validation check
   if (!firstName || !lastName || !email || !message) {
     alert("⚠️ Please fill out all required fields before sending.");
     return;
   }
 
-  // email format check
   const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
   if (!email.match(emailPattern)) {
     alert("⚠️ Please enter a valid email address.");
     return;
   }
 
-  // checkbox check
   if (!consent || !updates) {
     alert("⚠️ Please agree to both checkboxes before sending.");
     return;
   }
 
-  // success
   alert("✅ Message sent successfully!");
   document.getElementById("contactForm").reset();
 });
 </script>
-<script>
-// === Scroll Reveal Animation ===
-const revealElements = document.querySelectorAll(".reveal");
 
+<!-- Scroll reveal (unchanged) -->
+<script>
+const revealElements = document.querySelectorAll(".reveal");
 const revealOnScroll = () => {
   const windowHeight = window.innerHeight;
   revealElements.forEach(el => {
     const revealTop = el.getBoundingClientRect().top;
-    const revealPoint = 120; // how early to trigger animation
-    if (revealTop < windowHeight - revealPoint) {
-      el.classList.add("active");
-    }
+    const revealPoint = 120;
+    if (revealTop < windowHeight - revealPoint) el.classList.add("active");
   });
 };
-
 window.addEventListener("scroll", revealOnScroll);
-revealOnScroll(); // trigger on load
+revealOnScroll();
+</script>
+
+<!-- ===== CMS LOADER: reads `localStorage.cms_contact` and swaps content ===== -->
+<script>
+(function(){
+  const raw = localStorage.getItem('cms_contact');
+  if(!raw) return;
+  let data;
+  try{ data = JSON.parse(raw); }catch(_){ return; }
+
+  // Helpers
+  const $ = (s)=>document.querySelector(s);
+  const setText = (sel, val)=>{ if(!val) return; const el=$(sel); if(el) el.textContent = val; };
+  const setHTML = (sel, val)=>{ if(!val) return; const el=$(sel); if(el) el.innerHTML = sanitize(val); };
+  const setAttr = (sel, attr, val)=>{ if(!val) return; const el=$(sel); if(el) el.setAttribute(attr, val); };
+  const setPlaceholder = (sel, val)=>{ if(!val) return; const el=$(sel); if(el) el.placeholder = val; };
+  const sanitize = (str)=> String(str||'').replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi,'');
+
+  // HERO
+  setText('#c_pill', data.pillText);
+  setText('#c_title', data.title);
+
+  // Left card heading + sub
+  setText('#c_leftHeading', data.leftHeading);
+  setText('#c_leftSub', data.leftSub);
+
+  // Form placeholders
+  setPlaceholder('#firstName', data.firstNamePH);
+  setPlaceholder('#lastName', data.lastNamePH);
+  setPlaceholder('#email', data.emailPH);
+  setPlaceholder('#message', data.messagePH);
+
+  // Consents + help + button
+  setHTML('#c_updatesText', data.updatesText);
+  setHTML('#c_consentText', data.consentText);
+  setText('#c_help', data.helpText);
+  setText('#c_btnText', data.buttonText);
+
+  // Right: photo
+  setAttr('#c_photo','src', data.photoUrl);
+  if(data.photoAlt) setAttr('#c_photo','alt', data.photoAlt);
+
+  // Quick contact title
+  setText('#c_quickTitle', data.quickTitle);
+
+  // Email
+  setText('#c_emailLabel', data.emailLabel);
+  if(data.emailValue){
+    const el = document.getElementById('c_emailValue');
+    el.textContent = data.emailValue;
+    el.href = 'mailto:' + data.emailValue;
+  }
+
+  // Phone
+  setText('#c_phoneLabel', data.phoneLabel);
+  if(data.phoneValue){
+    const el = document.getElementById('c_phoneValue');
+    el.textContent = data.phoneValue;
+    el.href = 'tel:' + data.phoneValue.replace(/\s|\(|\)|-/g,'');
+  }
+
+  // HQ
+  setText('#c_hqLabel', data.hqLabel);
+  setText('#c_hqValue', data.hqValue);
+
+  // Follow title
+  setText('#c_followTitle', data.followTitle);
+
+  // Socials (optional): replace whole block if provided
+  if(Array.isArray(data.socials) && data.socials.length){
+    const mapIcon = (type)=>{
+      // default brand icons; you can override with .svg if provided in CMS
+      const icons = {
+        fb:'<svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.7v-2.9h2.7V9.5c0-2.7 1.6-4.2 4-4.2 1.1 0 2.3.2 2.3.2v2.6h-1.3c-1.3 0-1.7.8-1.7 1.6v1.9h3l-.5 2.9h-2.5v7A10 10 0 0 0 22 12Z"/></svg>',
+        x:'<svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.1 1.5 4.5 4.5 0 0 0-7.8 3v1A10.7 10.7 0 0 1 3 4s-4 9 5 13a11.6 11.6 0 0 1-7 2c9 5 20 0 20-11.5 0-.3 0-.5-.1-.8A7.7 7.7 0 0 0 23 3z"/></svg>',
+        ig:'<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1.3 14h-2.6v-6h2.6v6zm0-7.3h-2.6V7h2.6v1.7z"/></svg>'
+      };
+      return icons[type] || icons.fb;
+    };
+    const host = document.getElementById('c_socials');
+    host.innerHTML = data.socials.map(s=>{
+      const svg = s.svg ? sanitize(s.svg) : mapIcon((s.type||'').toLowerCase());
+      const label = s.label || (s.type||'Social');
+      const url = s.url || '#';
+      return `<a href="${escapeAttr(url)}" target="_blank" rel="noopener" aria-label="${escapeAttr(label)}">${svg}</a>`;
+    }).join('');
+  }
+
+  // Escape helpers for attributes
+  function escapeAttr(s){ return String(s||'').replace(/"/g,'&quot;'); }
+})();
 </script>
 
 </body>

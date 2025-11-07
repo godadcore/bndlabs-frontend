@@ -8,22 +8,8 @@
 <meta name="description" content="Oops! The page you’re looking for doesn’t exist. Explore some of Bodunde’s latest work instead.">
 <link rel="canonical" href="https://bodunde.com/404">
 
-<!-- Open Graph -->
-<meta property="og:type" content="website">
-<meta property="og:title" content="Page Not Found | Bodunde">
-<meta property="og:description" content="Oops! The page you’re looking for doesn’t exist. Check out some of Bodunde’s latest design projects.">
-<meta property="og:image" content="https://www.adhamdannaway.com/wp-content/themes/dannaway/images/yoda2.jpg">
-
-<!-- X -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Page Not Found | Bodunde">
-<meta name="twitter:description" content="Explore Bodunde’s latest work — creative UI/UX projects, even if you hit a 404!">
-<meta name="twitter:image" content="https://www.adhamdannaway.com/wp-content/themes/dannaway/images/yoda2.jpg">
-
 <!-- Favicon + PWA -->
 <link rel="icon" type="image/png" href="favicon.png">
-<link rel="apple-touch-icon" href="favicon.png">
-<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#FF4D00">
 
 <style>
@@ -48,7 +34,7 @@ body{
   padding-top:80px;
 }
 
-/* ===== HEADER (hamburger everywhere) ===== */
+/* ===== HEADER ===== */
 header{
   height:64px;display:flex;align-items:center;justify-content:space-between;
   position:fixed;top:0;left:0;right:0;z-index:2000;
@@ -58,7 +44,7 @@ header{
 .brand{display:flex;align-items:center;gap:10px}
 .brand .name{font-weight:700;font-size:18px;color:#fff}
 .logo svg{width:36px;height:36px;fill:#fff}
-.nav{display:none}
+.nav{display:none;}
 .nav.active{
   display:flex;flex-direction:column;align-items:flex-end;
   position:absolute;top:64px;right:16px;width:220px;
@@ -67,9 +53,15 @@ header{
   box-shadow:0 10px 30px rgba(0,0,0,.35);
 }
 .nav a{
-  background:rgba(255,255,255,.08);color:#fff;
-  padding:12px 0;border-radius:999px;width:100%;text-align:center;
-  font-weight:500;transition:.2s;
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  padding:12px 0;
+  border-radius:999px;
+  width:100%;
+  text-align:center;
+  font-weight:500;
+  transition:.2s;
+  text-decoration:none; /* ✅ removes underline */
 }
 .nav a:hover{background:rgba(255,255,255,.18);transform:translateY(-1px)}
 .nav a.active{background:var(--primary-gradient);color:#fff;font-weight:700}
@@ -135,48 +127,38 @@ header{
 .work-card h3{margin:0 0 4px;font-size:18px}
 .work-card small{color:var(--faint)}
 
-/* FOOTER */
-  footer{
-    background:#f6f3ef;
-    color:var(--light-faint);
-    padding:20px;
-    margin-top:40px;
-  }
-  .footer-inner{
-    max-width:var(--max-width);
-    margin:0 auto;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    flex-wrap:wrap;
-    gap:12px;
-    text-align:center;
-  }
-  .footer-left{font-size:14px;}
-  .footer-nav{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
-  .footer-nav a{color:var(--light-faint);font-size:14px;text-transform:capitalize;}
-  .socials{display:flex;gap:10px;align-items:center;justify-content:center;}
-  .socials a{
-    width:36px;height:36px;
-    border-radius:999px;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    border:1px solid rgba(0,0,0,0.1);
-  }
-  .socials a svg{width:18px;height:18px;fill:#000;}
-  @media(max-width:720px){
-    .footer-inner{flex-direction:column;gap:10px;}
-  }
-/* === Scroll Reveal Base === */
-.reveal {
-  opacity: 0;
-  transform: translateY(40px);
-  transition: all 0.8s ease-out;
+/* ===== FOOTER ===== */
+footer{
+  background:#f6f3ef;
+  color:var(--light-faint);
+  padding:20px;
+  margin-top:40px;
 }
-.reveal.active {
-  opacity: 1;
-  transform: translateY(0);
+.footer-inner{
+  max-width:var(--max-width);
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:12px;
+  text-align:center;
+}
+.footer-left{font-size:14px;}
+.footer-nav{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
+.footer-nav a{color:var(--light-faint);font-size:14px;text-transform:capitalize;}
+.socials{display:flex;gap:10px;align-items:center;justify-content:center;}
+.socials a{
+  width:36px;height:36px;
+  border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid rgba(0,0,0,0.1);
+}
+.socials a svg{width:18px;height:18px;fill:#000;}
+@media(max-width:720px){
+  .footer-inner{flex-direction:column;gap:10px;}
 }
 </style>
 </head>
@@ -192,7 +174,7 @@ header{
 
   <nav class="nav" aria-label="Main">
     <a href="index.html">Home</a>
-    <a href="about.html">About</a>
+    <a href="About.html">About</a>
     <a href="portfolio.html">Portfolio</a>
     <a href="blog.html">Blog</a>
     <a href="contact.html">Contact</a>
@@ -202,98 +184,47 @@ header{
 </header>
 
 <main>
-  <!-- Error content -->
   <section class="error-wrap">
     <div class="error-text">
-      <h1>Hmmm...</h1>
-      <p>Occurred, a 404 error has. I sense much fear in you.</p>
-      <p>Trust in the force, clear your mind, unlearn what you have learned, and find your missing page you will.</p>
+      <h1 id="err_title">Hmmm...</h1>
+      <p id="err_line1">Occurred, a 404 error has. I sense much fear in you.</p>
+      <p id="err_line2">Trust in the force, clear your mind, unlearn what you have learned, and find your missing page you will.</p>
       <div class="error-actions">
-        <button class="btn green" onclick="window.location.href='index.html'">Do</button>
-        <button class="btn red" onclick="window.location.href='index.html'">Do not</button>
-        <button class="btn gray">Try</button>
+        <button class="btn green" id="btn_do">Do</button>
+        <button class="btn red" id="btn_donot">Do not</button>
+        <button class="btn gray" id="btn_try" disabled>Try</button>
       </div>
     </div>
 
     <div class="error-image">
-      <!-- Your provided Yoda image -->
-      <img src="https://www.adhamdannaway.com/wp-content/themes/dannaway/images/yoda2.jpg" alt="Yoda with lightsaber jumping out of iMac" />
+      <img id="err_img" src="https://www.adhamdannaway.com/wp-content/themes/dannaway/images/yoda2.jpg" alt="Yoda with lightsaber jumping out of iMac" />
     </div>
   </section>
 
-  <!-- Some of my latest work -->
   <section class="latest-wrap">
     <div class="latest-inner">
-      <div class="latest-title">SOME OF MY LATEST WORK</div>
-      <div class="work-grid">
-        <a class="work-card" href="project-segment-builder.html">
-          <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80" alt="Segment builder">
-          <div class="p">
-            <h3>Segment builder design</h3>
-            <small>Product design</small>
-          </div>
-        </a>
-
-        <a class="work-card" href="project-quest-research.html">
-          <img src="https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=1200&q=80" alt="Quest Research">
-          <div class="p">
-            <h3>Quest Research redesign</h3>
-            <small>Brand & website design</small>
-          </div>
-        </a>
-
-        <a class="work-card" href="project-hrhr.html">
-          <img src="https://images.unsplash.com/photo-1557800636-894a64c1696f?auto=format&fit=crop&w=1200&q=80" alt="HRHR">
-          <div class="p">
-            <h3>HRHR brand & website design</h3>
-            <small>Brand & website design</small>
-          </div>
-        </a>
-      </div>
+      <div class="latest-title" id="latest_title">SOME OF MY LATEST WORK</div>
+      <div class="work-grid" id="latest_grid"></div>
     </div>
   </section>
 </main>
 
-  <footer>
-    <div class="footer-inner">
-      <div class="footer-left">© 2025 <strong>Bodunde</strong>. Designed & coded by Godadcore.</div>
-      <div class="socials">
-        <a href="#"><svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-2.9h2v-2.2c0-2 1.2-3.1 3-3.1.9 0 1.8.1 2 .1v2.3h-1.1c-1 0-1.3.6-1.3 1.2v1.7h2.6l-.4 2.9h-2.2v7A10 10 0 0 0 22 12z"/></svg></a>
-        <a href="#"><svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.1 1.5 4.4 4.4 0 0 0-7.5 3v1A10.7 10.7 0 0 1 3 4s-4 9 5 13a11.6 11.6 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.1-.8A7.7 7.7 0 0 0 23 3z"/></svg></a>
-        <a href="#"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1.3 14h-2.6v-6h2.6v6zm0-7.3h-2.6V7h2.6v1.7z"/></svg></a>
-      </div>
-      <nav class="footer-nav">
-        <a href="About.html">About</a>
-        <a href="portfolio.html">Portfolio</a>
-        <a href="blog.html">Blog</a>
-        <a href="contact.html">Contact</a>
-      </nav>
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">© 2025 <strong>Bodunde</strong>. Designed & coded by Godadcore.</div>
+    <div class="socials">
+      <a href="#"><svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-2.9h2v-2.2c0-2 1.2-3.1 3-3.1.9 0 1.8.1 2 .1v2.3h-1.1c-1 0-1.3.6-1.3 1.2v1.7h2.6l-.4 2.9h-2.2v7A10 10 0 0 0 22 12z"/></svg></a>
+      <a href="#"><svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.1 1.5 4.4 4.4 0 0 0-7.5 3v1A10.7 10.7 0 0 1 3 4s-4 9 5 13a11.6 11.6 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.1-.8A7.7 7.7 0 0 0 23 3z"/></svg></a>
+      <a href="#"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1.3 14h-2.6v-6h2.6v6zm0-7.3h-2.6V7h2.6v1.7z"/></svg></a>
     </div>
-  </footer>
-<script>
-// === Scroll Reveal Animation ===
-const revealElements = document.querySelectorAll(".reveal");
-
-const revealOnScroll = () => {
-  const windowHeight = window.innerHeight;
-  revealElements.forEach(el => {
-    const revealTop = el.getBoundingClientRect().top;
-    const revealPoint = 120; // how early to trigger animation
-    if (revealTop < windowHeight - revealPoint) {
-      el.classList.add("active");
-    }
-  });
-};
-
-window.addEventListener("scroll", revealOnScroll);
-revealOnScroll(); // trigger on load
-</script>
-
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').catch(console.error);
-  }
-</script>
+    <nav class="footer-nav">
+      <a href="About.html">About</a>
+      <a href="portfolio.html">Portfolio</a>
+      <a href="blog.html">Blog</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+</footer>
 
 <script>
 const menuToggle=document.getElementById('menuToggle');
@@ -304,6 +235,38 @@ document.addEventListener('click',e=>{
     nav.classList.remove('active');
   }
 });
+
+/* === 404 CMS Loader === */
+(function(){
+  const raw=localStorage.getItem('cms_404');
+  let data={};
+  try{ data=JSON.parse(raw)||{} }catch(e){}
+
+  if(data.title) document.getElementById('err_title').textContent=data.title;
+  if(data.line1) document.getElementById('err_line1').textContent=data.line1;
+  if(data.line2) document.getElementById('err_line2').textContent=data.line2;
+  if(data.image) document.getElementById('err_img').src=data.image;
+  if(data.btnDo) document.getElementById('btn_do').textContent=data.btnDo;
+  if(data.btnDonot) document.getElementById('btn_donot').textContent=data.btnDonot;
+  if(data.latestTitle) document.getElementById('latest_title').textContent=data.latestTitle;
+
+  document.getElementById('btn_do').onclick=()=>window.location.href='index.html';
+  document.getElementById('btn_donot').onclick=()=>window.location.href='index.html';
+
+  const grid=document.getElementById('latest_grid');
+  const cmsProjects=JSON.parse(localStorage.getItem('cms_projects')||'[]');
+  if(cmsProjects.length){
+    const latest=cmsProjects.slice(-3).reverse();
+    grid.innerHTML=latest.map(p=>`
+      <a class="work-card" href="${p.link||'#'}">
+        <img src="${p.image||''}" alt="${p.title||''}">
+        <div class="p">
+          <h3>${p.title||''}</h3>
+          <small>${p.category||''}</small>
+        </div>
+      </a>`).join('');
+  }
+})();
 </script>
 </body>
 </html>
