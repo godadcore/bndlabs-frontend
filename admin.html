@@ -553,6 +553,60 @@
     </div>
   </div>
 </section>
+<!-- =========================
+     CONTACT PAGE CMS TAB (fully working)
+========================= -->
+<section class="card" id="panel_contact" style="display:none">
+  <div class="pad">
+    <div class="toolbar" style="margin-bottom:6px">
+      <div>
+        <div style="font-size:18px;font-weight:900">Contact Page</div>
+        <div class="muted">All fields map directly to your contact.html content. Saved data auto-loads from <code>cms_contact</code>.</div>
+      </div>
+      <div class="inline-tools">
+        <button class="ghost tiny" id="c_export">Export</button>
+        <button class="ghost tiny danger" id="c_reset">Reset</button>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="row"><label>Pill Text</label><input id="c_pill" class="field" placeholder="WRITE TO US"></div>
+      <div class="row"><label>Hero Title</label><input id="c_title" class="field" placeholder="Get In Touch"></div>
+    </div>
+    <div class="row"><label>Subtitle</label><textarea id="c_leftSub" class="field" rows="2" placeholder="Get in touch with us using the enquiry form or contact details below."></textarea></div>
+
+    <div class="grid2" style="margin-top:10px">
+      <div class="row"><label>First Name Placeholder</label><input id="c_firstNamePH" class="field" placeholder="First Name"></div>
+      <div class="row"><label>Last Name Placeholder</label><input id="c_lastNamePH" class="field" placeholder="Last Name"></div>
+      <div class="row"><label>Email Placeholder</label><input id="c_emailPH" class="field" placeholder="Email"></div>
+      <div class="row"><label>Message Placeholder</label><input id="c_messagePH" class="field" placeholder="Message"></div>
+      <div class="row wide"><label>Updates Text</label><input id="c_updatesText" class="field" placeholder="I agree to receive other communication messages."></div>
+      <div class="row wide"><label>Consent Text</label><input id="c_consentText" class="field" placeholder="I give my consent to store my data."></div>
+      <div class="row wide"><label>Privacy Note</label><input id="c_helpText" class="field" placeholder="We respect your privacy. You can opt out at any time."></div>
+      <div class="row"><label>Button Text</label><input id="c_buttonText" class="field" placeholder="Send Message"></div>
+    </div>
+
+    <hr style="margin:16px 0">
+
+    <div class="row"><label>Sidebar Image URL</label><input id="c_photoUrl" class="field" placeholder="https://…"></div>
+    <div class="row"><label>Sidebar Image Alt</label><input id="c_photoAlt" class="field" placeholder="Team photo"></div>
+
+    <div class="grid2" style="margin-top:10px">
+      <div class="row"><label>Quick Contact Title</label><input id="c_quickTitle" class="field" placeholder="Quick Contact"></div>
+      <div class="row"><label>Email Label</label><input id="c_emailLabel" class="field" placeholder="Email"></div>
+      <div class="row"><label>Email Value</label><input id="c_emailValue" class="field" placeholder="hello@bodunde.dev"></div>
+      <div class="row"><label>Phone Label</label><input id="c_phoneLabel" class="field" placeholder="Phone Number"></div>
+      <div class="row"><label>Phone Value</label><input id="c_phoneValue" class="field" placeholder="+234 (0) 800 000 0000"></div>
+      <div class="row"><label>HQ Label</label><input id="c_hqLabel" class="field" placeholder="Headquarter"></div>
+      <div class="row"><label>HQ Value</label><input id="c_hqValue" class="field" placeholder="Lagos, Nigeria"></div>
+    </div>
+
+    <div class="bar" style="margin-top:14px">
+      <button id="c_save" class="btn tiny">Save Contact</button>
+      <span id="c_ok" style="display:none;color:var(--green);font-weight:800">Saved ✓</span>
+    </div>
+  </div>
+</section>
 
     <!-- =========================
    404 PAGE CMS TAB
@@ -1252,6 +1306,76 @@ function loadAbout(){
   const saved = JSON.parse(localStorage.getItem(LS_ABOUT)||'{}');
   About.fill(saved);
 }
+/* =========================
+   CONTACT PAGE CMS LOGIC
+========================= */
+function loadContact(){
+  const c = Store.read(LS_CONTACT, '{}');
+  $('#c_pill').value = c.pillText || '';
+  $('#c_title').value = c.title || '';
+  $('#c_leftSub').value = c.leftSub || '';
+  $('#c_firstNamePH').value = c.firstNamePH || '';
+  $('#c_lastNamePH').value = c.lastNamePH || '';
+  $('#c_emailPH').value = c.emailPH || '';
+  $('#c_messagePH').value = c.messagePH || '';
+  $('#c_updatesText').value = c.updatesText || '';
+  $('#c_consentText').value = c.consentText || '';
+  $('#c_helpText').value = c.helpText || '';
+  $('#c_buttonText').value = c.buttonText || '';
+  $('#c_photoUrl').value = c.photoUrl || '';
+  $('#c_photoAlt').value = c.photoAlt || '';
+  $('#c_quickTitle').value = c.quickTitle || '';
+  $('#c_emailLabel').value = c.emailLabel || '';
+  $('#c_emailValue').value = c.emailValue || '';
+  $('#c_phoneLabel').value = c.phoneLabel || '';
+  $('#c_phoneValue').value = c.phoneValue || '';
+  $('#c_hqLabel').value = c.hqLabel || '';
+  $('#c_hqValue').value = c.hqValue || '';
+}
+
+$('#c_save').onclick = () => {
+  const obj = {
+    pillText: $('#c_pill').value.trim(),
+    title: $('#c_title').value.trim(),
+    leftSub: $('#c_leftSub').value.trim(),
+    firstNamePH: $('#c_firstNamePH').value.trim(),
+    lastNamePH: $('#c_lastNamePH').value.trim(),
+    emailPH: $('#c_emailPH').value.trim(),
+    messagePH: $('#c_messagePH').value.trim(),
+    updatesText: $('#c_updatesText').value.trim(),
+    consentText: $('#c_consentText').value.trim(),
+    helpText: $('#c_helpText').value.trim(),
+    buttonText: $('#c_buttonText').value.trim(),
+    photoUrl: $('#c_photoUrl').value.trim(),
+    photoAlt: $('#c_photoAlt').value.trim(),
+    quickTitle: $('#c_quickTitle').value.trim(),
+    emailLabel: $('#c_emailLabel').value.trim(),
+    emailValue: $('#c_emailValue').value.trim(),
+    phoneLabel: $('#c_phoneLabel').value.trim(),
+    phoneValue: $('#c_phoneValue').value.trim(),
+    hqLabel: $('#c_hqLabel').value.trim(),
+    hqValue: $('#c_hqValue').value.trim()
+  };
+  Store.write(LS_CONTACT, obj);
+  $('#c_ok').style.display='inline';
+  setTimeout(()=>$('#c_ok').style.display='none',1200);
+};
+
+// export/reset buttons
+$('#c_export').onclick = ()=>{
+  const c = Store.read(LS_CONTACT,'{}');
+  const blob = new Blob([JSON.stringify(c,null,2)],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download='contact.json'; a.click();
+  URL.revokeObjectURL(url);
+};
+$('#c_reset').onclick = ()=>{
+  if(confirm('Clear all Contact data?')){
+    localStorage.removeItem(LS_CONTACT);
+    loadContact();
+    alert('Contact data cleared.');
+  }
+};
 
 function autosaveAbout(){
   const payload = About.gather();
