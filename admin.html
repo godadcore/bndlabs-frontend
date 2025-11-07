@@ -550,6 +550,10 @@
         <button type="button" class="ghost tiny" id="add_social">+ Add Social</button>
         <span class="icon-demo mini">Tip: Choose Platform + Link. Optional custom SVG overrides the default.</span>
       </div>
+      <div class="bar" style="margin-top:16px">
+  <button class="btn tiny" id="saveContactBtn">💾 Save Contact</button>
+  <span id="contactSaved" style="display:none;color:var(--green);font-weight:800">Saved ✓</span>
+</div>
     </div>
   </div>
 </section>
@@ -1533,6 +1537,24 @@ function autosaveContact(){
   setTimeout(()=>{ try{ loadFour(); }catch{} }, 200);
 
 })();
+// ====== MANUAL SAVE CONTACT BUTTON ======
+const saveContactBtn = document.getElementById('saveContactBtn');
+if (saveContactBtn) {
+  saveContactBtn.addEventListener('click', () => {
+    try {
+      const payload = Contact.gather();
+      localStorage.setItem(LS_CONTACT, JSON.stringify(payload));
+      const saved = document.getElementById('contactSaved');
+      if (saved) {
+        saved.style.display = 'inline';
+        setTimeout(() => (saved.style.display = 'none'), 1500);
+      }
+      alert('✅ Contact data saved successfully!');
+    } catch (err) {
+      alert('⚠️ Failed to save contact: ' + err.message);
+    }
+  });
+}
 
 </script>
 </body>
