@@ -171,12 +171,11 @@
   if(menuToggle){ menuToggle.addEventListener("click", () => nav.classList.toggle("active")); }
 
 <!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script
+<!-- ✅ Correct Firebase v11 CDN -->
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-database-compat.js"></script>
 
-  
 <script>
-  // Firebase config (same as admin)
   const firebaseConfig = {
     apiKey: "AIzaSyAjupAgXu1zNxphgWrbyYOyp0UeYkCJhO4",
     authDomain: "bodunde-cms.firebaseapp.com",
@@ -187,7 +186,11 @@
     appId: "1:646132228201:web:dda94fe0d19291454702f8",
     measurementId: "G-P6HV8WLRWJ"
   };
-  firebase.initializeApp(firebaseConfig);
+
+  try { 
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig); 
+  } catch(e) { console.warn(e); }
+
   const db = firebase.database();
 </script>
 
@@ -197,7 +200,6 @@
   const host = document.getElementById('blogList');
   const fallback = document.getElementById('staticPosts');
 
-  // Load from Firebase
   db.ref(key).on('value', snap => {
     const data = snap.val() || [];
     if(!data.length){ fallback.style.display='block'; return; }
