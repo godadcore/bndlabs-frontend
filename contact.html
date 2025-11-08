@@ -426,74 +426,114 @@ const revealOnScroll = () => {
 window.addEventListener("scroll", revealOnScroll);
 revealOnScroll();
 </script>
+<!-- ===== CMS LOADER (Firebase + Local fallback) ===== -->
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-database-compat.js"></script>
 
-<!-- ===== CMS LOADER: reads localStorage.cms_contact and swaps content ===== -->
 <script>
-(function(){
-  const raw = localStorage.getItem('cms_contact');   // ✅ match admin key
-  if(!raw) return;
-  let d; try { d = JSON.parse(raw); } catch(_) { return; }
+  // === Firebase Setup ===
+  const firebaseConfig = {
+    apiKey: "AIzaSyAjupAgXu1zNxphgWrbyYOyp0UeYkCJhO4",
+    authDomain: "bodunde-cms.firebaseapp.com",
+    databaseURL: "https://bodunde-cms-default-rtdb.firebaseio.com",
+    projectId: "bodunde-cms",
+    storageBucket: "bodunde-cms.firebasestorage.app",
+    messagingSenderId: "646132228201",
+    appId: "1:646132228201:web:dda94fe0d19291454702f8",
+    measurementId: "G-P6HV8WLRWJ"
+  };
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+</script>
 
-  const $ = s => document.querySelector(s);
-  const setText = (sel, val) => { if(val==null) return; const el=$(sel); if(el) el.textContent = val; };
-  const setHTML = (sel, val) => { if(val==null) return; const el=$(sel); if(el) el.innerHTML = String(val).replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi,''); };
-  const setAttr = (sel, attr, val) => { if(val==null) return; const el=$(sel); if(el) el.setAttribute(attr, val); };
-  const setPH = (sel, val) => { if(val==null) return; const el=$(sel); if(el) el.placeholder = val; };
+<script>
+(async function(){
+  const key = 'cms_contact';
+  let data = await readFromFirebase(key);
+  if (!data) data = readLocal();
 
-  // HERO
-  setText('#c_pill',  d.c_pill);
-  setText('#c_title', d.c_title);
-  setText('#c_sub',   d.c_sub);
+  if (!data) return;
+  render(data);
 
-  // FORM labels + placeholders
-  setText('label[for="firstName"]', d.c_label_first);
-  setText('label[for="lastName"]',  d.c_label_last);
-  setText('label[for="email"]',     d.c_label_email);
-  setText('label[for="message"]',   d.c_label_message);
-
-  setPH('#firstName', d.c_label_first);
-  setPH('#lastName',  d.c_label_last);
-  setPH('#email',     d.c_label_email);
-  setPH('#message',   d.c_label_message);
-
-  // notices / consents / button
-  setText('#c_updatesText',  d.c_consent_1);
-  setText('#c_consentText',  d.c_consent_2);
-  setText('#c_privacyNote',  d.c_privacy);   // ensure an element with this id exists
-  setText('#c_btnText',      d.c_button);
-
-  // sidebar image
-  setAttr('#c_photo','src', d.c_image);
-
-  // Quick contact
-  setText('#c_quickTitle',      d.c_qc_title);
-  setText('#c_emailLabel',      d.c_qc_email_label);
-  if(d.c_qc_email_value){
-    const el = $('#c_emailValue'); if(el){ el.textContent=d.c_qc_email_value; el.href='mailto:'+d.c_qc_email_value; }
+  // ===== Firebase live fetch =====
+  async function readFromFirebase(key){
+    try {
+      const snap = await db.ref(key).get();
+      if (snap.exists()) {
+        const val = snap.val();
+        localStorage.setItem(key, JSON.stringify(val));
+        return val;
+      }
+    } catch(e){ console.warn('⚠️ Firebase failed for contact page', e); }
+    return null;
   }
 
-  setText('#c_phoneLabel',      d.c_qc_phone_label);
-  if(d.c_qc_phone_value){
-    const el = $('#c_phoneValue'); if(el){ el.textContent=d.c_qc_phone_value; el.href='tel:'+d.c_qc_phone_value.replace(/\s|\(|\)|-/g,''); }
+  // ===== Local fallback =====
+  function readLocal(){
+    try { return JSON.parse(localStorage.getItem(key) || '{}'); }
+    catch { return null; }
   }
 
-  setText('#c_hqLabel',         d.c_qc_hq_label);
-  setText('#c_hqValue',         d.c_qc_hq_value);
+  // ===== Render Contact Data =====
+  function render(d){
+    const $ = s => document.querySelector(s);
+    const setText = (sel,val)=>{ if(val==null) return; const el=$(sel); if(el) el.textContent=val; };
+    const setAttr = (sel,attr,val)=>{ if(val==null) return; const el=$(sel); if(el) el.setAttribute(attr,val); };
+    const setPH = (sel,val)=>{ if(val==null) return; const el=$(sel); if(el) el.placeholder=val; };
 
-  // Socials (optional: render if you have a #socials container)
-  if (Array.isArray(d.c_socials) && $('#socials')) {
-    const box = $('#socials'); box.innerHTML = '';
-    d.c_socials.forEach(s=>{
-      if(!s.url) return;
-      const li=document.createElement('li');
-      li.innerHTML = s.svg
-        ? `<a href="${s.url}" target="_blank" rel="noopener">${s.svg}</a>`
-        : `<a href="${s.url}" target="_blank" rel="noopener">${s.platform}</a>`;
-      box.appendChild(li);
-    });
+    // HERO
+    setText('#c_pill',  d.c_pill);
+    setText('#c_title', d.c_title);
+
+    // FORM
+    setText('#c_leftHeading', d.c_leftHeading);
+    setText('#c_leftSub', d.c_leftSub);
+    setText('#c_updatesText', d.c_consent_1);
+    setText('#c_consentText', d.c_consent_2);
+    setText('#c_help', d.c_help);
+    setText('#c_btnText', d.c_button);
+
+    // Placeholders
+    setPH('#firstName', d.c_label_first);
+    setPH('#lastName', d.c_label_last);
+    setPH('#email', d.c_label_email);
+    setPH('#message', d.c_label_message);
+
+    // IMAGE
+    setAttr('#c_photo','src', d.c_image);
+
+    // Quick Contact
+    setText('#c_quickTitle', d.c_qc_title);
+    setText('#c_emailLabel', d.c_qc_email_label);
+    if(d.c_qc_email_value){
+      const el = $('#c_emailValue');
+      if(el){ el.textContent = d.c_qc_email_value; el.href = 'mailto:' + d.c_qc_email_value; }
+    }
+    setText('#c_phoneLabel', d.c_qc_phone_label);
+    if(d.c_qc_phone_value){
+      const el = $('#c_phoneValue');
+      if(el){ el.textContent = d.c_qc_phone_value; el.href = 'tel:' + d.c_qc_phone_value.replace(/\s|\(|\)|-/g,''); }
+    }
+    setText('#c_hqLabel', d.c_qc_hq_label);
+    setText('#c_hqValue', d.c_qc_hq_value);
+    setText('#c_followTitle', d.c_followTitle);
+
+    // Socials
+    if (Array.isArray(d.c_socials)) {
+      const box = $('#c_socials');
+      if (box) {
+        box.innerHTML = '';
+        d.c_socials.forEach(s=>{
+          if(!s.url) return;
+          const a=document.createElement('a');
+          a.href=s.url; a.target='_blank'; a.rel='noopener';
+          a.innerHTML = s.svg || `<span>${s.platform}</span>`;
+          box.appendChild(a);
+        });
+      }
+    }
   }
 })();
 </script>
-
 </body>
 </html>
