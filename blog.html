@@ -168,14 +168,15 @@
   // Menu
   const menuToggle = document.getElementById("menuToggle");
   const nav = document.querySelector(".nav");
-  if(menuToggle){ menuToggle.addEventListener("click", () => nav.classList.toggle("active")); }
+  if (menuToggle) { menuToggle.addEventListener("click", () => nav.classList.toggle("active")); }
+</script>
 
-<!-- Firebase SDK -->
-<!-- ✅ Correct Firebase v11 CDN -->
+<!-- ✅ Firebase v11 CDN (compat) -->
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-database-compat.js"></script>
 
 <script>
+  // Firebase init
   const firebaseConfig = {
     apiKey: "AIzaSyAjupAgXu1zNxphgWrbyYOyp0UeYkCJhO4",
     authDomain: "bodunde-cms.firebaseapp.com",
@@ -187,67 +188,65 @@
     measurementId: "G-P6HV8WLRWJ"
   };
 
-  try { 
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig); 
-  } catch(e) { console.warn(e); }
-
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 </script>
 
 <script>
-(function(){
-  const key = 'cms_blogs';
-  const host = document.getElementById('blogList');
-  const fallback = document.getElementById('staticPosts');
+  // Blog list loader (Firebase → fallback to localStorage)
+  (function(){
+    const key = 'cms_blogs';
+    const host = document.getElementById('blogList');
+    const fallback = document.getElementById('staticPosts');
 
-  db.ref(key).on('value', snap => {
-    const data = snap.val() || [];
-    if(!data.length){ fallback.style.display='block'; return; }
-    render(data);
-  }, err => {
-    console.warn('⚠️ Firebase failed, fallback to localStorage', err);
-    const local = JSON.parse(localStorage.getItem(key)||'[]');
-    if(local.length) render(local); else fallback.style.display='block';
-  });
-
-  function render(list){
-    host.innerHTML='';
-    fallback.style.display='none';
-    list.sort((a,b)=>(b.updated||0)-(a.updated||0));
-
-    list.forEach(post=>{
-      const card=document.createElement('a');
-      card.className='blog-card reveal';
-      card.href=`blog-details.html?id=${encodeURIComponent(post.id)}`;
-      card.innerHTML=`
-        <img src="${escapeAttr(post.hero||'')}" alt="">
-        <div class="blog-card-content">
-          <h2>${escapeHtml(post.title||'Untitled')}</h2>
-          ${post.subtitle?`<p class="subtitle">${escapeHtml(post.subtitle)}</p>`:''}
-          <div class="author">
-            <img src="${escapeAttr(post.authorAvatar||'https://via.placeholder.com/88')}" alt="">
-            <div class="meta"><strong>${escapeHtml(post.author||'')}</strong><br>${escapeHtml(post.date||'')}</div>
-          </div>
-        </div>`;
-      host.appendChild(card);
+    db.ref(key).on('value', snap => {
+      const data = snap.val() || [];
+      if (!data.length) { fallback.style.display = 'block'; return; }
+      render(data);
+    }, err => {
+      console.warn('⚠️ Firebase failed, fallback to localStorage', err);
+      const local = JSON.parse(localStorage.getItem(key) || '[]');
+      if (local.length) render(local); else fallback.style.display = 'block';
     });
 
-    revealOnScroll();
-  }
+    function render(list){
+      host.innerHTML = '';
+      fallback.style.display = 'none';
+      list.sort((a,b)=>(b.updated||0)-(a.updated||0));
 
-  function revealOnScroll(){
-    const cards=document.querySelectorAll('.blog-card');
-    const reveal=()=>cards.forEach(c=>{
-      const r=c.getBoundingClientRect();
-      if(r.top<window.innerHeight-100)c.classList.add('visible');
-    });
-    window.addEventListener('scroll',reveal);
-    reveal();
-  }
+      list.forEach(post=>{
+        const card = document.createElement('a');
+        card.className = 'blog-card reveal';
+        card.href = `blog-details.html?id=${encodeURIComponent(post.id)}`;
+        card.innerHTML = `
+          <img src="${escapeAttr(post.hero||'')}" alt="">
+          <div class="blog-card-content">
+            <h2>${escapeHtml(post.title||'Untitled')}</h2>
+            ${post.subtitle ? `<p class="subtitle">${escapeHtml(post.subtitle)}</p>` : ''}
+            <div class="author">
+              <img src="${escapeAttr(post.authorAvatar||'https://via.placeholder.com/88')}" alt="">
+              <div class="meta"><strong>${escapeHtml(post.author||'')}</strong><br>${escapeHtml(post.date||'')}</div>
+            </div>
+          </div>`;
+        host.appendChild(card);
+      });
 
-  function escapeHtml(s){return String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
-  function escapeAttr(s){return String(s||'').replace(/"/g,'&quot;');}
-})();
+      revealOnScroll();
+    }
+
+    function revealOnScroll(){
+      const cards = document.querySelectorAll('.blog-card');
+      const reveal = () => cards.forEach(c=>{
+        const r = c.getBoundingClientRect();
+        if (r.top < window.innerHeight - 100) c.classList.add('visible');
+      });
+      window.addEventListener('scroll', reveal);
+      reveal();
+    }
+
+    function escapeHtml(s){return String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+    function escapeAttr(s){return String(s||'').replace(/"/g,'&quot;');}
+  })();
 </script>
 </body>
 </html>
