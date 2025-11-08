@@ -1654,19 +1654,22 @@ function autosaveContact(){
   setTimeout(()=>{ try{ loadFour(); }catch{} }, 200);
 
 })();
-// ====== MANUAL SAVE CONTACT BUTTON ======
+// ====== MANUAL SAVE CONTACT BUTTON (now saves to Firebase too) ======
 const saveContactBtn = document.getElementById('saveContactBtn');
 if (saveContactBtn) {
-  saveContactBtn.addEventListener('click', () => {
+  saveContactBtn.addEventListener('click', async () => {
     try {
       const payload = Contact.gather();
+      // Save locally as backup
       localStorage.setItem(LS_CONTACT, JSON.stringify(payload));
+      // ✅ Write to Firebase
+      await Store.write(LS_CONTACT, payload);
       const saved = document.getElementById('contactSaved');
       if (saved) {
         saved.style.display = 'inline';
         setTimeout(() => (saved.style.display = 'none'), 1500);
       }
-      alert('✅ Contact data saved successfully!');
+      alert('✅ Contact data saved successfully to Firebase!');
     } catch (err) {
       alert('⚠️ Failed to save contact: ' + err.message);
     }
