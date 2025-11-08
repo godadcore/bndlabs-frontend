@@ -1338,13 +1338,15 @@ function loadAbout(){
   };
 
   // hydrate
-  const saved = JSON.parse(localStorage.getItem(LS_ABOUT)||'{}');
+  (async ()=>{
+  const saved = await Store.read(LS_ABOUT,'{}');
   About.fill(saved);
+})();
 }
 
 function autosaveAbout(){
   const payload = About.gather();
-  localStorage.setItem(LS_ABOUT, JSON.stringify(payload));
+  Store.write(LS_ABOUT, payload);
 }
 
 /* =========================
