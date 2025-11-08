@@ -326,14 +326,11 @@ const revealOnScroll = () => {
 window.addEventListener("scroll", revealOnScroll);
 revealOnScroll();
 </script>
-<!-- ===== Firebase SDKs ===== -->
-<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js"></script>
+<!-- ===== Firebase + CMS (MODULAR FIX) ===== -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-<!-- ===== CMS HOOKS (Firebase + local fallback) ===== -->
-<script>
-(function(){
-  // --- Firebase (same config as admin) ---
   const firebaseConfig = {
     apiKey: "AIzaSyAjupAgXu1zNxphgWrbyYOyp0UeYkCJhO4",
     authDomain: "bodunde-cms.firebaseapp.com",
@@ -344,86 +341,58 @@ revealOnScroll();
     appId: "1:646132228201:web:dda94fe0d19291454702f8",
     measurementId: "G-P6HV8WLRWJ"
   };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
 
-  const HOME_KEY = 'cms_home';
-  const PROJ_KEY = 'cms_projects';
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
 
-  // --- read helper (Firebase first, then localStorage) ---
   async function readCMS(key, fallback = null) {
     try {
-      const snap = await db.ref(key).get();
+      const snap = await get(ref(db, key));
       if (snap.exists()) {
         const val = snap.val();
-        try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
+        localStorage.setItem(key, JSON.stringify(val));
         return val;
       }
-    } catch (_) {}
-    try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }
+    } catch (err) {
+      console.warn('Firebase read failed:', err);
+    }
+    try { return JSON.parse(localStorage.getItem(key)) ?? fallback; }
+    catch { return fallback; }
   }
 
-  // --- escape helpers ---
-  const escapeHtml = s => String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
-  const escapeAttr = s => String(s||'').replace(/"/g,'&quot;');
+  const escHTML = s => String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  const escAttr = s => String(s||'').replace(/"/g,'&quot;');
 
-  // --- hydrate Home hero ---
-  (async function hydrateHome(){
-    const h = await readCMS(HOME_KEY, {});
-    if (!h) return;
+  (async function(){
+    const h = await readCMS('cms_home', {});
+    window.__debugHome = h;
 
-    const $ = id => document.getElementById(id);
-    if ($('h_title') && h.title) $('h_title').textContent = h.title;
-    if ($('h_sub') && h.sub) $('h_sub').textContent = h.sub;
-    if ($('h_pill') && h.pill) $('h_pill').textContent = h.pill;
-    if ($('h_proj_title') && h.proj_title) $('h_proj_title').textContent = h.proj_title;
-    if ($('h_button') && h.button) $('h_button').textContent = h.button;
-
-    // optional chips (if you ever add to cms_home.softwares)
-    const sw = Array.isArray(h.softwares) ? h.softwares.filter(Boolean) : [];
-    const swHost = $('home_softwares');
-    if (swHost) {
-      if (sw.length) {
-        swHost.style.display = 'flex';
-        swHost.innerHTML = sw.map(s=>`<span class="chip">${escapeHtml(String(s))}</span>`).join('');
-      } else {
-        swHost.style.display = 'none';
-      }
-    }
+    if (h.title) document.getElementById('h_title').textContent = h.title;
+    if (h.sub) document.getElementById('h_sub').textContent = h.sub;
+    if (h.pill) document.getElementById('h_pill').textContent = h.pill;
+    if (h.proj_title) document.getElementById('h_proj_title').textContent = h.proj_title;
+    if (h.button) document.getElementById('h_button').textContent = h.button;
   })();
 
-  // --- hydrate Latest Projects (top 3 active by updated desc) ---
-  (async function hydrateProjects(){
+  (async function(){
     const grid = document.getElementById('projectsGrid');
-    if (!grid) return;
-
-    const list = await readCMS(PROJ_KEY, []);
-    if (!Array.isArray(list) || !list.length) {
-      grid.innerHTML = `<div style="text-align:center;color:var(--light-muted)">No projects yet.</div>`;
-      return;
-    }
-
-    const latest = list
+    const raw = await readCMS('cms_projects', []);
+    const projects = Array.isArray(raw) ? raw : Object.values(raw || {});
+    const latest = projects
       .filter(p => (p.status || 'active') === 'active')
-      .sort((a,b) => (b.updated||0) - (a.updated||0))
-      .slice(0,3);
+      .sort((a,b) => (b.updated || 0) - (a.updated || 0))
+      .slice(0, 3);
 
-    grid.innerHTML = latest.map(p => {
-      const img = escapeAttr(p.hero || '');
-      const title = escapeHtml(p.title || 'Untitled Project');
-      const tag = escapeHtml(p.tag || '');
-      const href = p.link ? escapeAttr(p.link) : `project-monitor.html?id=${encodeURIComponent(p.id||'')}`;
-      return `
-        <a href="${href}" class="project-card">
-          <img src="${img}" alt="${title}">
-          <div class="project-content">
-            <h3>${title}</h3>
-            <p>${tag}</p>
-          </div>
-        </a>`;
-    }).join('');
+    grid.innerHTML = latest.map(p => `
+      <a href="${p.link || `project-monitor.html?id=${encodeURIComponent(p.id||'')}`}" class="project-card">
+        <img src="${escAttr(p.hero||'')}" alt="${escAttr(p.title||'')}">
+        <div class="project-content">
+          <h3>${escHTML(p.title||'Untitled Project')}</h3>
+          <p>${escHTML(p.tag||'')}</p>
+        </div>
+      </a>
+    `).join('');
   })();
-})();
 </script>
 
 </body>
