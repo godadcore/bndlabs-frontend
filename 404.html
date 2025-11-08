@@ -291,6 +291,49 @@ document.addEventListener('click',e=>{
       </div>
     </a>`).join('');
 })();
+// ====== MANUAL SAVE 404 BUTTON (now saves to Firebase too) ======
+const saveFourBtn = document.getElementById('four_save');
+if (saveFourBtn) {
+  saveFourBtn.addEventListener('click', async () => {
+    try {
+      const val = (function collectFour() {
+        const q = (id) => document.getElementById(id);
+        return {
+          title: q('four_title').value.trim(),
+          line1: q('four_line1').value.trim(),
+          line2: q('four_line2').value.trim(),
+          btn_do_label: q('four_btn_do_label').value.trim(),
+          btn_do_link: q('four_btn_do_link').value.trim(),
+          btn_donot_label: q('four_btn_donot_label').value.trim(),
+          btn_donot_link: q('four_btn_donot_link').value.trim(),
+          btn_try_label: q('four_btn_try_label').value.trim(),
+          try_disabled: q('four_try_disabled').checked,
+          image: q('four_image').value.trim(),
+          use_latest: q('four_use_latest').checked,
+          latest_count: Number(q('four_latest_count').value || 0),
+          custom_projects: (q('four_custom_projects').value || '')
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean),
+          remove_nav_underline: q('four_remove_nav_underline').checked
+        };
+      })();
+
+      // ✅ Save to localStorage and Firebase
+      localStorage.setItem('cms_404', JSON.stringify(val));
+      await Store.write('cms_404', val);
+
+      const saved = document.getElementById('four_saved');
+      if (saved) {
+        saved.style.display = 'inline';
+        setTimeout(() => (saved.style.display = 'none'), 1500);
+      }
+      alert('✅ 404 data saved successfully to Firebase!');
+    } catch (err) {
+      alert('⚠️ Failed to save 404: ' + err.message);
+    }
+  });
+}
 </script>
 </body>
 </html>
