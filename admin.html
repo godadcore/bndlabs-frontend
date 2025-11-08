@@ -676,29 +676,114 @@
     </div>
   </div>
 </div>
+  <!-- Firebase SDK for Browser -->
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js"></script>
 
+<script>
+  // Your Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyAjupAgXu1zNxphgWrbyYOyp0UeYkCJhO4",
+    authDomain: "bodunde-cms.firebaseapp.com",
+    databaseURL: "https://bodunde-cms-default-rtdb.firebaseio.com",
+    projectId: "bodunde-cms",
+    storageBucket: "bodunde-cms.firebasestorage.app",
+    messagingSenderId: "646132228201",
+    appId: "1:646132228201:web:dda94fe0d19291454702f8",
+    measurementId: "G-P6HV8WLRWJ"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+  // Connect to Realtime Database
+  const db = firebase.database();
+</script>
 <script>
 /* ===== Storage Keys ===== */
 const LS_PROJECTS='cms_projects', LS_BLOGS='cms_blogs', LS_PROFILE='cms_profile', LS_HOME='cms_home', LS_ABOUT='cms_about', LS_CONTACT='cms_contact';
 
-/* ===== Tiny Store ===== */
-const Store={
-  read:(k,f)=>{try{return JSON.parse(localStorage.getItem(k)||f)}catch(e){return JSON.parse(f)}},
-  write:(k,v)=>localStorage.setItem(k,JSON.stringify(v)),
+/* ===== Tiny Store (Firebase version) ===== */
+const Store = {
+  async read(k, fallback) {
+    try {
+      const snap = await firebase.database().ref(k).get();
+      if (snap.exists()) return snap.val();
+      return JSON.parse(fallback);
+    } catch (err) {
+      console.warn('⚠️ Firebase read failed, using local backup', err);
+      return JSON.parse(localStorage.getItem(k) || fallback);
+    }
+  },
 
-  projects(){const a=this.read(LS_PROJECTS,'[]');a.sort((x,y)=>(y.updated||0)-(x.updated||0));return a},
-  putProject(p){const L=this.projects(); if(!p.id)p.id=crypto.randomUUID?crypto.randomUUID():String(Date.now()); p.updated=Date.now(); const i=L.findIndex(x=>x.id===p.id); if(i>=0)L[i]=p; else L.unshift(p); this.write(LS_PROJECTS,L); return p.id},
-  removeProject(id){this.write(LS_PROJECTS,this.projects().filter(x=>x.id!==id))},
-  byIdProject(id){return this.projects().find(x=>x.id===id)},
+  async write(k, v) {
+    try {
+      await firebase.database().ref(k).set(v);
+    } catch (err) {
+      console.error('⚠️ Firebase write failed, saving locally', err);
+      localStorage.setItem(k, JSON.stringify(v));
+    }
+  },
 
-  blogs(){const a=this.read(LS_BLOGS,'[]');a.sort((x,y)=>(y.updated||0)-(x.updated||0));return a},
-  putBlog(b){const L=this.blogs(); if(!b.id)b.id=crypto.randomUUID?crypto.randomUUID():String(Date.now()); b.updated=Date.now(); const i=L.findIndex(x=>x.id===b.id); if(i>=0)L[i]=b; else L.unshift(b); this.write(LS_BLOGS,L); return b.id},
-  removeBlog(id){this.write(LS_BLOGS,this.blogs().filter(x=>x.id!==id))},
-  byIdBlog(id){return this.blogs().find(x=>x.id===id)},
+  projects() {
+    const a = JSON.parse(localStorage.getItem(LS_PROJECTS) || '[]');
+    a.sort((x, y) => (y.updated || 0) - (x.updated || 0));
+    return a;
+  },
 
-  profile(){return this.read(LS_PROFILE,'{}')},
-  saveProfile(p){this.write(LS_PROFILE,p)}
+  putProject(p) {
+    const L = this.projects();
+    if (!p.id) p.id = crypto.randomUUID ? crypto.randomUUID() : String(Date.now());
+    p.updated = Date.now();
+    const i = L.findIndex(x => x.id === p.id);
+    if (i >= 0) L[i] = p; else L.unshift(p);
+    this.write(LS_PROJECTS, L);
+    return p.id;
+  },
+
+  removeProject(id) {
+    const newList = this.projects().filter(x => x.id !== id);
+    this.write(LS_PROJECTS, newList);
+  },
+
+  byIdProject(id) {
+    return this.projects().find(x => x.id === id);
+  },
+
+  blogs() {
+    const a = JSON.parse(localStorage.getItem(LS_BLOGS) || '[]');
+    a.sort((x, y) => (y.updated || 0) - (x.updated || 0));
+    return a;
+  },
+
+  putBlog(b) {
+    const L = this.blogs();
+    if (!b.id) b.id = crypto.randomUUID ? crypto.randomUUID() : String(Date.now());
+    b.updated = Date.now();
+    const i = L.findIndex(x => x.id === b.id);
+    if (i >= 0) L[i] = b; else L.unshift(b);
+    this.write(LS_BLOGS, L);
+    return b.id;
+  },
+
+  removeBlog(id) {
+    const newList = this.blogs().filter(x => x.id !== id);
+    this.write(LS_BLOGS, newList);
+  },
+
+  byIdBlog(id) {
+    return this.blogs().find(x => x.id === id);
+  },
+
+  profile() {
+    return JSON.parse(localStorage.getItem(LS_PROFILE) || '{}');
+  },
+
+  saveProfile(p) {
+    this.write(LS_PROFILE, p);
+  }
 };
+
 
 /* ===== Shortcuts ===== */
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
@@ -1556,29 +1641,6 @@ if (saveContactBtn) {
   });
 }
 
-</script>
-  <!-- Firebase SDK for Browser -->
-<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js"></script>
-
-<script>
-  // Your Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyAjupAgXu1zNxphgWrbyYOyp0UeYkCJhO4",
-    authDomain: "bodunde-cms.firebaseapp.com",
-    databaseURL: "https://bodunde-cms-default-rtdb.firebaseio.com",
-    projectId: "bodunde-cms",
-    storageBucket: "bodunde-cms.firebasestorage.app",
-    messagingSenderId: "646132228201",
-    appId: "1:646132228201:web:dda94fe0d19291454702f8",
-    measurementId: "G-P6HV8WLRWJ"
-  };
-
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-
-  // Connect to Realtime Database
-  const db = firebase.database();
 </script>
 </body>
 </html>
