@@ -399,6 +399,8 @@
           <div class="inline-tools">
             <button class="ghost tiny" id="about_export">Export</button>
             <button class="ghost tiny danger" id="about_reset">Reset</button>
+            <button class="btn tiny" id="about_save">💾 Save About</button>
+  <span id="about_ok" style="display:none;color:#16A34A;font-weight:800">Saved ✓</span>
           </div>
         </div>
 
@@ -1322,8 +1324,8 @@ function loadAbout(){
 
   // autosave on any input change / typing (WhatsApp style)
   $('#panel_about').addEventListener('input', (e)=> {
-    if(e.target.matches('input,textarea,select,div[contenteditable]')) autosaveAbout();
-  });
+  if(e.target.matches('input,textarea,select,div[contenteditable]')) debouncedAutoSaveAbout();
+});
 
   // export about only
   $('#about_export').onclick=()=>{
@@ -1348,7 +1350,35 @@ function autosaveAbout(){
   const payload = About.gather();
   Store.write(LS_ABOUT, payload);
 }
-
+function debounce(fn, ms = 800) {
+  let t;
+  return (...a) => {
+    clearTimeout(t);
+    t = setTimeout(() => fn(...a), ms);
+  };
+}
+const debouncedAutoSaveAbout = debounce(() => {
+  const payload = About.gather();
+  Store.write(LS_ABOUT, payload);
+}, 800);
+// ====== MANUAL SAVE ABOUT BUTTON ======
+const aboutSaveBtn = document.getElementById('about_save');
+if (aboutSaveBtn) {
+  aboutSaveBtn.addEventListener('click', async () => {
+    try {
+      const payload = About.gather();
+      await Store.write(LS_ABOUT, payload);
+      const ok = document.getElementById('about_ok');
+      if (ok) {
+        ok.style.display = 'inline';
+        setTimeout(() => (ok.style.display = 'none'), 1500);
+      }
+      alert('✅ About data saved successfully!');
+    } catch (err) {
+      alert('⚠️ Failed to save About: ' + err.message);
+    }
+  });
+}
 /* =========================
    CONTACT TAB: AUTOSAVE + UI
 ========================= */
