@@ -236,36 +236,60 @@ document.addEventListener('click',e=>{
   }
 });
 
-/* === 404 CMS Loader === */
+/* === 404 CMS Loader (Dynamic) === */
 (function(){
-  const raw=localStorage.getItem('cms_404');
-  let data={};
-  try{ data=JSON.parse(raw)||{} }catch(e){}
+  const raw = localStorage.getItem('cms_404');
+  let d = {};
+  try { d = JSON.parse(raw) || {}; } catch(e) { d = {}; }
 
-  if(data.title) document.getElementById('err_title').textContent=data.title;
-  if(data.line1) document.getElementById('err_line1').textContent=data.line1;
-  if(data.line2) document.getElementById('err_line2').textContent=data.line2;
-  if(data.image) document.getElementById('err_img').src=data.image;
-  if(data.btnDo) document.getElementById('btn_do').textContent=data.btnDo;
-  if(data.btnDonot) document.getElementById('btn_donot').textContent=data.btnDonot;
-  if(data.latestTitle) document.getElementById('latest_title').textContent=data.latestTitle;
+  // --- Texts ---
+  if(d.title) document.getElementById('err_title').textContent = d.title;
+  if(d.line1) document.getElementById('err_line1').textContent = d.line1;
+  if(d.line2) document.getElementById('err_line2').textContent = d.line2;
+  if(d.image) document.getElementById('err_img').src = d.image;
 
-  document.getElementById('btn_do').onclick=()=>window.location.href='index.html';
-  document.getElementById('btn_donot').onclick=()=>window.location.href='index.html';
+  // --- Buttons ---
+  const btnDo = document.getElementById('btn_do');
+  const btnDonot = document.getElementById('btn_donot');
+  const btnTry = document.getElementById('btn_try');
 
-  const grid=document.getElementById('latest_grid');
-  const cmsProjects=JSON.parse(localStorage.getItem('cms_projects')||'[]');
-  if(cmsProjects.length){
-    const latest=cmsProjects.slice(-3).reverse();
-    grid.innerHTML=latest.map(p=>`
-      <a class="work-card" href="${p.link||'#'}">
-        <img src="${p.image || p.hero || ''}" alt="${p.title || ''}">
-        <div class="p">
-          <h3>${p.title||''}</h3>
-          <small>${p.category||''}</small>
-        </div>
-      </a>`).join('');
+  if(d.btn_do_label) btnDo.textContent = d.btn_do_label;
+  if(d.btn_donot_label) btnDonot.textContent = d.btn_donot_label;
+  if(d.btn_try_label) btnTry.textContent = d.btn_try_label;
+  if(d.try_disabled) btnTry.disabled = true;
+  else btnTry.disabled = false;
+
+  btnDo.onclick = ()=> window.location.href = d.btn_do_link || 'index.html';
+  btnDonot.onclick = ()=> window.location.href = d.btn_donot_link || 'index.html';
+  btnTry.onclick = ()=> window.location.href = 'index.html'; // optional custom action
+
+  // --- Latest work section ---
+  const grid = document.getElementById('latest_grid');
+  const titleEl = document.getElementById('latest_title');
+  titleEl.textContent = 'SOME OF MY LATEST WORK';
+
+  const cmsProjects = JSON.parse(localStorage.getItem('cms_projects') || '[]');
+  if(!cmsProjects.length) return;
+
+  let showProjects = [];
+
+  if(d.use_latest){
+    const count = d.latest_count || 3;
+    showProjects = cmsProjects.slice(-count).reverse();
+  } else if(Array.isArray(d.custom_projects) && d.custom_projects.length){
+    showProjects = cmsProjects.filter(p=> d.custom_projects.includes(p.id));
+  } else {
+    showProjects = cmsProjects.slice(-3).reverse();
   }
+
+  grid.innerHTML = showProjects.map(p=>`
+    <a class="work-card" href="${p.link || '#'}">
+      <img src="${p.hero || p.image || ''}" alt="${p.title || ''}">
+      <div class="p">
+        <h3>${p.title || ''}</h3>
+        <small>${p.tag || ''}</small>
+      </div>
+    </a>`).join('');
 })();
 </script>
 </body>
