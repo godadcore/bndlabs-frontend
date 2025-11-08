@@ -285,9 +285,11 @@
 
 <script>
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').catch(console.error);
+    navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister()));
+    caches && caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
   }
 </script>
+
 
 <script>
   const menuToggle = document.getElementById("menuToggle");
@@ -324,69 +326,103 @@ const revealOnScroll = () => {
 window.addEventListener("scroll", revealOnScroll);
 revealOnScroll();
 </script>
+<!-- ===== Firebase SDKs ===== -->
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js"></script>
 
-<!-- ===== CMS HOOKS FOR HOME + LATEST PROJECTS ===== -->
+<!-- ===== CMS HOOKS (Firebase + local fallback) ===== -->
 <script>
 (function(){
-  const homeKey = 'cms_home';
-  const projKey = 'cms_projects';
+  // --- Firebase (same config as admin) ---
+  const firebaseConfig = {
+    apiKey: "AIzaSyAjupAgXu1zNxphgWrbyYOyp0UeYkCJhO4",
+    authDomain: "bodunde-cms.firebaseapp.com",
+    databaseURL: "https://bodunde-cms-default-rtdb.firebaseio.com",
+    projectId: "bodunde-cms",
+    storageBucket: "bodunde-cms.firebasestorage.app",
+    messagingSenderId: "646132228201",
+    appId: "1:646132228201:web:dda94fe0d19291454702f8",
+    measurementId: "G-P6HV8WLRWJ"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
 
-  /* --- 1. Load Home Content --- */
-  try {
-    const h = JSON.parse(localStorage.getItem(homeKey) || '{}');
-    if(h.title) document.getElementById('h_title').textContent = h.title;
-    if(h.sub) document.getElementById('h_sub').textContent = h.sub;
-    if(h.pill) document.getElementById('h_pill').textContent = h.pill;
-    if(h.proj_title) document.getElementById('h_proj_title').textContent = h.proj_title;
+  const HOME_KEY = 'cms_home';
+  const PROJ_KEY = 'cms_projects';
 
-    // Button
-    const btn = document.getElementById('h_button');
-    if(btn && h.button) btn.textContent = h.button;
-
-    // Optional software badges
-    const sw = Array.isArray(h.softwares) ? h.softwares.filter(Boolean) : [];
-    const swHost = document.getElementById('home_softwares');
-    if (sw.length && swHost){
-      swHost.style.display = 'flex';
-      swHost.innerHTML = sw.map(s=>`<span class="chip">${escapeHtml(String(s))}</span>`).join('');
-    }
-  } catch(e) {
-    console.warn('Home content load failed:', e);
+  // --- read helper (Firebase first, then localStorage) ---
+  async function readCMS(key, fallback = null) {
+    try {
+      const snap = await db.ref(key).get();
+      if (snap.exists()) {
+        const val = snap.val();
+        try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
+        return val;
+      }
+    } catch (_) {}
+    try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }
   }
 
-  /* --- 2. Load Latest 3 Projects --- */
-  try {
+  // --- escape helpers ---
+  const escapeHtml = s => String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  const escapeAttr = s => String(s||'').replace(/"/g,'&quot;');
+
+  // --- hydrate Home hero ---
+  (async function hydrateHome(){
+    const h = await readCMS(HOME_KEY, {});
+    if (!h) return;
+
+    const $ = id => document.getElementById(id);
+    if ($('h_title') && h.title) $('h_title').textContent = h.title;
+    if ($('h_sub') && h.sub) $('h_sub').textContent = h.sub;
+    if ($('h_pill') && h.pill) $('h_pill').textContent = h.pill;
+    if ($('h_proj_title') && h.proj_title) $('h_proj_title').textContent = h.proj_title;
+    if ($('h_button') && h.button) $('h_button').textContent = h.button;
+
+    // optional chips (if you ever add to cms_home.softwares)
+    const sw = Array.isArray(h.softwares) ? h.softwares.filter(Boolean) : [];
+    const swHost = $('home_softwares');
+    if (swHost) {
+      if (sw.length) {
+        swHost.style.display = 'flex';
+        swHost.innerHTML = sw.map(s=>`<span class="chip">${escapeHtml(String(s))}</span>`).join('');
+      } else {
+        swHost.style.display = 'none';
+      }
+    }
+  })();
+
+  // --- hydrate Latest Projects (top 3 active by updated desc) ---
+  (async function hydrateProjects(){
     const grid = document.getElementById('projectsGrid');
     if (!grid) return;
 
-    const projects = JSON.parse(localStorage.getItem(projKey) || '[]');
-    if(!projects.length){
+    const list = await readCMS(PROJ_KEY, []);
+    if (!Array.isArray(list) || !list.length) {
       grid.innerHTML = `<div style="text-align:center;color:var(--light-muted)">No projects yet.</div>`;
       return;
     }
 
-    // Sort and pick 3 latest active
-    const latest = projects
+    const latest = list
       .filter(p => (p.status || 'active') === 'active')
-      .sort((a,b) => (b.updated || 0) - (a.updated || 0))
+      .sort((a,b) => (b.updated||0) - (a.updated||0))
       .slice(0,3);
 
-    grid.innerHTML = latest.map(p => `
-      <a href="project-monitor.html?id=${encodeURIComponent(p.id)}" class="project-card">
-        <img src="${escapeAttr(p.hero || '')}" alt="${escapeAttr(p.title || '')}">
-        <div class="project-content">
-          <h3>${escapeHtml(p.title || 'Untitled Project')}</h3>
-          <p>${escapeHtml(p.tag || '')}</p>
-        </div>
-      </a>
-    `).join('');
-  } catch(e) {
-    console.warn('Projects load failed:', e);
-  }
-
-  /* --- Helper functions --- */
-  function escapeHtml(s){ return String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
-  function escapeAttr(s){ return String(s||'').replace(/"/g,'&quot;'); }
+    grid.innerHTML = latest.map(p => {
+      const img = escapeAttr(p.hero || '');
+      const title = escapeHtml(p.title || 'Untitled Project');
+      const tag = escapeHtml(p.tag || '');
+      const href = p.link ? escapeAttr(p.link) : `project-monitor.html?id=${encodeURIComponent(p.id||'')}`;
+      return `
+        <a href="${href}" class="project-card">
+          <img src="${img}" alt="${title}">
+          <div class="project-content">
+            <h3>${title}</h3>
+            <p>${tag}</p>
+          </div>
+        </a>`;
+    }).join('');
+  })();
 })();
 </script>
 
