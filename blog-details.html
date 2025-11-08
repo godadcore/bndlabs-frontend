@@ -180,85 +180,129 @@
 </footer>
 
 <script>
+  // === Menu toggle ===
   const menuToggle = document.getElementById('menuToggle');
   const nav = document.querySelector('.nav');
   menuToggle.addEventListener('click', () => nav.classList.toggle('active'));
   document.addEventListener('click', (e) => {
     if (!nav.contains(e.target) && !menuToggle.contains(e.target)) nav.classList.remove('active');
   });
+</script>
 
-  (function(){
-    const key='cms_blogs';
-    const params=new URLSearchParams(location.search);
-    const id=params.get('id');
+<!-- ✅ Firebase SDK (same version as others) -->
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-database-compat.js"></script>
 
-    const posts = readPosts();
-    if(!posts.length) return;
+<script>
+  // === Firebase Config ===
+  const firebaseConfig = {
+    apiKey: "AIzaSyAjupAgXu1zNxphgWrbyYOyp0UeYkCJhO4",
+    authDomain: "bodunde-cms.firebaseapp.com",
+    databaseURL: "https://bodunde-cms-default-rtdb.firebaseio.com",
+    projectId: "bodunde-cms",
+    storageBucket: "bodunde-cms.firebasestorage.app",
+    messagingSenderId: "646132228201",
+    appId: "1:646132228201:web:dda94fe0d19291454702f8",
+    measurementId: "G-P6HV8WLRWJ"
+  };
 
-    const post = posts.find(p=>String(p.id)===String(id)) || posts[0];
-function readProfile(){
-  try { return JSON.parse(localStorage.getItem('cms_profile') || '{}'); }
-  catch(e){ return {}; }
-}
-const profile = readProfile();
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+</script>
 
-   setText('#post_title', post.title);
-setText('#post_sub', post.subtitle);
-setText('#post_date', post.date);
-setText('#post_tag', post.tag || post.category);
+<script>
+  (async function(){
+    const key = 'cms_blogs';
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id');
 
-// author: prefer profile, fallback to post fields
-setText('#post_author', profile.name || post.author || 'Admin');
-const imgEl = document.getElementById('author_img');
-if (imgEl) imgEl.src = profile.avatar || 'default-avatar.png';
+    // === Read from Firebase first ===
+    let posts = await readFromFirebase(key);
+    if (!posts || !posts.length) posts = readLocal();
 
+    if (!posts.length) return;
 
-    // body render: use innerHTML for formatted text
-    const body = document.getElementById('article_body');
-    body.innerHTML = '';
-    const items = Array.isArray(post.sections)?post.sections:[];
-    let i=0;
-    while(i<items.length){
-      const s = items[i];
-      if(s.type==='h2'){
-        const h2=document.createElement('h2');h2.className='reveal';h2.innerHTML=s.value||'';body.appendChild(h2);i++;
-      }else if(s.type==='p'){
-        const p=document.createElement('p');p.className='reveal';p.innerHTML=s.value||'';body.appendChild(p);i++;
-      }else if(s.type==='img'){
-        const wrap=document.createElement('div');wrap.className='illustration reveal';
-        wrap.innerHTML = `<img src="${escapeAttr(s.value||'')}" alt="${escapeAttr(s.alt||'')}">`;body.appendChild(wrap);i++;
-      }else if(s.type==='quote'){
-        const q=document.createElement('blockquote');q.className='reveal';q.style.cssText='border-left:4px solid rgba(0,0,0,.1);margin:14px 0;padding:10px 14px;color:var(--light-muted)';
-        q.innerHTML=s.value||'';body.appendChild(q);i++;
-      }else{i++;}
+    const post = posts.find(p => String(p.id) === String(id)) || posts[0];
+    renderPost(post, posts);
+
+    // --- Firebase reader ---
+    async function readFromFirebase(key){
+      try {
+        const snap = await db.ref(key).get();
+        if (snap.exists()) {
+          const val = snap.val();
+          localStorage.setItem(key, JSON.stringify(val));
+          return val;
+        }
+      } catch(e) { console.warn('Firebase failed', e); }
+      return [];
     }
 
-    const recent = posts.filter(p=>String(p.id)!==String(post.id));
-    if(recent.length){
-      const list = document.getElementById('recent_list');
-      document.getElementById('recent_wrap').style.display='block';
-      recent.slice(0,4).forEach(p=>{
-        const li=document.createElement('li');
-        li.className='reveal';
-        li.innerHTML = `<a href="blog-details.html?id=${encodeURIComponent(p.id)}">${escapeHtml(p.title||'Untitled')}</a>`;
-        list.appendChild(li);
-      });
-    }
-
-    const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');observer.unobserve(e.target);}});},{threshold:.12});
-    document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
-
-    function readPosts(){
-      try{
-        const arr=JSON.parse(localStorage.getItem(key)||'[]');
-        arr.sort((a,b)=>{
-          const au=a.updated||Date.parse(a.date||0)||0;
-          const bu=b.updated||Date.parse(b.date||0)||0;
-          return bu-au;
-        });
+    // --- Local reader ---
+    function readLocal(){
+      try {
+        const arr = JSON.parse(localStorage.getItem(key) || '[]');
+        arr.sort((a,b)=> (b.updated||0) - (a.updated||0));
         return arr;
-      }catch(e){return []}
+      } catch { return []; }
     }
+
+    // --- Render the selected post ---
+    function renderPost(post, all){
+      setText('#post_title', post.title);
+      setText('#post_sub', post.subtitle);
+      setText('#post_date', post.date);
+      setText('#post_tag', post.tag || post.category);
+
+      const profile = readProfile();
+      setText('#post_author', profile.name || post.author || 'Admin');
+      const imgEl = document.getElementById('author_img');
+      if (imgEl) imgEl.src = profile.avatar || post.authorAvatar || 'default-avatar.png';
+
+      const body = document.getElementById('article_body');
+      body.innerHTML = '';
+      const items = Array.isArray(post.sections) ? post.sections : [];
+      items.forEach(s=>{
+        if (s.type === 'h2') body.innerHTML += `<h2 class="reveal">${s.value||''}</h2>`;
+        else if (s.type === 'p') body.innerHTML += `<p class="reveal">${s.value||''}</p>`;
+        else if (s.type === 'img') body.innerHTML += `
+          <div class="illustration reveal">
+            <img src="${escapeAttr(s.value||'')}" alt="${escapeAttr(s.alt||'')}">
+          </div>`;
+        else if (s.type === 'quote') body.innerHTML += `
+          <blockquote class="reveal" style="border-left:4px solid rgba(0,0,0,.1);margin:14px 0;padding:10px 14px;color:var(--light-muted)">
+            ${s.value||''}
+          </blockquote>`;
+      });
+
+      const recent = all.filter(p => String(p.id) !== String(post.id));
+      if (recent.length){
+        const list = document.getElementById('recent_list');
+        document.getElementById('recent_wrap').style.display = 'block';
+        recent.slice(0,4).forEach(p=>{
+          const li = document.createElement('li');
+          li.className = 'reveal';
+          li.innerHTML = `<a href="blog-details.html?id=${encodeURIComponent(p.id)}">${escapeHtml(p.title||'Untitled')}</a>`;
+          list.appendChild(li);
+        });
+      }
+
+      const observer = new IntersectionObserver(entries=>{
+        entries.forEach(e=>{
+          if(e.isIntersecting){
+            e.target.classList.add('show');
+            observer.unobserve(e.target);
+          }
+        });
+      },{threshold:.12});
+      document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+    }
+
+    function readProfile(){
+      try { return JSON.parse(localStorage.getItem('cms_profile') || '{}'); }
+      catch { return {}; }
+    }
+
     function setText(sel,val){const el=document.querySelector(sel); if(el) el.textContent = val||'';}
     function escapeHtml(s){return String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
     function escapeAttr(s){return String(s||'').replace(/"/g,'&quot;');}
