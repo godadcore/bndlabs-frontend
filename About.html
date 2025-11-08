@@ -362,8 +362,9 @@
     });
   }
 </script>
-<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-database-compat.js"></script>
+
 <script>
 /* Firebase-first About loader (falls back to localStorage). No layout changes. */
 (function(){
@@ -471,6 +472,12 @@
     }
   })();
 })();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister()));
+  caches && caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+}
 </script>
 
 <script>
