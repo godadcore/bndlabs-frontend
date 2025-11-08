@@ -170,21 +170,53 @@
   const nav = document.querySelector(".nav");
   if(menuToggle){ menuToggle.addEventListener("click", () => nav.classList.toggle("active")); }
 
-  // CMS render (from localStorage)
-  (function(){
-    const key = 'cms_blogs';
-    const list = getPosts();
-    const host = document.getElementById('blogList');
-    const fallback = document.getElementById('staticPosts');
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-    if(!list.length){ fallback.style.display='block'; return; }
+<script>
+  // Firebase config (same as admin)
+  const firebaseConfig = {
+    apiKey: "AIzaSyAjupAgXu1zNxphgWrbyYOyp0UeYkCJhO4",
+    authDomain: "bodunde-cms.firebaseapp.com",
+    databaseURL: "https://bodunde-cms-default-rtdb.firebaseio.com",
+    projectId: "bodunde-cms",
+    storageBucket: "bodunde-cms.firebasestorage.app",
+    messagingSenderId: "646132228201",
+    appId: "1:646132228201:web:dda94fe0d19291454702f8",
+    measurementId: "G-P6HV8WLRWJ"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+</script>
+
+<script>
+(function(){
+  const key = 'cms_blogs';
+  const host = document.getElementById('blogList');
+  const fallback = document.getElementById('staticPosts');
+
+  // Load from Firebase
+  db.ref(key).on('value', snap => {
+    const data = snap.val() || [];
+    if(!data.length){ fallback.style.display='block'; return; }
+    render(data);
+  }, err => {
+    console.warn('⚠️ Firebase failed, fallback to localStorage', err);
+    const local = JSON.parse(localStorage.getItem(key)||'[]');
+    if(local.length) render(local); else fallback.style.display='block';
+  });
+
+  function render(list){
+    host.innerHTML='';
     fallback.style.display='none';
+    list.sort((a,b)=>(b.updated||0)-(a.updated||0));
 
     list.forEach(post=>{
-      const card = document.createElement('a');
+      const card=document.createElement('a');
       card.className='blog-card reveal';
-      card.href = `blog-details.html?id=${encodeURIComponent(post.id)}`;
-      card.innerHTML = `
+      card.href=`blog-details.html?id=${encodeURIComponent(post.id)}`;
+      card.innerHTML=`
         <img src="${escapeAttr(post.hero||'')}" alt="">
         <div class="blog-card-content">
           <h2>${escapeHtml(post.title||'Untitled')}</h2>
@@ -197,32 +229,22 @@
       host.appendChild(card);
     });
 
-    // reveal on scroll
-    const cards = document.querySelectorAll('.blog-card');
-    const revealCards = () => {
-      cards.forEach(card => {
-        const rect = card.getBoundingClientRect();
-        if(rect.top < window.innerHeight - 100){ card.classList.add('visible'); }
-      });
-    };
-    window.addEventListener('scroll', revealCards);
-    revealCards();
+    revealOnScroll();
+  }
 
-    function getPosts(){
-      try{
-        const arr = JSON.parse(localStorage.getItem(key)||'[]');
-        // sort by updated desc if present, otherwise by date desc
-        arr.sort((a,b)=>{
-          const au=a.updated||Date.parse(a.date||0)||0;
-          const bu=b.updated||Date.parse(b.date||0)||0;
-          return bu-au;
-        });
-        return arr;
-      }catch(e){ return [] }
-    }
-    function escapeHtml(s){return String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
-    function escapeAttr(s){return String(s||'').replace(/"/g,'&quot;');}
-  })();
+  function revealOnScroll(){
+    const cards=document.querySelectorAll('.blog-card');
+    const reveal=()=>cards.forEach(c=>{
+      const r=c.getBoundingClientRect();
+      if(r.top<window.innerHeight-100)c.classList.add('visible');
+    });
+    window.addEventListener('scroll',reveal);
+    reveal();
+  }
+
+  function escapeHtml(s){return String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+  function escapeAttr(s){return String(s||'').replace(/"/g,'&quot;');}
+})();
 </script>
 </body>
 </html>
