@@ -705,25 +705,25 @@ const LS_PROJECTS='cms_projects', LS_BLOGS='cms_blogs', LS_PROFILE='cms_profile'
 
 /* ===== Tiny Store (Firebase version) ===== */
 const Store = {
-  async read(k, fallback) {
-    try {
-      const snap = await firebase.database().ref(k).get();
-      if (snap.exists()) return snap.val();
-      return JSON.parse(fallback);
-    } catch (err) {
-      console.warn('⚠️ Firebase read failed, using local backup', err);
-      return JSON.parse(localStorage.getItem(k) || fallback);
-    }
-  },
+async read(k, fallback) {
+  try {
+    const snap = await db.ref(k).get();
+    if (snap.exists()) return snap.val();
+    return JSON.parse(fallback);
+  } catch (err) {
+    console.warn('⚠️ Firebase read failed, using local backup', err);
+    return JSON.parse(localStorage.getItem(k) || fallback);
+  }
+},
 
-  async write(k, v) {
-    try {
-      await firebase.database().ref(k).set(v);
-    } catch (err) {
-      console.error('⚠️ Firebase write failed, saving locally', err);
-      localStorage.setItem(k, JSON.stringify(v));
-    }
-  },
+async write(k, v) {
+  try {
+    await db.ref(k).set(v);
+  } catch (err) {
+    console.error('⚠️ Firebase write failed, saving locally', err);
+    localStorage.setItem(k, JSON.stringify(v));
+  }
+},
 
   projects() {
     const a = JSON.parse(localStorage.getItem(LS_PROJECTS) || '[]');
