@@ -4,7 +4,7 @@
 
 async function getHomeData() {
   try {
-    const res = await fetch("/api/home");
+    const res = await fetch("https://bndlabs-backends.onrender.com/api/home");
     if (!res.ok) throw new Error("Failed to load home data");
     return await res.json();
   } catch (err) {
@@ -22,7 +22,7 @@ async function getHomeData() {
 
 async function getProjects() {
   try {
-    const res = await fetch("/api/projects");
+    const res = await fetch("https://bndlabs-backends.onrender.com/api/projects");
     if (!res.ok) throw new Error("Failed to load projects");
     return await res.json();
   } catch (err) {
