@@ -1,5 +1,5 @@
 (() => {
-  // Base API URL – points directly to your Render backend
+  // ===== Base API URL (Render backend) =====
   const API_BASE = "https://bndlabs-backend.onrender.com/api";
 
   async function get(endpoint, fallback) {
@@ -13,6 +13,7 @@
     }
   }
 
+  // ===== Cache =====
   const cache = {
     home: {},
     projects: [],
@@ -20,22 +21,24 @@
     profile: {},
     about: {},
     contact: {},
+    socials: [], // 👈 NEW for footer icons
     "404": {}
   };
 
   // ===== Global CMS Data Object =====
   window.Data = {
     async prime() {
-      const [home, projects, blogs, profile, about, contact, four] = await Promise.all([
+      const [home, projects, blogs, profile, about, contact, socials, four] = await Promise.all([
         get("home", {}),
         get("projects", []),
         get("blogs", []),
         get("profile", {}),
         get("about", {}),
         get("contact", {}),
+        get("socials", []), // 👈 NEW endpoint
         get("404", {})
       ]);
-      Object.assign(cache, { home, projects, blogs, profile, about, contact, "404": four });
+      Object.assign(cache, { home, projects, blogs, profile, about, contact, socials, "404": four });
       return cache;
     },
     get(key) {
@@ -49,12 +52,13 @@
     }
   };
 
-  // ===== Shortcut functions for each section =====
+  // ===== Shortcut functions =====
   window.getHome = async () => await get("home", {});
   window.getProjects = async () => await get("projects", []);
   window.getBlogs = async () => await get("blogs", []);
   window.getProfile = async () => await get("profile", {});
   window.getAbout = async () => await get("about", {});
   window.getContact = async () => await get("contact", {});
+  window.getSocials = async () => await get("socials", []); // 👈 NEW
   window.get404 = async () => await get("404", {});
 })();
