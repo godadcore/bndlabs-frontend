@@ -1581,120 +1581,115 @@ if (saveContactBtn) {
 <script src="js/render.js"></script>
 <script>
   window.BNDLABS_API_BASE = "https://bndlabs-backend.onrender.com";
-</script>
-<!-- ===== BNDLABS LIVE API INTEGRATION PATCH (NO LAYOUT CHANGES) ===== -->
-<script>
-/* 
-  FIXED VERSION — waits for everything to load first.
-  Do not change layout, only backend live Store integration.
-*/
+</script><script>
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    const API_BASE = "https://bndlabs-backend.onrender.com/api";
+    const KEY_MAP = {
+      [LS_HOME]: "home",
+      [LS_PROJECTS]: "projects",
+      [LS_BLOGS]: "blogs",
+      [LS_PROFILE]: "profile",
+      [LS_ABOUT]: "about",
+      [LS_CONTACT]: "contact",
+      "cms_404": "404"
+    };
 
-setTimeout(() => {
-  const API_BASE = "https://bndlabs-backend.onrender.com/api";
-  const KEY_MAP = {
-    [LS_HOME]: "home",
-    [LS_PROJECTS]: "projects",
-    [LS_BLOGS]: "blogs",
-    [LS_PROFILE]: "profile",
-    [LS_ABOUT]: "about",
-    [LS_CONTACT]: "contact",
-    "cms_404": "404"
-  };
+    const _cache = {
+      home: {}, projects: [], blogs: [], profile: {}, about: {}, contact: {}, "404": {}
+    };
+    const m = k => KEY_MAP[k] || k;
 
-  const _cache = {
-    home: {}, projects: [], blogs: [], profile: {}, about: {}, contact: {}, "404": {}
-  };
-  const m = k => KEY_MAP[k] || k;
-
-  async function fetchJSON(endpoint, fallback){
-    try{
-      const r = await fetch(`${API_BASE}/${endpoint}`, { credentials:"omit" });
-      if(!r.ok) throw new Error(r.status);
-      return await r.json();
-    }catch(e){
-      console.warn(`⚠️ GET /${endpoint} failed`, e);
-      return fallback;
+    async function fetchJSON(endpoint, fallback){
+      try{
+        const r = await fetch(`${API_BASE}/${endpoint}`, { credentials:"omit" });
+        if(!r.ok) throw new Error(r.status);
+        return await r.json();
+      }catch(e){
+        console.warn(`⚠️ GET /${endpoint} failed`, e);
+        return fallback;
+      }
     }
-  }
-  async function postJSON(endpoint, data){
-    const r = await fetch(`${API_BASE}/${endpoint}`, {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify(data)
-    });
-    if(!r.ok) throw new Error(`POST /${endpoint} ${r.status}`);
-    return r.json().catch(()=>({ok:true}));
-  }
+    async function postJSON(endpoint, data){
+      const r = await fetch(`${API_BASE}/${endpoint}`, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify(data)
+      });
+      if(!r.ok) throw new Error(`POST /${endpoint} ${r.status}`);
+      return r.json().catch(()=>({ok:true}));
+    }
 
-  async function prime(){
-    _cache.home     = await fetchJSON("home", {});
-    _cache.projects = await fetchJSON("projects", []);
-    _cache.blogs    = await fetchJSON("blogs", []);
-    _cache.profile  = await fetchJSON("profile", {});
-    _cache.about    = await fetchJSON("about", {});
-    _cache.contact  = await fetchJSON("contact", {});
-    _cache["404"]   = await fetchJSON("404", {});
-    try{ typeof renderProjects==="function" && renderProjects(); }catch{}
-    try{ typeof renderBlogs==="function" && renderBlogs(); }catch{}
-  }
+    async function prime(){
+      _cache.home     = await fetchJSON("home", {});
+      _cache.projects = await fetchJSON("projects", []);
+      _cache.blogs    = await fetchJSON("blogs", []);
+      _cache.profile  = await fetchJSON("profile", {});
+      _cache.about    = await fetchJSON("about", {});
+      _cache.contact  = await fetchJSON("contact", {});
+      _cache["404"]   = await fetchJSON("404", {});
+      try{ typeof renderProjects==="function" && renderProjects(); }catch{}
+      try{ typeof renderBlogs==="function" && renderBlogs(); }catch{}
+    }
 
-  window.Store = {
-    read(key, fallback){
-      const k = m(key);
-      return structuredClone(_cache[k] ?? JSON.parse(fallback || "{}"));
-    },
-    async write(key, value){
-      const k = m(key);
-      _cache[k] = value;
-      await postJSON(k, value);
-      return {ok:true};
-    },
-    projects(){
-      const a = Array.isArray(_cache.projects)?[..._cache.projects]:[];
-      a.sort((x,y)=>(y.updated||0)-(x.updated||0));
-      return a;
-    },
-    putProject(p){
-      const L=this.projects();
-      if(!p.id) p.id=(crypto.randomUUID?crypto.randomUUID():String(Date.now()));
-      p.updated=Date.now();
-      const i=L.findIndex(x=>x.id===p.id);
-      if(i>=0)L[i]=p;else L.unshift(p);
-      _cache.projects=L;
-      return this.write(LS_PROJECTS,L).then(()=>p.id);
-    },
-    removeProject(id){
-      const L=this.projects().filter(x=>x.id!==id);
-      _cache.projects=L;
-      return this.write(LS_PROJECTS,L);
-    },
-    byIdProject(id){return this.projects().find(x=>x.id===id);},
-    blogs(){
-      const a=Array.isArray(_cache.blogs)?[..._cache.blogs]:[];
-      a.sort((x,y)=>(y.updated||0)-(x.updated||0));
-      return a;
-    },
-    putBlog(b){
-      const L=this.blogs();
-      if(!b.id)b.id=(crypto.randomUUID?crypto.randomUUID():String(Date.now()));
-      b.updated=Date.now();
-      const i=L.findIndex(x=>x.id===b.id);
-      if(i>=0)L[i]=b;else L.unshift(b);
-      _cache.blogs=L;
-      return this.write(LS_BLOGS,L).then(()=>b.id);
-    },
-    removeBlog(id){
-      const L=this.blogs().filter(x=>x.id!==id);
-      _cache.blogs=L;
-      return this.write(LS_BLOGS,L);
-    },
-    byIdBlog(id){return this.blogs().find(x=>x.id===id);},
-    profile(){return structuredClone(_cache.profile||{});},
-    saveProfile(p){_cache.profile=p;return this.write(LS_PROFILE,p);}
-  };
+    window.Store = {
+      read(key, fallback){
+        const k = m(key);
+        return structuredClone(_cache[k] ?? JSON.parse(fallback || "{}"));
+      },
+      async write(key, value){
+        const k = m(key);
+        _cache[k] = value;
+        await postJSON(k, value);
+        return {ok:true};
+      },
+      projects(){
+        const a = Array.isArray(_cache.projects)?[..._cache.projects]:[];
+        a.sort((x,y)=>(y.updated||0)-(x.updated||0));
+        return a;
+      },
+      putProject(p){
+        const L=this.projects();
+        if(!p.id) p.id=(crypto.randomUUID?crypto.randomUUID():String(Date.now()));
+        p.updated=Date.now();
+        const i=L.findIndex(x=>x.id===p.id);
+        if(i>=0)L[i]=p;else L.unshift(p);
+        _cache.projects=L;
+        return this.write(LS_PROJECTS,L).then(()=>p.id);
+      },
+      removeProject(id){
+        const L=this.projects().filter(x=>x.id!==id);
+        _cache.projects=L;
+        return this.write(LS_PROJECTS,L);
+      },
+      byIdProject(id){return this.projects().find(x=>x.id===id);},
+      blogs(){
+        const a=Array.isArray(_cache.blogs)?[..._cache.blogs]:[];
+        a.sort((x,y)=>(y.updated||0)-(x.updated||0));
+        return a;
+      },
+      putBlog(b){
+        const L=this.blogs();
+        if(!b.id)b.id=(crypto.randomUUID?crypto.randomUUID():String(Date.now()));
+        b.updated=Date.now();
+        const i=L.findIndex(x=>x.id===b.id);
+        if(i>=0)L[i]=b;else L.unshift(b);
+        _cache.blogs=L;
+        return this.write(LS_BLOGS,L).then(()=>b.id);
+      },
+      removeBlog(id){
+        const L=this.blogs().filter(x=>x.id!==id);
+        _cache.blogs=L;
+        return this.write(LS_BLOGS,L);
+      },
+      byIdBlog(id){return this.blogs().find(x=>x.id===id);},
+      profile(){return structuredClone(_cache.profile||{});},
+      saveProfile(p){_cache.profile=p;return this.write(LS_PROFILE,p);}
+    };
 
-  prime();
-}, 1000);
+    prime();
+  }, 800); // ⏱️ small delay ensures everything loads before backend patch
+});
 </script>
 </body>
 </html>
