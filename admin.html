@@ -678,104 +678,10 @@
     </div>
   </div>
 </div>
-  <!-- Firebase SDK for Browser -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
-<script>
-  // Your Firebase configuration
-  const 
-
-  // Initialize Firebase
-  
-
-  // Connect to Realtime Database
-  const db = firebase.database();
-</script>
+ 
 <script>
 /* ===== Storage Keys ===== */
 const LS_PROJECTS='cms_projects', LS_BLOGS='cms_blogs', LS_PROFILE='cms_profile', LS_HOME='cms_home', LS_ABOUT='cms_about', LS_CONTACT='cms_contact';
-
-/* ===== Tiny Store (Firebase version) ===== */
-const Store = {
-async read(k, fallback) {
-  try {
-    const snap = await db.ref(k).get();
-    if (snap.exists()) return snap.val();
-    return JSON.parse(fallback);
-  } catch (err) {
-    console.warn('⚠️ Firebase read failed, using local backup', err);
-    return JSON.parse( || fallback);
-  }
-},
-
-async write(k, v) {
-  try {
-    await db.ref(k).set(v);
-  } catch (err) {
-    console.error('⚠️ Firebase write failed, saving locally', err);
-    );
-  }
-},
-
-  projects() {
-    const a = JSON.parse( || '[]');
-    a.sort((x, y) => (y.updated || 0) - (x.updated || 0));
-    return a;
-  },
-
-  putProject(p) {
-    const L = this.projects();
-    if (!p.id) p.id = crypto.randomUUID ? crypto.randomUUID() : String(Date.now());
-    p.updated = Date.now();
-    const i = L.findIndex(x => x.id === p.id);
-    if (i >= 0) L[i] = p; else L.unshift(p);
-    this.write(LS_PROJECTS, L);
-    return p.id;
-  },
-
-  removeProject(id) {
-    const newList = this.projects().filter(x => x.id !== id);
-    this.write(LS_PROJECTS, newList);
-  },
-
-  byIdProject(id) {
-    return this.projects().find(x => x.id === id);
-  },
-
-  blogs() {
-    const a = JSON.parse( || '[]');
-    a.sort((x, y) => (y.updated || 0) - (x.updated || 0));
-    return a;
-  },
-
-  putBlog(b) {
-    const L = this.blogs();
-    if (!b.id) b.id = crypto.randomUUID ? crypto.randomUUID() : String(Date.now());
-    b.updated = Date.now();
-    const i = L.findIndex(x => x.id === b.id);
-    if (i >= 0) L[i] = b; else L.unshift(b);
-    this.write(LS_BLOGS, L);
-    return b.id;
-  },
-
-  removeBlog(id) {
-    const newList = this.blogs().filter(x => x.id !== id);
-    this.write(LS_BLOGS, newList);
-  },
-
-  byIdBlog(id) {
-    return this.blogs().find(x => x.id === id);
-  },
-
-  profile() {
-    return JSON.parse( || '{}');
-  },
-
-  saveProfile(p) {
-    this.write(LS_PROFILE, p);
-  }
-};
 
 
 /* ===== Shortcuts ===== */
@@ -1175,43 +1081,50 @@ $('#h_save').onclick=()=>{
 };
 
 /* ===== Export / Import (global) ===== */
-$('#exportBtn').onclick=()=>{
-  const data={
-  projects:Store.projects(),
-  blogs:Store.blogs(),
-  profile:Store.profile(),
-  about:JSON.parse(||'{}'),
-  contact:JSON.parse(||'{}'),
-  home:Store.read(LS_HOME,'{}')
+$('#exportBtn').onclick = () => {
+  const data = {
+    projects: Store.projects(),
+    blogs: Store.blogs(),
+    profile: Store.profile(),
+    about: Store.read(LS_ABOUT, '{}'),
+    contact: Store.read(LS_CONTACT, '{}'),
+    home: Store.read(LS_HOME, '{}')
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'bndlabs-cms.json';
+  a.click();
+  URL.revokeObjectURL(url);
 };
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='bndlabs-cms.json'; a.click(); URL.revokeObjectURL(url);
-};
-$('#importFile').addEventListener('change',e=>{
-  const f=e.target.files?.[0]; if(!f) return; const r=new FileReader();
-  r.onload=()=>{ try{ const j=JSON.parse(r.result);
-    if(Array.isArray(j)) );
-    else{
-      if(j.projects) );
-      if(j.blogs) );
-      if(j.profile) );
-      if(j.about) );
-      if(j.home) );
-      if(j.contact) );
+$('#importFile').addEventListener('change', e => {
+  const f = e.target.files?.[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = async () => {
+    try {
+      const j = JSON.parse(r.result);
+      if (Array.isArray(j)) {
+        alert('Unsupported JSON format.');
+      } else {
+        if (j.projects) await Store.write(LS_PROJECTS, j.projects);
+        if (j.blogs) await Store.write(LS_BLOGS, j.blogs);
+        if (j.profile) await Store.write(LS_PROFILE, j.profile);
+        if (j.about) await Store.write(LS_ABOUT, j.about);
+        if (j.home) await Store.write(LS_HOME, j.home);
+        if (j.contact) await Store.write(LS_CONTACT, j.contact);
+      }
+      renderProjects();
+      renderBlogs();
+      loadProfile();
+      alert('Imported successfully');
+    } catch (err) {
+      alert('Import failed: ' + err.message);
     }
-    renderProjects(); renderBlogs(); loadProfile(); alert('Imported successfully');
-  } catch(_){ alert('Import failed'); } };
+  };
   r.readAsText(f);
 });
-
-/* ===== Init (ensure fields on legacy data) ===== */
-(function init(){
-  const fix=(arr)=> (arr||[]).map(x=>({views:0,status:'active',...x}));
-  )));
-  )));
-  renderProjects(); renderBlogs();
-})();
-
 /* =========================
    ABOUT TAB: AUTOSAVE + UI
 ========================= */
@@ -1510,7 +1423,7 @@ function loadContact(){
   };
 
   // hydrate saved or sensible defaults (mirrors your current Contact page copy)
-  const saved = JSON.parse(||'{}');
+  const saved = Store.read(LS_CONTACT, '{}');
   if(!Object.keys(saved).length){
     // sensible defaults from your current contact.html
     const defaults = {
@@ -1549,7 +1462,7 @@ function loadContact(){
 
 function autosaveContact(){
   const payload = Contact.gather();
-  );
+  Store.write(LS_CONTACT, payload);
 }
 // 404 admin: save/load for cms_404
 (function(){
@@ -1558,7 +1471,7 @@ function autosaveContact(){
   function safeParse(j){ try{return JSON.parse(j||''); }catch{return null} }
 
   function loadFour(){
-    const d=safeParse()||{};
+    const d = Store.read('cms_404', '{}') || {};
     q('four_title').value = d.title||'Hmmm...';
     q('four_line1').value = d.line1||'Occurred, a 404 error has. I sense much fear in you.';
     q('four_line2').value = d.line2||'Trust in the force, clear your mind, unlearn what you have learned, and find your missing page you will.';
@@ -1595,9 +1508,9 @@ function autosaveContact(){
   }
 
   function saveFour(){
-    const val = collectFour();
-    );
-    Q('#four_saved',2000);
+const val = collectFour();
+Store.write('cms_404', val);
+Q('#four_saved', 2000);
   }
 
   function clearFour(){
@@ -1623,13 +1536,13 @@ function autosaveContact(){
   ['four_title','four_line1','four_line2','four_btn_do_label','four_btn_do_link','four_btn_donot_label','four_btn_donot_link','four_btn_try_label','four_image','four_custom_projects'].forEach(id=>{
     const el=document.getElementById(id);
     if(!el) return;
-    el.addEventListener('input', ()=>{ try{ )); }catch{} });
+el.addEventListener('input', ()=> Store.write('cms_404', collectFour()));
   });
   // checkboxes & numeric
   ['four_try_disabled','four_use_latest','four_remove_nav_underline','four_latest_count'].forEach(id=>{
     const el=document.getElementById(id);
     if(!el) return;
-    el.addEventListener('change', ()=>{ try{ )); }catch{} });
+el.addEventListener('change', ()=> Store.write('cms_404', collectFour()));
   });
 
   // expose loadFour globally so we can call it
@@ -1651,25 +1564,135 @@ if (saveContactBtn) {
   saveContactBtn.addEventListener('click', async () => {
     try {
       const payload = Contact.gather();
-      // Save locally as backup
-      );
-      // ✅ Write to Firebase
       await Store.write(LS_CONTACT, payload);
       const saved = document.getElementById('contactSaved');
       if (saved) {
         saved.style.display = 'inline';
         setTimeout(() => (saved.style.display = 'none'), 1500);
       }
-      alert('✅ Contact data saved successfully to Firebase!');
+      alert('✅ Contact data saved!');
     } catch (err) {
       alert('⚠️ Failed to save contact: ' + err.message);
     }
   });
 }
-
 </script>
 <script src="js/data.js"></script>
 <script src="js/render.js"></script>
+<script>
+<!-- ===== BNDLABS LIVE API INTEGRATION PATCH (NO LAYOUT CHANGES) ===== -->
+<script>
+/* 
+  FIXED VERSION — waits for everything to load first.
+  Do not change layout, only backend live Store integration.
+*/
 
+setTimeout(() => {
+  const API_BASE = "https://bndlabs-backend.onrender.com/api";
+  const KEY_MAP = {
+    [LS_HOME]: "home",
+    [LS_PROJECTS]: "projects",
+    [LS_BLOGS]: "blogs",
+    [LS_PROFILE]: "profile",
+    [LS_ABOUT]: "about",
+    [LS_CONTACT]: "contact",
+    "cms_404": "404"
+  };
+
+  const _cache = {
+    home: {}, projects: [], blogs: [], profile: {}, about: {}, contact: {}, "404": {}
+  };
+  const m = k => KEY_MAP[k] || k;
+
+  async function fetchJSON(endpoint, fallback){
+    try{
+      const r = await fetch(`${API_BASE}/${endpoint}`, { credentials:"omit" });
+      if(!r.ok) throw new Error(r.status);
+      return await r.json();
+    }catch(e){
+      console.warn(`⚠️ GET /${endpoint} failed`, e);
+      return fallback;
+    }
+  }
+  async function postJSON(endpoint, data){
+    const r = await fetch(`${API_BASE}/${endpoint}`, {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify(data)
+    });
+    if(!r.ok) throw new Error(`POST /${endpoint} ${r.status}`);
+    return r.json().catch(()=>({ok:true}));
+  }
+
+  async function prime(){
+    _cache.home     = await fetchJSON("home", {});
+    _cache.projects = await fetchJSON("projects", []);
+    _cache.blogs    = await fetchJSON("blogs", []);
+    _cache.profile  = await fetchJSON("profile", {});
+    _cache.about    = await fetchJSON("about", {});
+    _cache.contact  = await fetchJSON("contact", {});
+    _cache["404"]   = await fetchJSON("404", {});
+    try{ typeof renderProjects==="function" && renderProjects(); }catch{}
+    try{ typeof renderBlogs==="function" && renderBlogs(); }catch{}
+  }
+
+  window.Store = {
+    read(key, fallback){
+      const k = m(key);
+      return structuredClone(_cache[k] ?? JSON.parse(fallback || "{}"));
+    },
+    async write(key, value){
+      const k = m(key);
+      _cache[k] = value;
+      await postJSON(k, value);
+      return {ok:true};
+    },
+    projects(){
+      const a = Array.isArray(_cache.projects)?[..._cache.projects]:[];
+      a.sort((x,y)=>(y.updated||0)-(x.updated||0));
+      return a;
+    },
+    putProject(p){
+      const L=this.projects();
+      if(!p.id) p.id=(crypto.randomUUID?crypto.randomUUID():String(Date.now()));
+      p.updated=Date.now();
+      const i=L.findIndex(x=>x.id===p.id);
+      if(i>=0)L[i]=p;else L.unshift(p);
+      _cache.projects=L;
+      return this.write(LS_PROJECTS,L).then(()=>p.id);
+    },
+    removeProject(id){
+      const L=this.projects().filter(x=>x.id!==id);
+      _cache.projects=L;
+      return this.write(LS_PROJECTS,L);
+    },
+    byIdProject(id){return this.projects().find(x=>x.id===id);},
+    blogs(){
+      const a=Array.isArray(_cache.blogs)?[..._cache.blogs]:[];
+      a.sort((x,y)=>(y.updated||0)-(x.updated||0));
+      return a;
+    },
+    putBlog(b){
+      const L=this.blogs();
+      if(!b.id)b.id=(crypto.randomUUID?crypto.randomUUID():String(Date.now()));
+      b.updated=Date.now();
+      const i=L.findIndex(x=>x.id===b.id);
+      if(i>=0)L[i]=b;else L.unshift(b);
+      _cache.blogs=L;
+      return this.write(LS_BLOGS,L).then(()=>b.id);
+    },
+    removeBlog(id){
+      const L=this.blogs().filter(x=>x.id!==id);
+      _cache.blogs=L;
+      return this.write(LS_BLOGS,L);
+    },
+    byIdBlog(id){return this.blogs().find(x=>x.id===id);},
+    profile(){return structuredClone(_cache.profile||{});},
+    saveProfile(p){_cache.profile=p;return this.write(LS_PROFILE,p);}
+  };
+
+  prime();
+}, 1000);
+</script>
 </body>
 </html>
