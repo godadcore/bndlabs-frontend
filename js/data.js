@@ -1,40 +1,49 @@
 // js/data.js
-// These functions connect to your live backend API on Render
-// Only the first 3 projects will show on the home page.
+// Connects all pages to the live BndLabs backend API
+const API = "https://bndlabs-backend.onrender.com/api";
 
-async function getHomeData() {
+async function fetchJSON(url) {
   try {
-    const res = await fetch("https://bndlabs-backend.onrender.com/api/home");
-    if (!res.ok) throw new Error("Failed to load home data");
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(res.status);
     return await res.json();
   } catch (err) {
     console.warn("Backend not connected yet:", err);
-    // Temporary dummy data for visual preview
-    return {
-      title: "UI/UX Designer & Developer",
-      sub: "I design clean, conversion-focused digital interfaces.",
-      pill: "Design + Code",
-      proj_title: "Some of my latest work",
-      button: "See All Work"
-    };
+    return null;
   }
 }
 
-async function getProjects() {
-  try {
-    const res = await fetch("https://bndlabs-backend.onrender.com/api/projects");
-    if (!res.ok) throw new Error("Failed to load projects");
-    const projects = await res.json();
+// HOME
+async function getHomeData() {
+  return await fetchJSON(`${API}/home`);
+}
 
-    // ✅ Limit to first 3 projects for home display
-    return projects.slice(0, 3);
-  } catch (err) {
-    console.warn("Backend not connected yet:", err);
-    // Temporary dummy projects for visual preview
-    return [
-      { id: "1", title: "Monitor Dashboard", tag: "Web App", hero: "images/project1.jpg" },
-      { id: "2", title: "Analytics Suite", tag: "UI Design", hero: "images/project2.jpg" },
-      { id: "3", title: "Marketing Landing Page", tag: "Web Design", hero: "images/project3.jpg" }
-    ];
-  }
+// PROJECTS
+async function getProjects() {
+  return await fetchJSON(`${API}/projects`);
+}
+
+// BLOGS
+async function getBlogs() {
+  return await fetchJSON(`${API}/blogs`);
+}
+
+// PROFILE (for admin or About)
+async function getProfile() {
+  return await fetchJSON(`${API}/profile`);
+}
+
+// ABOUT
+async function getAbout() {
+  return await fetchJSON(`${API}/about`);
+}
+
+// CONTACT
+async function getContact() {
+  return await fetchJSON(`${API}/contact`);
+}
+
+// 404 PAGE
+async function getPage404() {
+  return await fetchJSON(`${API}/404`);
 }

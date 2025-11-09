@@ -548,6 +548,20 @@ revealOnScroll();
 </script>
 <script src="js/data.js"></script>
 <script src="js/render.js"></script>
+<script src="data.js"></script>
+<script>
+(async () => {
+  const contact = await getContact();
+  if (!contact) return;
 
+  // Example — match these selectors to your HTML structure
+  document.querySelector('.info-title').textContent = contact.title || "Contact Me";
+  document.querySelector('.muted').textContent = contact.subtitle || "";
+  const phone = document.querySelector('#contact_phone');
+  const email = document.querySelector('#contact_email');
+  if (phone) phone.textContent = contact.phone || "";
+  if (email) email.textContent = contact.email || "";
+})();
+</script>
 </body>
 </html>

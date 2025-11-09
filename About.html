@@ -487,5 +487,17 @@ if ('serviceWorker' in navigator) {
 </script>
 <script src="js/data.js"></script>
 <script src="js/render.js"></script>
+<script src="data.js"></script>
+<script>
+(async () => {
+  const about = await getAbout();
+  if (!about) return;
+
+  // Example — adjust these selectors to your actual element IDs
+  if (about.name) document.querySelector('.name-lg').textContent = about.name;
+  if (about.role) document.querySelector('.role').textContent = about.role;
+  if (about.desc) document.querySelector('.about-body p').textContent = about.desc;
+})();
+</script>
 </body>
 </html>
