@@ -1,9 +1,9 @@
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open('bodunde-v1').then((cache) => {
+    caches.open('bndlabs-v1').then((cache) => {
       return cache.addAll([
         '/',
-        '/index.html',
+        '/home.html',
         '/about.html',
         '/portfolio.html',
         '/blog.html',

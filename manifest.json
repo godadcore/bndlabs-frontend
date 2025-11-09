@@ -1,8 +1,8 @@
 {
-  "name": "Bodunde — UI/UX Designer & Front-End Developer",
-  "short_name": "Bodunde",
+  "name": "bndlabs — UI/UX Designer & Front-End Developer",
+  "short_name": "bndlabs",
   "description": "I design and develop high-conversion digital interfaces, precision-engineered for global performance and measurable business impact.",
-  "start_url": "index.html",
+  "start_url": "home.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#FFFFFF",

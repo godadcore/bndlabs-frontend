@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Bodunde CMS — Admin</title>
+  <title>bndlabs CMS — Admin</title>
 
   <style>
     :root{
@@ -145,7 +145,7 @@
       <div class="logo">
         <svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-2.9h2v-2.2c0-2 1.2-3.1 3-3.1.9 0 1.8.1 2 .1v2.3h-1.1c-1 0-1.3.6-1.3 1.2v1.7h2.6l-.4 2.9h-2.2v7A10 10 0 0 0 22 12z" fill="currentColor"/></svg>
       </div>
-      <div class="name">Bodunde CMS</div>
+      <div class="name">bndlabs CMS</div>
     </div>
 
     <div class="mutey">Manage</div>
@@ -327,7 +327,7 @@
         <div style="font-size:18px;font-weight:900;margin-bottom:10px">Profile / Settings</div>
 
         <div class="grid2">
-          <div class="row"><label>Your Name</label><input id="s_name" class="field" placeholder="Bodunde"></div>
+          <div class="row"><label>Your Name</label><input id="s_name" class="field" placeholder="bndlabs"></div>
           <div class="row"><label>Profession / Title</label><input id="s_title" class="field" placeholder="Product Designer & Front-end Developer"></div>
         </div>
 
@@ -511,7 +511,7 @@
         <div class="row"><label>Message Label</label><input id="c_label_message" class="field" placeholder="Message"></div>
 
         <div class="row wide"><label>Consent #1</label><input id="c_consent_1" class="field" placeholder="I agree to receive other communication messages."></div>
-        <div class="row wide"><label>Consent #2</label><input id="c_consent_2" class="field" placeholder="I give my consent to Bodunde to store my data."></div>
+        <div class="row wide"><label>Consent #2</label><input id="c_consent_2" class="field" placeholder="I give my consent to bndlabs to store my data."></div>
 
         <div class="row wide"><label>Privacy Note</label><input id="c_privacy" class="field" placeholder="We respect your privacy. You can opt out at any time."></div>
         <div class="row"><label>Submit Button Text</label><input id="c_button" class="field" placeholder="Send Message"></div>
@@ -530,7 +530,7 @@
         <div class="row"><label>Quick Contact Title</label><input id="c_qc_title" class="field" placeholder="Quick Contact"></div>
 
         <div class="row"><label>Email Label</label><input id="c_qc_email_label" class="field" placeholder="Email"></div>
-        <div class="row"><label>Email Value</label><input id="c_qc_email_value" class="field" placeholder="hello@bodunde.dev"></div>
+        <div class="row"><label>Email Value</label><input id="c_qc_email_value" class="field" placeholder="hello@bndlabs.dev"></div>
 
         <div class="row"><label>Phone Label</label><input id="c_qc_phone_label" class="field" placeholder="Phone Number"></div>
         <div class="row"><label>Phone Value</label><input id="c_qc_phone_value" class="field" placeholder="+234 …"></div>
@@ -592,7 +592,7 @@
       </div>
       <div class="row">
         <label>Button A Link</label>
-        <input id="four_btn_do_link" class="field" placeholder="index.html" />
+        <input id="four_btn_do_link" class="field" placeholder="home.html" />
       </div>
     </div>
 
@@ -603,7 +603,7 @@
       </div>
       <div class="row">
         <label>Button B Link</label>
-        <input id="four_btn_donot_link" class="field" placeholder="index.html" />
+        <input id="four_btn_donot_link" class="field" placeholder="home.html" />
       </div>
     </div>
 
@@ -668,7 +668,7 @@
 <!-- Password Gate -->
 <div class="gate" id="gate">
   <div class="login">
-    <div class="login-head">Bodunde Admin Login</div>
+    <div class="login-head">bndlabs Admin Login</div>
     <div class="login-body">
       <div class="row"><label>Password</label><input id="pass" type="password" class="field" placeholder="Enter password"></div>
       <div class="bar" style="margin-top:10px">
@@ -684,19 +684,10 @@
 
 <script>
   // Your Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyAjupAgXu1zNxphgWrbyYOyp0UeYkCJhO4",
-    authDomain: "bodunde-cms.firebaseapp.com",
-    databaseURL: "https://bodunde-cms-default-rtdb.firebaseio.com",
-    projectId: "bodunde-cms",
-    storageBucket: "bodunde-cms.firebasestorage.app",
-    messagingSenderId: "646132228201",
-    appId: "1:646132228201:web:dda94fe0d19291454702f8",
-    measurementId: "G-P6HV8WLRWJ"
-  };
+  const 
 
   // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
+  
 
   // Connect to Realtime Database
   const db = firebase.database();
@@ -714,7 +705,7 @@ async read(k, fallback) {
     return JSON.parse(fallback);
   } catch (err) {
     console.warn('⚠️ Firebase read failed, using local backup', err);
-    return JSON.parse(localStorage.getItem(k) || fallback);
+    return JSON.parse( || fallback);
   }
 },
 
@@ -723,12 +714,12 @@ async write(k, v) {
     await db.ref(k).set(v);
   } catch (err) {
     console.error('⚠️ Firebase write failed, saving locally', err);
-    localStorage.setItem(k, JSON.stringify(v));
+    );
   }
 },
 
   projects() {
-    const a = JSON.parse(localStorage.getItem(LS_PROJECTS) || '[]');
+    const a = JSON.parse( || '[]');
     a.sort((x, y) => (y.updated || 0) - (x.updated || 0));
     return a;
   },
@@ -753,7 +744,7 @@ async write(k, v) {
   },
 
   blogs() {
-    const a = JSON.parse(localStorage.getItem(LS_BLOGS) || '[]');
+    const a = JSON.parse( || '[]');
     a.sort((x, y) => (y.updated || 0) - (x.updated || 0));
     return a;
   },
@@ -778,7 +769,7 @@ async write(k, v) {
   },
 
   profile() {
-    return JSON.parse(localStorage.getItem(LS_PROFILE) || '{}');
+    return JSON.parse( || '{}');
   },
 
   saveProfile(p) {
@@ -1189,24 +1180,24 @@ $('#exportBtn').onclick=()=>{
   projects:Store.projects(),
   blogs:Store.blogs(),
   profile:Store.profile(),
-  about:JSON.parse(localStorage.getItem(LS_ABOUT)||'{}'),
-  contact:JSON.parse(localStorage.getItem(LS_CONTACT)||'{}'),
+  about:JSON.parse(||'{}'),
+  contact:JSON.parse(||'{}'),
   home:Store.read(LS_HOME,'{}')
 };
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='bodunde-cms.json'; a.click(); URL.revokeObjectURL(url);
+  const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='bndlabs-cms.json'; a.click(); URL.revokeObjectURL(url);
 };
 $('#importFile').addEventListener('change',e=>{
   const f=e.target.files?.[0]; if(!f) return; const r=new FileReader();
   r.onload=()=>{ try{ const j=JSON.parse(r.result);
-    if(Array.isArray(j)) localStorage.setItem(LS_PROJECTS,JSON.stringify(j));
+    if(Array.isArray(j)) );
     else{
-      if(j.projects) localStorage.setItem(LS_PROJECTS,JSON.stringify(j.projects));
-      if(j.blogs) localStorage.setItem(LS_BLOGS,JSON.stringify(j.blogs));
-      if(j.profile) localStorage.setItem(LS_PROFILE,JSON.stringify(j.profile));
-      if(j.about) localStorage.setItem(LS_ABOUT,JSON.stringify(j.about));
-      if(j.home) localStorage.setItem(LS_HOME,JSON.stringify(j.home));
-      if(j.contact) localStorage.setItem(LS_CONTACT, JSON.stringify(j.contact));
+      if(j.projects) );
+      if(j.blogs) );
+      if(j.profile) );
+      if(j.about) );
+      if(j.home) );
+      if(j.contact) );
     }
     renderProjects(); renderBlogs(); loadProfile(); alert('Imported successfully');
   } catch(_){ alert('Import failed'); } };
@@ -1216,8 +1207,8 @@ $('#importFile').addEventListener('change',e=>{
 /* ===== Init (ensure fields on legacy data) ===== */
 (function init(){
   const fix=(arr)=> (arr||[]).map(x=>({views:0,status:'active',...x}));
-  localStorage.setItem(LS_PROJECTS,JSON.stringify(fix(Store.projects())));
-  localStorage.setItem(LS_BLOGS,JSON.stringify(fix(Store.blogs())));
+  )));
+  )));
   renderProjects(); renderBlogs();
 })();
 
@@ -1336,7 +1327,7 @@ function loadAbout(){
 
   // reset about only
   $('#about_reset').onclick=()=>{
-    if(confirm('Clear About Page data only?')){ localStorage.removeItem(LS_ABOUT); About.fill({}); autosaveAbout(); alert('About cleared'); }
+    if(confirm('Clear About Page data only?')){  About.fill({}); autosaveAbout(); alert('About cleared'); }
   };
 
   // hydrate
@@ -1511,7 +1502,7 @@ function loadContact(){
   };
   document.querySelector('#contact_reset').onclick = ()=>{
     if(confirm('Clear Contact Page data only?')){
-      localStorage.removeItem(LS_CONTACT);
+      
       Contact.fill({});
       autosaveContact();
       alert('Contact cleared');
@@ -1519,7 +1510,7 @@ function loadContact(){
   };
 
   // hydrate saved or sensible defaults (mirrors your current Contact page copy)
-  const saved = JSON.parse(localStorage.getItem(LS_CONTACT)||'{}');
+  const saved = JSON.parse(||'{}');
   if(!Object.keys(saved).length){
     // sensible defaults from your current contact.html
     const defaults = {
@@ -1531,13 +1522,13 @@ function loadContact(){
       c_label_email:'Email',
       c_label_message:'Message',
       c_consent_1:'I agree to receive other communication messages.',
-      c_consent_2:'I give my consent to Bodunde to store my data.',
+      c_consent_2:'I give my consent to bndlabs to store my data.',
       c_privacy:'We respect your privacy. You can opt out at any time.',
       c_button:'Send Message',
       c_image:'',
       c_qc_title:'Quick Contact',
       c_qc_email_label:'Email',
-      c_qc_email_value:'hello@bodunde.dev',
+      c_qc_email_value:'hello@bndlabs.dev',
       c_qc_phone_label:'Phone Number',
       c_qc_phone_value:'+234 (0) 800 000 0000',
       c_qc_hq_label:'Headquarter',
@@ -1558,7 +1549,7 @@ function loadContact(){
 
 function autosaveContact(){
   const payload = Contact.gather();
-  localStorage.setItem(LS_CONTACT, JSON.stringify(payload));
+  );
 }
 // 404 admin: save/load for cms_404
 (function(){
@@ -1567,14 +1558,14 @@ function autosaveContact(){
   function safeParse(j){ try{return JSON.parse(j||''); }catch{return null} }
 
   function loadFour(){
-    const d=safeParse(localStorage.getItem(key))||{};
+    const d=safeParse()||{};
     q('four_title').value = d.title||'Hmmm...';
     q('four_line1').value = d.line1||'Occurred, a 404 error has. I sense much fear in you.';
     q('four_line2').value = d.line2||'Trust in the force, clear your mind, unlearn what you have learned, and find your missing page you will.';
     q('four_btn_do_label').value = d.btn_do_label||'Do';
-    q('four_btn_do_link').value = d.btn_do_link||'index.html';
+    q('four_btn_do_link').value = d.btn_do_link||'home.html';
     q('four_btn_donot_label').value = d.btn_donot_label||'Do not';
-    q('four_btn_donot_link').value = d.btn_donot_link||'index.html';
+    q('four_btn_donot_link').value = d.btn_donot_link||'home.html';
     q('four_btn_try_label').value = d.btn_try_label||'Try';
     q('four_try_disabled').checked = Boolean(d.try_disabled);
     q('four_image').value = d.image||'';
@@ -1605,13 +1596,13 @@ function autosaveContact(){
 
   function saveFour(){
     const val = collectFour();
-    localStorage.setItem(key, JSON.stringify(val));
+    );
     Q('#four_saved',2000);
   }
 
   function clearFour(){
     if(!confirm('Clear all 404 settings?')) return;
-    localStorage.removeItem(key);
+    
     loadFour();
     alert('Cleared 404 settings.');
   }
@@ -1632,13 +1623,13 @@ function autosaveContact(){
   ['four_title','four_line1','four_line2','four_btn_do_label','four_btn_do_link','four_btn_donot_label','four_btn_donot_link','four_btn_try_label','four_image','four_custom_projects'].forEach(id=>{
     const el=document.getElementById(id);
     if(!el) return;
-    el.addEventListener('input', ()=>{ try{ localStorage.setItem(key, JSON.stringify(collectFour())); }catch{} });
+    el.addEventListener('input', ()=>{ try{ )); }catch{} });
   });
   // checkboxes & numeric
   ['four_try_disabled','four_use_latest','four_remove_nav_underline','four_latest_count'].forEach(id=>{
     const el=document.getElementById(id);
     if(!el) return;
-    el.addEventListener('change', ()=>{ try{ localStorage.setItem(key, JSON.stringify(collectFour())); }catch{} });
+    el.addEventListener('change', ()=>{ try{ )); }catch{} });
   });
 
   // expose loadFour globally so we can call it
@@ -1661,7 +1652,7 @@ if (saveContactBtn) {
     try {
       const payload = Contact.gather();
       // Save locally as backup
-      localStorage.setItem(LS_CONTACT, JSON.stringify(payload));
+      );
       // ✅ Write to Firebase
       await Store.write(LS_CONTACT, payload);
       const saved = document.getElementById('contactSaved');
@@ -1677,5 +1668,8 @@ if (saveContactBtn) {
 }
 
 </script>
+<script src="js/data.js"></script>
+<script src="js/render.js"></script>
+
 </body>
 </html>
