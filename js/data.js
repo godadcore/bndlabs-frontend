@@ -1,49 +1,34 @@
-// js/data.js
-// Connects all pages to the live BndLabs backend API
-const API = "https://bndlabs-backend.onrender.com/api";
+(() => {
+  const API_BASE = (window.BNDLABS_API_BASE || "").replace(/\/+$/,"") + "/api";
 
-async function fetchJSON(url) {
-  try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(res.status);
-    return await res.json();
-  } catch (err) {
-    console.warn("Backend not connected yet:", err);
-    return null;
+  async function get(endpoint, fallback) {
+    try {
+      const r = await fetch(`${API_BASE}/${endpoint}`, { credentials: "omit" });
+      if (!r.ok) throw new Error(r.status);
+      return await r.json();
+    } catch (e) {
+      return fallback;
+    }
   }
-}
 
-// HOME
-async function getHomeData() {
-  return await fetchJSON(`${API}/home`);
-}
+  const cache = { home:{}, projects:[], blogs:[], profile:{}, about:{}, contact:{}, "404":{} };
 
-// PROJECTS
-async function getProjects() {
-  return await fetchJSON(`${API}/projects`);
-}
-
-// BLOGS
-async function getBlogs() {
-  return await fetchJSON(`${API}/blogs`);
-}
-
-// PROFILE (for admin or About)
-async function getProfile() {
-  return await fetchJSON(`${API}/profile`);
-}
-
-// ABOUT
-async function getAbout() {
-  return await fetchJSON(`${API}/about`);
-}
-
-// CONTACT
-async function getContact() {
-  return await fetchJSON(`${API}/contact`);
-}
-
-// 404 PAGE
-async function getPage404() {
-  return await fetchJSON(`${API}/404`);
-}
+  window.Data = {
+    async prime() {
+      const [home, projects, blogs, profile, about, contact, four] = await Promise.all([
+        get("home",{}),
+        get("projects",[]),
+        get("blogs",[]),
+        get("profile",{}),
+        get("about",{}),
+        get("contact",{}),
+        get("404",{})
+      ]);
+      Object.assign(cache, {home, projects, blogs, profile, about, contact, "404": four});
+      return cache;
+    },
+    get(key){ return structuredClone(cache[key]); },
+    projects(){ return [...cache.projects].sort((a,b)=>(b.updated||0)-(a.updated||0)); },
+    blogs(){ return [...cache.blogs].sort((a,b)=>(b.updated||0)-(a.updated||0)); }
+  };
+})();
