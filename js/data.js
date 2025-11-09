@@ -1,7 +1,6 @@
 (() => {
-  // Base API URL – make sure to replace with your real backend if needed
+  // Base API URL – points directly to your Render backend
   const API_BASE = "https://bndlabs-backend.onrender.com/api";
-    .replace(/\/+$/, "") + "/api";
 
   async function get(endpoint, fallback) {
     try {
@@ -50,7 +49,7 @@
     }
   };
 
-  // ===== Shortcut functions for each page =====
+  // ===== Shortcut functions for each section =====
   window.getHome = async () => await get("home", {});
   window.getProjects = async () => await get("projects", []);
   window.getBlogs = async () => await get("blogs", []);
