@@ -779,7 +779,13 @@ function renderProjects(){
     projBody.appendChild(tr);
   });
 }
-renderProjects();
+if (window.Store) {
+  renderProjects();
+} else {
+  setTimeout(() => {
+    if (window.Store) renderProjects();
+  }, 1000);
+}
 
 projBody.addEventListener('click',e=>{
   const id=e.target.getAttribute('data-edit'), del=e.target.getAttribute('data-del'), tog=e.target.getAttribute('data-toggle');
@@ -814,8 +820,13 @@ function renderBlogs(){
     blogBody.appendChild(tr);
   });
 }
-renderBlogs();
-
+if (window.Store) {
+  renderBlogs();
+} else {
+  setTimeout(() => {
+    if (window.Store) renderBlogs();
+  }, 1000);
+}
 blogBody.addEventListener('click',e=>{
   const id=e.target.getAttribute('data-bed'), del=e.target.getAttribute('data-bdel'), tog=e.target.getAttribute('data-btoggle');
   if(id) openBlogEditor(Store.byIdBlog(id));
@@ -1115,10 +1126,21 @@ $('#importFile').addEventListener('change', e => {
         if (j.home) await Store.write(LS_HOME, j.home);
         if (j.contact) await Store.write(LS_CONTACT, j.contact);
       }
+   if (window.Store) {
+  renderProjects();
+  renderBlogs();
+  loadProfile();
+} else {
+  setTimeout(() => {
+    if (window.Store) {
       renderProjects();
       renderBlogs();
       loadProfile();
-      alert('Imported successfully');
+    }
+  }, 1000);
+}
+alert('Imported successfully');
+
     } catch (err) {
       alert('Import failed: ' + err.message);
     }
@@ -1577,8 +1599,6 @@ if (saveContactBtn) {
   });
 }
 </script>
-<script src="js/data.js"></script>
-<script src="js/render.js"></script>
 <script>
   window.BNDLABS_API_BASE = "https://bndlabs-backend.onrender.com";
 </script><script>
