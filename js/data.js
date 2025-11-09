@@ -1,6 +1,6 @@
 // js/data.js
-// These functions will later connect to your real backend API.
-// For now, they use sample placeholder endpoints so layout is preserved.
+// These functions connect to your live backend API on Render
+// Only the first 3 projects will show on the home page.
 
 async function getHomeData() {
   try {
@@ -24,7 +24,10 @@ async function getProjects() {
   try {
     const res = await fetch("https://bndlabs-backends.onrender.com/api/projects");
     if (!res.ok) throw new Error("Failed to load projects");
-    return await res.json();
+    const projects = await res.json();
+
+    // ✅ Limit to first 3 projects for home display
+    return projects.slice(0, 3);
   } catch (err) {
     console.warn("Backend not connected yet:", err);
     // Temporary dummy projects for visual preview
