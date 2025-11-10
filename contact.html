@@ -167,8 +167,8 @@
 <section class="hero">
   <div class="hero-card reveal">
     <div class="hero-inner">
-      <div class="pill" id="c_pill">WRITE TO US</div>
-      <h1 id="c_title">Get In Touch</h1>
+      <div class="pill" id="c_pill"></div>
+      <h1 id="c_title"></h1>
     </div>
   </div>
 </section>
@@ -177,65 +177,65 @@
   <div class="grid">
     <div class="card">
       <div class="pad">
-        <h2>Let’s Talk!</h2>
-        <p class="sub" id="c_sub">Get in touch with us using the enquiry form or contact details below.</p>
+        <h2 id="c_heading"></h2>
+        <p class="sub" id="c_sub"></p>
         <div class="divider"></div>
 
         <form id="contactForm">
           <div class="form-grid">
-            <div><input class="field" type="text" id="firstName" name="first_name" placeholder="First Name" /></div>
-            <div><input class="field" type="text" id="lastName" name="last_name" placeholder="Last Name" /></div>
+            <div><input class="field" type="text" id="firstName" name="first_name" /></div>
+            <div><input class="field" type="text" id="lastName" name="last_name" /></div>
           </div>
-          <div style="margin-top:12px"><input class="field" type="email" id="email" name="email" placeholder="Email" /></div>
-          <div style="margin-top:12px"><textarea name="message" id="message" class="field" placeholder="Message"></textarea></div>
+          <div style="margin-top:12px"><input class="field" type="email" id="email" name="email" /></div>
+          <div style="margin-top:12px"><textarea name="message" id="message" class="field"></textarea></div>
           <div class="consents">
             <label class="cb">
               <input type="checkbox" id="updates" name="agree_messages">
-              <span id="c_consent_1">I agree to receive other communication messages.</span>
+              <span id="c_consent_1"></span>s
             </label>
             <label class="cb">
               <input type="checkbox" id="consent" name="agree_data">
-              <span id="c_consent_2">I give my consent to bndlabs to store my data.</span>
+              <span id="c_consent_2"></span>
             </label>
           </div>
-          <p class="help" id="c_privacy">We respect your privacy. You can opt out at any time.</p>
-          <button class="btn" type="submit" id="c_button">Send Message</button>
+          <p class="help" id="c_privacy"></p>
+          <button class="btn" type="submit" id="c_button"></button>
         </form>
       </div>
     </div>
 
     <aside class="side-stack">
-      <div class="photo"><img id="c_image" src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?q=80&w=1400&auto=format&fit=crop" alt="Happy person on phone"></div>
+      <div class="photo"><img id="c_image" alt=""></div>
 
       <div class="info-card">
         <div class="pad">
-          <h3 class="info-title" id="c_qc_title">Quick Contact</h3>
+          <h3 class="info-title" id="c_qc_title"></h3>
 
           <div class="row">
             <span class="bullet"><svg viewBox="0 0 24 24"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.3 0-8 2.2-8 5v1h16v-1c0-2.8-3.7-5-8-5Z"/></svg></span>
             <div>
-              <div class="muted" id="c_qc_email_label">Email</div>
-              <div><a id="c_qc_email_value" href="mailto:hello@bndlabs.dev">hello@bndlabs.dev</a></div>
+              <div class="muted" id="c_qc_email_label"></div>
+              <div><a id="c_qc_email_value"></a></div>
             </div>
           </div>
 
           <div class="row">
             <span class="bullet"><svg viewBox="0 0 24 24"><path d="M6.6 10.8a15.6 15.6 0 0 0 6.6 6.6l2.2-2.2c.3-.3.8-.4 1.2-.3 1 .3 2 .5 3 .5.7 0 1.2.5 1.2 1.2V20c0 .7-.5 1.2-1.2 1.2C10.4 21.2 2.8 13.6 2.8 3.2 2.8 2.5 3.3 2 4 2h3.2c.7 0 1.2.5 1.2 1.2 0 1 .2 2 .5 3 .1.4 0 .9-.3 1.2l-2 2.4Z"/></svg></span>
             <div>
-              <div class="muted" id="c_qc_phone_label">Phone Number</div>
-              <div><a id="c_qc_phone_value" href="tel:+2348000000000">+234 (0) 800 000 0000</a></div>
+              <div class="muted" id="c_qc_phone_label"></div>
+              <div><a id="c_qc_phone_value"></a></div>
             </div>
           </div>
 
           <div class="row">
             <span class="bullet"><svg viewBox="0 0 24 24"><path d="M12 2a8 8 0 0 0-8 8c0 5.2 8 12 8 12s8-6.8 8-12a8 8 0 0 0-8-8Zm0 10.5A2.5 2.5 0 1 1 12 7.5a2.5 2.5 0 0 1 0 5Z"/></svg></span>
             <div>
-              <div class="muted" id="c_qc_hq_label">Headquarter</div>
-              <div id="c_qc_hq_value">Lagos, Nigeria</div>
+              <div class="muted" id="c_qc_hq_label"></div>
+              <div id="c_qc_hq_value"></div>
             </div>
           </div>
 
-          <div style="margin-top:10px;font-weight:800" id="c_follow_title">Follow us</div>
+          <div style="margin-top:10px;font-weight:800" id="c_follow_title"></div>
           <div class="socials" id="c_socials"></div>
         </div>
       </div>
@@ -257,20 +257,32 @@
 </footer>
 
 <script>
-const menuToggle=document.getElementById('menuToggle');
+const menuToggle=document.get
+ElementById('menuToggle');
 const nav=document.querySelector('.nav');
 menuToggle.addEventListener('click',()=>nav.classList.toggle('active'));
-document.addEventListener('click',e=>{if(!nav.contains(e.target)&&!menuToggle.contains(e.target))nav.classList.remove('active')});
+document.addEventListener('click',e=>{
+  if(!nav.contains(e.target)&&!menuToggle.contains(e.target))
+    nav.classList.remove('active')
+});
 </script>
 
 <script>
 const revealElements=document.querySelectorAll(".reveal");
-const revealOnScroll=()=>{const wh=window.innerHeight;revealElements.forEach(el=>{const top=el.getBoundingClientRect().top;if(top<wh-120)el.classList.add("active")})};
-window.addEventListener("scroll",revealOnScroll);revealOnScroll();
+const revealOnScroll=()=>{
+  const wh=window.innerHeight;
+  revealElements.forEach(el=>{
+    const top=el.getBoundingClientRect().top;
+    if(top<wh-120)el.classList.add("active")
+  })
+};
+window.addEventListener("scroll",revealOnScroll);
+revealOnScroll();
 </script>
 
 <!-- CMS Data Loader -->
 <script src="js/data.js"></script>
 <script src="js/render.js"></script>
+
 </body>
 </html>
