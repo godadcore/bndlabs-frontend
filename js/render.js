@@ -1,9 +1,16 @@
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    // Prime cache directly from Render backend
+    // === Ensure Data.js is ready before running ===
+    let retries = 0;
+    while ((!window.Data || !window.Data.get) && retries < 10) {
+      await new Promise(r => setTimeout(r, 150));
+      retries++;
+    }
+
+    // === Prime CMS cache from backend ===
     await (window.Data?.prime?.() || Promise.resolve());
 
-    // Utility shortcuts
+    // === Utility helpers ===
     const $ = s => document.querySelector(s);
     const putText = (sel, v = "") => { const el = $(sel); if (el) el.textContent = v || ""; };
     const putHTML = (sel, v = "") => { const el = $(sel); if (el) el.innerHTML = v || ""; };
@@ -21,13 +28,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (Array.isArray(a.about_stats)) {
         const host = $("#about_stats");
-        host.innerHTML = a.about_stats.map(s => `
-          <div class="stat"><div class="value">${s.value || ""}</div><div class="label">${s.label || ""}</div></div>
-        `).join("");
+        if (host) {
+          host.innerHTML = a.about_stats.map(s => `
+            <div class="stat">
+              <div class="value">${s.value || ""}</div>
+              <div class="label">${s.label || ""}</div>
+            </div>
+          `).join("");
+        }
       }
+
       if (Array.isArray(a.about_skills)) {
         const host = $("#about_skills");
-        host.innerHTML = a.about_skills.map(sk => `<span>${sk}</span>`).join("");
+        if (host) {
+          host.innerHTML = a.about_skills.map(sk => `<span>${sk}</span>`).join("");
+        }
       }
     }
 
@@ -73,10 +88,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       // Socials
       if (Array.isArray(c.c_socials)) {
         const box = $("#c_socials");
-        box.innerHTML = c.c_socials.map(s => {
-          const icon = s.svg && s.svg.includes("<svg") ? s.svg : `<span>${s.platform}</span>`;
-          return `<a href="${s.url || "#"}" target="_blank" rel="noopener">${icon}</a>`;
-        }).join("");
+        if (box) {
+          box.innerHTML = c.c_socials.map(s => {
+            const icon = s.svg && s.svg.includes("<svg") ? s.svg : `<span>${s.platform}</span>`;
+            return `<a href="${s.url || "#"}" target="_blank" rel="noopener">${icon}</a>`;
+          }).join("");
+        }
       }
     }
 
@@ -110,12 +127,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     }
 
-    // ========== 404 ==========
+    // ========== 404 PAGE ==========
     if (page === "four") {
       const d = Data.get("404") || {};
       putText("#four_title", d.title);
       putHTML("#four_desc", d.desc);
     }
+
   } catch (err) {
     console.warn("⚠️ Render initialization failed:", err);
   }
@@ -125,18 +143,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 (async () => {
   try {
     const res = await fetch("https://bndlabs-backend.onrender.com/api/socials");
-    if (!res.ok) throw new Error(res.status);
-    const socials = await res.json();
+    if (!res.ok) throw new Error(res.statusText);
 
-    const footerSocials = document.querySelector(".footer-inner .socials");
-    if (footerSocials && Array.isArray(socials)) {
-      footerSocials.innerHTML = socials.map(s => `
+    const socials = await res.json();
+    const footer = document.querySelector(".footer-inner .socials");
+
+    if (footer && Array.isArray(socials)) {
+      footer.innerHTML = socials.map(s => `
         <a href="${s.url}" target="_blank" rel="noopener" title="${s.platform}">
           ${s.svg || `<span>${s.platform}</span>`}
         </a>
       `).join("");
     }
   } catch (e) {
-    console.warn("⚠️ Failed to load footer socials:", e);
+    console.warn("⚠️ Could not load footer socials:", e.message);
   }
 })();
