@@ -1,0 +1,35 @@
+services:
+  - type: static
+    name: bndlabs-frontend
+    env: static
+    repo: https://github.com/godadcore/bndlabs-frontend
+    branch: main
+    buildCommand: ""
+    publishPath: .
+    routes:
+      # Default home page
+      - type: rewrite
+        source: /
+        destination: /home.html
+
+      # Route all other pages correctly (about, portfolio, contact, etc.)
+      - type: rewrite
+        source: /about
+        destination: /about.html
+
+      - type: rewrite
+        source: /portfolio
+        destination: /portfolio.html
+
+      - type: rewrite
+        source: /blog
+        destination: /blog.html
+
+      - type: rewrite
+        source: /contact
+        destination: /contact.html
+
+      # Fallback: any path that doesn’t match will map directly
+      - type: rewrite
+        source: /*
+        destination: /:splat
