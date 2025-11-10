@@ -36,43 +36,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 <style>
-  /* ====== Smooth Loader ====== */
-.page-loader {
-  position: fixed;
-  inset: 0;
-  background: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  transition: opacity .5s ease, visibility .5s ease;
-}
-.page-loader.hidden {
-  opacity: 0;
-  visibility: hidden;
-}
-.loader-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
-.spinner {
-  width: 36px;
-  height: 36px;
-  border: 3px solid rgba(0,0,0,.1);
-  border-top-color: #ff4d00;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-.page-loader p {
-  font-weight: 700;
-  color: #555;
-  font-size: 13px;
-  letter-spacing: .06em;
-}
-
   :root{
     --primary:#FF4D00;
     --primary-2:#FF8C00;
@@ -119,24 +82,18 @@
   }
   .menu-toggle{display:block; cursor:pointer;}
 
-  /* Bubble Dropdown Menu */
+  /* Dropdown Menu */
   .nav { display:none;flex-direction:column;align-items:flex-end;position:absolute;top:60px;right:20px;
     background:rgba(20,20,20,0.9);backdrop-filter:blur(10px);border-radius:30px;
     padding:16px 10px;gap:10px;box-shadow:0 8px 30px rgba(0,0,0,0.4);animation:dropIn .25s ease forwards;width:200px;}
   .nav.active { display:flex; }
-  .nav a { background:rgba(255,255,255,0.08);color:#fff;padding:12px 0;border-radius:30px;font-weight:500;text-align:center;transition:.25s;width:100%;}
-  .nav a:hover { background:rgba(255,255,255,0.2);transform:translateX(-2px);}
-  .nav a.active { background:var(--primary-gradient);color:#fff;font-weight:700;}
+  .nav a { background:rgba(255,255,255,0.08);color:#fff;padding:12px 0;border-radius:30px;font-weight:500;text-align:center;transition:.25s;width:100%; }
+  .nav a:hover { background:rgba(255,255,255,0.2);transform:translateX(-2px); }
+  .nav a.active { background:var(--primary-gradient);color:#fff;font-weight:700; }
   @keyframes dropIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
 
-  /* TECH BACKGROUND ANIMATION */
-  .tech-bg{position:absolute;top:0;left:0;right:0;height:700px;overflow:hidden;z-index:-1;background:var(--light-bg);}
-  .tech-bg::before{content:"";position:absolute;width:200%;height:200%;
-    background-image:repeating-linear-gradient(135deg,rgba(255,77,0,0.25) 0,rgba(255,77,0,0.25) 1px,transparent 1px,transparent 80px);
-    animation:moveLines 25s linear infinite;}
-  @keyframes moveLines{from{transform:translateX(0) translateY(0);}to{transform:translateX(-200px) translateY(-200px);}}
-
   /* HERO */
+  .tech-bg{position:absolute;top:0;left:0;right:0;height:700px;overflow:hidden;z-index:-1;background:var(--light-bg);}
   .hero-wrap{max-width:1200px;margin:120px auto 0;padding:0 20px;text-align:center;position:relative;}
   .hero-card{border-radius:18px;overflow:hidden;background:rgba(255,255,255,0.6);color:#000;padding:60px 20px;}
   .label-left h1{
@@ -148,95 +105,18 @@
   .pill{display:inline-block;margin-top:18px;padding:8px 14px;border-radius:999px;background:rgba(255,77,0,0.06);color:var(--primary);font-weight:600}
   @media(max-width:720px){.label-left h1{font-size:36px}}
 
-  /* optional: softwares badges row under hero */
-  .softwares{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
-  .chip{padding:6px 10px;border-radius:999px;border:1px solid rgba(0,0,0,0.08);background:#fff;font-size:12px;color:#333}
-
   /* PROJECTS */
-  .projects-section{padding:0px 20px;}
-  .projects-title{
-    text-align:center;font-size:24px;background:var(--primary-gradient);
-    -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:30px;
-  }
- /* --- Projects: fixed card size, left text, tighter spacing --- */
-.projects-section { padding: 0 20px 10px; }               /* less bottom air */
-.projects-title { margin: 10px 0 18px; }                   /* closer to grid */
-
-.projects-grid{
-  display: grid;
-  /* 2 equal cards on desktop, each within 320–420 width */
-  grid-template-columns: repeat(auto-fit, minmax(320px, 420px));
-  justify-content: center;          /* keep the row centered as a group */
-  gap: 28px;                        /* tighter space between cards */
-  margin-top: 12px;
-}
-
-.project-card{
-  width: 100%;
-  max-width: 420px;                 /* hard cap so cards don’t grow too wide */
-  border-radius: 14px;
-  overflow: hidden;
-  background: #fff;
-  border: 1px solid rgba(0,0,0,0.08);
-  box-shadow: 0 8px 26px rgba(0,0,0,.06);
-  text-align: left;                 /* force left alignment inside card */
-}
-
-/* Consistent image area */
-.project-card img{
-  display: block;
-  width: 100%;
-  height: 220px;                    /* fixed visual height */
-  object-fit: cover;                /* crop to fill without distortion */
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
-/* Title + tag always left, consistent rhythm */
-.project-content{
-  padding: 14px 16px 16px;
-}
-.project-content h3{
-  margin: 0 0 6px;
-  font-size: 18px;
-  line-height: 1.25;
-  color: var(--light-text);
-  text-align: left;
-}
-.project-content p{
-  margin: 0;
-  font-size: 13px;
-  letter-spacing: .2px;
-  color: var(--primary);
-  text-transform: uppercase;
-  text-align: left;
-}
-
-/* Button a bit closer to the cards */
-.see-all-wrap{ margin-top: 18px; }
-
-/* Tablet/phone: single column, same card proportions */
-@media (max-width: 900px){
-  .projects-grid{
-    grid-template-columns: minmax(300px, 1fr);
-    gap: 18px;
-  }
-  .project-card img{ height: 200px; }
-}
-
-  .project-card{
-    background:#f6f3ef;border-radius:14px;overflow:hidden;border:1px solid rgba(0,0,0,0.08);
-    transition:all .3s ease;cursor:pointer;
-  }
-  .project-card img{width:100%;height:180px;object-fit:cover;border-bottom-left-radius:14px;border-bottom-right-radius:14px;}
-  .project-card:hover{box-shadow:0 0 12px rgba(255,77,0,0.4);transform:translateY(-4px);}
-  .project-card:active{transform:scale(0.97);}
-  .project-content{padding:14px;}
-  .project-content h3{margin:0 0 6px;font-size:18px;color:var(--light-text);}
-  .project-content p{margin:0;font-size:14px;color:var(--primary);}
-  .see-all-wrap{text-align:center;margin-top:30px;}
-  .see-all-btn{padding:12px 26px;border:none;border-radius:12px;background:var(--primary-gradient);color:#fff;font-weight:700;cursor:pointer;display:inline-block}
-  .see-all-btn:hover{opacity:0.9}
+  .projects-section{padding:0 20px 10px;}
+  .projects-title{text-align:center;font-size:24px;background:var(--primary-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:18px;}
+  .projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,420px));justify-content:center;gap:28px;margin-top:12px;}
+  .project-card{width:100%;max-width:420px;border-radius:14px;overflow:hidden;background:#fff;border:1px solid rgba(0,0,0,0.08);box-shadow:0 8px 26px rgba(0,0,0,.06);text-align:left;}
+  .project-card img{display:block;width:100%;height:220px;object-fit:cover;}
+  .project-content{padding:14px 16px 16px;}
+  .project-content h3{margin:0 0 6px;font-size:18px;line-height:1.25;color:var(--light-text);}
+  .project-content p{margin:0;font-size:13px;letter-spacing:.2px;color:var(--primary);text-transform:uppercase;}
+  .see-all-wrap{text-align:center;margin-top:18px;}
+  .see-all-btn{padding:12px 26px;border:none;border-radius:12px;background:var(--primary-gradient);color:#fff;font-weight:700;cursor:pointer;}
+  .see-all-btn:hover{opacity:0.9;}
 
   /* FOOTER */
   footer{background:#f6f3ef;color:var(--light-faint);padding:20px;margin-top:40px}
@@ -249,7 +129,6 @@
   .socials a svg{width:18px;height:18px;fill:#000;}
   @media(max-width:720px){.footer-inner{flex-direction:column;gap:10px;}}
 
-  /* Reveal */
   .reveal{opacity:0;transform:translateY(40px);transition:all 0.8s ease-out;}
   .reveal.active{opacity:1;transform:translateY(0);}
 </style>
@@ -283,23 +162,20 @@
   <div class="hero-wrap">
     <div class="hero-card reveal">
       <div class="label-left">
-       <h1 id="h_title">UI/UX Designer & Developer</h1>
-        <p id="h_sub">UI/UX Designer specialising in UI/UX & design systems. Front-end developer who writes clean, elegant, and efficient code.</p>
-        <div class="pill" id="h_pill">Design + Code</div>
-
-        <!-- optional CMS-driven softwares row (chips). Hidden if empty -->
+        <h1 id="h_title"></h1>
+        <p id="h_sub"></p>
+        <div class="pill" id="h_pill"></div>
         <div class="softwares" id="home_softwares" style="display:none;"></div>
       </div>
     </div>
   </div>
 
-  <!-- PROJECTS from CMS -->
+  <!-- PROJECTS -->
   <section class="projects-section" id="projects">
-  <h2 class="projects-title" id="h_proj_title">Some of my latest work</h2>
-    <div class="projects-grid" id="projectsGrid"><!-- Cards will be auto-loaded here --></div>
-
+    <h2 class="projects-title" id="h_proj_title"></h2>
+    <div class="projects-grid" id="projectsGrid"></div>
     <div class="see-all-wrap">
-     <a href="portfolio.html" id="h_button" class="see-all-btn">See All Work</a>
+      <a href="portfolio.html" id="h_button" class="see-all-btn"></a>
     </div>
   </section>
 
@@ -321,14 +197,6 @@
   </footer>
 
 <script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister()));
-    caches && caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
-  }
-</script>
-
-
-<script>
   const menuToggle = document.getElementById("menuToggle");
   const nav = document.querySelector(".nav");
   const navLinks = document.querySelectorAll(".nav a");
@@ -337,12 +205,11 @@
     nav.classList.toggle("active");
   });
 
-  // Highlight active link
   navLinks.forEach(link => {
     link.addEventListener("click", () => {
       navLinks.forEach(l => l.classList.remove("active"));
       link.classList.add("active");
-      nav.classList.remove("active"); // close menu on click
+      nav.classList.remove("active");
     });
   });
 </script>
@@ -363,84 +230,48 @@ const revealOnScroll = () => {
 window.addEventListener("scroll", revealOnScroll);
 revealOnScroll();
 </script>
-<!-- ===== Firebase + CMS (MODULAR FIX) ===== -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-  const 
-
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-
-  async function readCMS(key, fallback = null) {
-    try {
-      const snap = await get(ref(db, key));
-      if (snap.exists()) {
-        const val = snap.val();
-        );
-        return val;
-      }
-    } catch (err) {
-      console.warn('Firebase read failed:', err);
-    }
-    try { return JSON.parse() ?? fallback; }
-    catch { return fallback; }
+<!-- === CMS Connection (Backend) === -->
+<script>
+async function loadHomeData() {
+  try {
+    const res = await fetch('https://bndlabs-backend.onrender.com/api/home');
+    const h = await res.json();
+    document.getElementById('h_title').textContent = h.title || '';
+    document.getElementById('h_sub').textContent = h.sub || '';
+    document.getElementById('h_pill').textContent = h.pill || '';
+    document.getElementById('h_proj_title').textContent = h.proj_title || '';
+    document.getElementById('h_button').textContent = h.button || '';
+  } catch (err) {
+    console.error('Error loading home data:', err);
   }
+}
 
-  const escHTML = s => String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
-  const escAttr = s => String(s||'').replace(/"/g,'&quot;');
-
-  (async function(){
-    const h = await readCMS('cms_home', {});
-    window.__debugHome = h;
-
-    if (h.title) document.getElementById('h_title').textContent = h.title;
-    if (h.sub) document.getElementById('h_sub').textContent = h.sub;
-    if (h.pill) document.getElementById('h_pill').textContent = h.pill;
-    if (h.proj_title) document.getElementById('h_proj_title').textContent = h.proj_title;
-    // Hide loader once CMS home data has loaded
-setTimeout(() => {
-  document.getElementById('pageLoader').classList.add('hidden');
-}, 500);
-    if (h.button) document.getElementById('h_button').textContent = h.button;
-  })();
-
-  (async function(){
+async function loadProjects() {
+  try {
+    const res = await fetch('https://bndlabs-backend.onrender.com/api/projects');
+    const projects = await res.json();
     const grid = document.getElementById('projectsGrid');
-    const raw = await readCMS('cms_projects', []);
-    const projects = Array.isArray(raw) ? raw : Object.values(raw || {});
-    const latest = projects
-      .filter(p => (p.status || 'active') === 'active')
-      .sort((a,b) => (b.updated || 0) - (a.updated || 0))
-      .slice(0, 3);
-
+    const latest = projects.slice(0, 3);
     grid.innerHTML = latest.map(p => `
       <a href="${p.link || `project-monitor.html?id=${encodeURIComponent(p.id||'')}`}" class="project-card">
-        <img src="${escAttr(p.hero||'')}" alt="${escAttr(p.title||'')}">
+        <img src="${p.hero || ''}" alt="${p.title || ''}">
         <div class="project-content">
-          <h3>${escHTML(p.title||'Untitled Project')}</h3>
-          <p>${escHTML(p.tag||'')}</p>
+          <h3>${p.title || 'Untitled Project'}</h3>
+          <p>${p.tag || ''}</p>
         </div>
       </a>
     `).join('');
-  })();
+  } catch (err) {
+    console.error('Error loading projects:', err);
+  }
+}
+
+loadHomeData();
+loadProjects();
 </script>
-<!-- ====== Loader Overlay ====== -->
-<div id="pageLoader" class="page-loader">
-  <div class="loader-inner">
-    <div class="spinner"></div>
-    <p>Loading bndlabs...</p>
-  </div>
-</div>
-<script>
-  // Safety fallback: hide loader after 4 seconds no matter what
-  setTimeout(() => {
-    document.getElementById('pageLoader').classList.add('hidden');
-  }, 4000);
-</script>
+
 <script src="js/data.js"></script>
 <script src="js/render.js"></script>
-
 </body>
 </html>
