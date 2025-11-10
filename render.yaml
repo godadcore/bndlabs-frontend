@@ -1,4 +1,5 @@
 services:
+  # FRONTEND: Static website
   - type: static
     name: bndlabs-frontend
     env: static
@@ -7,12 +8,11 @@ services:
     buildCommand: ""
     publishPath: .
     routes:
-      # Default home page
+      # Route setup
       - type: rewrite
         source: /
         destination: /home.html
 
-      # Route all other pages correctly (about, portfolio, contact, etc.)
       - type: rewrite
         source: /about
         destination: /about.html
@@ -29,7 +29,19 @@ services:
         source: /contact
         destination: /contact.html
 
-      # Fallback: any path that doesn’t match will map directly
       - type: rewrite
         source: /*
         destination: /:splat
+
+  # BACKEND: Express CMS API
+  - type: web
+    name: bndlabs-backend
+    env: node
+    repo: https://github.com/godadcore/bndlabs-backend
+    branch: main
+    buildCommand: npm install
+    startCommand: node server.js
+    plan: free
+    envVars:
+      - key: NODE_VERSION
+        value: 18
