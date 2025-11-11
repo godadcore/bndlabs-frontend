@@ -164,39 +164,48 @@
   const fallback = document.getElementById('staticPosts');
 
   try {
-    const res = await fetch('https://bndlabs-backend.onrender.com/api/blogs');
-    const blogs = await res.json();
+    // Fetch blogs
+    const blogRes = await fetch('https://bndlabs-backend.onrender.com/api/blogs');
+    const blogs = await blogRes.json();
 
-    if (!blogs || !blogs.length) {
+    // Fetch profile
+    const profileRes = await fetch('https://bndlabs-backend.onrender.com/api/profile');
+    const profile = await profileRes.json();
+
+    if (!blogs.length) {
       fallback.style.display = 'block';
       return;
     }
 
-    blogList.innerHTML = '';
     fallback.style.display = 'none';
+    blogList.innerHTML = '';
 
-    blogs.sort((a,b)=> new Date(b.date) - new Date(a.date));
+    // Sort newest first
+    blogs.sort((a, b) => (b.updated || 0) - (a.updated || 0));
 
-    blogs.forEach(post=>{
+    // Render blog cards
+    blogs.forEach(post => {
       const card = document.createElement('a');
       card.className = 'blog-card reveal';
       card.href = `blog-details.html?id=${encodeURIComponent(post.id)}`;
       card.innerHTML = `
-        <img src="${post.hero || 'https://via.placeholder.com/800x400'}" alt="">
+        <img src="${escapeAttr(post.hero || '')}" alt="">
         <div class="blog-card-content">
-          <h2>${post.title || 'Untitled'}</h2>
-          ${post.subtitle ? `<p class="subtitle">${post.subtitle}</p>` : ''}
+          <h2>${escapeHtml(post.title || 'Untitled')}</h2>
+          ${post.subtitle ? `<p class="subtitle">${escapeHtml(post.subtitle)}</p>` : ''}
           <div class="author">
-            <img src="${post.authorAvatar || 'https://via.placeholder.com/88'}" alt="">
-            <div class="meta"><strong>${post.author || ''}</strong><br>${post.date || ''}</div>
+            <img src="${escapeAttr(profile.avatar || 'default-avatar.png')}" alt="${escapeAttr(profile.name)}">
+            <div class="meta"><strong>${escapeHtml(profile.name)}</strong><br>${escapeHtml(post.date || '')}</div>
           </div>
         </div>`;
       blogList.appendChild(card);
     });
 
+    // Scroll reveal
     revealOnScroll();
+
   } catch (err) {
-    console.error('Error fetching blogs:', err);
+    console.error('⚠️ Blog loading error:', err);
     fallback.style.display = 'block';
   }
 
@@ -209,9 +218,11 @@
     window.addEventListener('scroll', reveal);
     reveal();
   }
+
+  function escapeHtml(s){return String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+  function escapeAttr(s){return String(s||'').replace(/"/g,'&quot;');}
 })();
 </script>
-
 <script src="js/data.js"></script>
 <script src="js/render.js"></script>
 

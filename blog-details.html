@@ -205,75 +205,76 @@
 (async function(){
   const params = new URLSearchParams(location.search);
   const id = params.get('id');
+
   const articleBody = document.getElementById('article_body');
   const recentWrap = document.getElementById('recent_wrap');
   const recentList = document.getElementById('recent_list');
 
   try {
-    // === Fetch all blog posts from backend ===
-    const res = await fetch('https://bndlabs-backend.onrender.com/api/blogs');
-    const posts = await res.json();
+    // === Fetch blog posts ===
+    const blogRes = await fetch('https://bndlabs-backend.onrender.com/api/blogs');
+    const blogs = await blogRes.json();
 
-    if (!Array.isArray(posts) || !posts.length) {
-      articleBody.innerHTML = `<p style="text-align:center;color:var(--light-faint);margin-top:40px;">No blog data found. Please add blogs in Admin CMS.</p>`;
+    // === Fetch profile info ===
+    const profileRes = await fetch('https://bndlabs-backend.onrender.com/api/profile');
+    const profile = await profileRes.json();
+
+    if (!blogs.length) {
+      articleBody.innerHTML = `<p style="color:var(--light-faint);text-align:center;">No CMS data found. Please add a blog post in your admin CMS.</p>`;
       return;
     }
 
-    // === Find the selected post ===
-    const post = posts.find(p => String(p.id) === String(id)) || posts[0];
+    // Find selected post by ID
+    const post = blogs.find(p => String(p.id) === String(id)) || blogs[0];
 
-    if (!post) {
-      articleBody.innerHTML = `<p style="text-align:center;color:var(--light-faint);margin-top:40px;">Post not found.</p>`;
-      return;
-    }
-
-    // === Fill Hero ===
+    // === Hero ===
     setText('#post_title', post.title);
     setText('#post_sub', post.subtitle);
     setText('#post_date', post.date);
     setText('#post_tag', post.tag || post.category || '');
-    setText('#post_author', post.author || 'Admin');
-    setSrc('#author_img', post.authorAvatar || 'https://via.placeholder.com/60');
 
-    // === Render article sections ===
+    const imgEl = document.getElementById('author_img');
+    if (imgEl) imgEl.src = profile.avatar || 'default-avatar.png';
+    setText('#post_author', profile.name || 'Admin');
+
+    // === Article Sections ===
     articleBody.innerHTML = '';
-    const sections = Array.isArray(post.sections) ? post.sections : [];
-    if (!sections.length) {
-      articleBody.innerHTML = `<p style="color:var(--light-muted);text-align:center;">No content found for this article.</p>`;
+    const items = Array.isArray(post.sections) ? post.sections : [];
+    if (!items.length) {
+      articleBody.innerHTML = `<p style="color:var(--light-faint);text-align:center;">This post has no content yet.</p>`;
     } else {
-      sections.forEach(s => {
-        if (s.type === 'h2') {
-          articleBody.innerHTML += `<h2 class="reveal">${cleanRich(s.value)}</h2>`;
-        } else if (s.type === 'p') {
-          articleBody.innerHTML += `<p class="reveal">${cleanRich(s.value)}</p>`;
-        } else if (s.type === 'img') {
+      items.forEach(s => {
+        if (s.type === 'h2')
+          articleBody.innerHTML += `<h2 class="reveal">${s.value || ''}</h2>`;
+        else if (s.type === 'p')
+          articleBody.innerHTML += `<p class="reveal">${s.value || ''}</p>`;
+        else if (s.type === 'img')
           articleBody.innerHTML += `
             <div class="illustration reveal">
-              <img src="${escapeAttr(s.value)}" alt="${escapeAttr(s.alt || '')}">
+              <img src="${escapeAttr(s.value || '')}" alt="${escapeAttr(s.alt || '')}">
             </div>`;
-        } else if (s.type === 'quote') {
+        else if (s.type === 'quote')
           articleBody.innerHTML += `
             <blockquote class="reveal" style="border-left:4px solid rgba(0,0,0,.1);margin:14px 0;padding:10px 14px;color:var(--light-muted)">
-              ${cleanRich(s.value)}
+              ${s.value || ''}
             </blockquote>`;
-        }
       });
     }
 
-    // === Render "Recent articles" ===
-    const recent = posts.filter(p => String(p.id) !== String(post.id)).slice(0, 4);
+    // === Recent posts ===
+    const recent = blogs.filter(p => String(p.id) !== String(post.id)).slice(0, 4);
     if (recent.length) {
       recentWrap.style.display = 'block';
       recentList.innerHTML = '';
-      recent.forEach(r => {
+      recent.forEach(p => {
         const li = document.createElement('li');
         li.className = 'reveal';
-        li.innerHTML = `<a href="blog-details.html?id=${encodeURIComponent(r.id)}">${escapeHtml(r.title || 'Untitled')}</a>`;
+        li.innerHTML = `<a href="blog-details.html?id=${encodeURIComponent(p.id)}">${escapeHtml(p.title || 'Untitled')}</a>`;
         recentList.appendChild(li);
       });
     }
 
-    // === Reveal animation ===
+    // === Reveal Animation ===
     const observer = new IntersectionObserver(entries => {
       entries.forEach(e => {
         if (e.isIntersecting) {
@@ -281,22 +282,21 @@
           observer.unobserve(e.target);
         }
       });
-    }, { threshold: 0.1 });
+    }, { threshold: 0.12 });
+
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
   } catch (err) {
-    console.error('Error loading blog details:', err);
-    articleBody.innerHTML = `<p style="text-align:center;color:var(--light-faint);margin-top:40px;">Unable to load this post. Please check your connection.</p>`;
+    console.error('⚠️ Blog detail load error:', err);
+    articleBody.innerHTML = `<p style="color:var(--light-faint);text-align:center;">Error loading article. Please try again later.</p>`;
   }
 
-  // === Helpers ===
-  function setText(sel, val){ const el = document.querySelector(sel); if(el) el.textContent = val || ''; }
-  function setSrc(sel, val){ const el = document.querySelector(sel); if(el) el.src = val || ''; }
-  function escapeHtml(s){ return String(s||'').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+  function setText(sel, val){
+    const el = document.querySelector(sel);
+    if (el) el.textContent = val || '';
+  }
+  function escapeHtml(s){ return String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
   function escapeAttr(s){ return String(s||'').replace(/"/g,'&quot;'); }
-  function decodeHtml(str){ const t=document.createElement('textarea'); t.innerHTML=String(str||''); return t.value; }
-  function stripScripts(html){ return String(html||'').replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi,''); }
-  function cleanRich(val){ return stripScripts(decodeHtml(val)); }
 })();
 </script>
 <script src="js/data.js"></script>
