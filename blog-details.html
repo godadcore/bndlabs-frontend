@@ -202,102 +202,102 @@
 </script>
 
 <script>
-  (async function(){
-    const key = 'cms_blogs';
-    const params = new URLSearchParams(location.search);
-    const id = params.get('id');
+(async function(){
+  const params = new URLSearchParams(location.search);
+  const id = params.get('id');
+  const articleBody = document.getElementById('article_body');
+  const recentWrap = document.getElementById('recent_wrap');
+  const recentList = document.getElementById('recent_list');
 
-    // === Read from Firebase first ===
-    let posts = await readFromFirebase(key);
-    if (!posts || !posts.length) posts = readLocal();
+  try {
+    // === Fetch all blog posts from backend ===
+    const res = await fetch('https://bndlabs-backend.onrender.com/api/blogs');
+    const posts = await res.json();
 
-    if (!posts.length) return;
+    if (!Array.isArray(posts) || !posts.length) {
+      articleBody.innerHTML = `<p style="text-align:center;color:var(--light-faint);margin-top:40px;">No blog data found. Please add blogs in Admin CMS.</p>`;
+      return;
+    }
 
+    // === Find the selected post ===
     const post = posts.find(p => String(p.id) === String(id)) || posts[0];
-    renderPost(post, posts);
 
-    // --- Firebase reader ---
-    async function readFromFirebase(key){
-      try {
-        const snap = await db.ref(key).get();
-        if (snap.exists()) {
-          const val = snap.val();
-          );
-          return val;
+    if (!post) {
+      articleBody.innerHTML = `<p style="text-align:center;color:var(--light-faint);margin-top:40px;">Post not found.</p>`;
+      return;
+    }
+
+    // === Fill Hero ===
+    setText('#post_title', post.title);
+    setText('#post_sub', post.subtitle);
+    setText('#post_date', post.date);
+    setText('#post_tag', post.tag || post.category || '');
+    setText('#post_author', post.author || 'Admin');
+    setSrc('#author_img', post.authorAvatar || 'https://via.placeholder.com/60');
+
+    // === Render article sections ===
+    articleBody.innerHTML = '';
+    const sections = Array.isArray(post.sections) ? post.sections : [];
+    if (!sections.length) {
+      articleBody.innerHTML = `<p style="color:var(--light-muted);text-align:center;">No content found for this article.</p>`;
+    } else {
+      sections.forEach(s => {
+        if (s.type === 'h2') {
+          articleBody.innerHTML += `<h2 class="reveal">${cleanRich(s.value)}</h2>`;
+        } else if (s.type === 'p') {
+          articleBody.innerHTML += `<p class="reveal">${cleanRich(s.value)}</p>`;
+        } else if (s.type === 'img') {
+          articleBody.innerHTML += `
+            <div class="illustration reveal">
+              <img src="${escapeAttr(s.value)}" alt="${escapeAttr(s.alt || '')}">
+            </div>`;
+        } else if (s.type === 'quote') {
+          articleBody.innerHTML += `
+            <blockquote class="reveal" style="border-left:4px solid rgba(0,0,0,.1);margin:14px 0;padding:10px 14px;color:var(--light-muted)">
+              ${cleanRich(s.value)}
+            </blockquote>`;
         }
-      } catch(e) { console.warn('Firebase failed', e); }
-      return [];
-    }
-
-    // --- Local reader ---
-    function readLocal(){
-      try {
-        const arr = JSON.parse( || '[]');
-        arr.sort((a,b)=> (b.updated||0) - (a.updated||0));
-        return arr;
-      } catch { return []; }
-    }
-
-    // --- Render the selected post ---
-    function renderPost(post, all){
-      setText('#post_title', post.title);
-      setText('#post_sub', post.subtitle);
-      setText('#post_date', post.date);
-      setText('#post_tag', post.tag || post.category);
-
-      const profile = readProfile();
-      setText('#post_author', profile.name || post.author || 'Admin');
-      const imgEl = document.getElementById('author_img');
-      if (imgEl) imgEl.src = profile.avatar || post.authorAvatar || 'default-avatar.png';
-
-      const body = document.getElementById('article_body');
-      body.innerHTML = '';
-      const items = Array.isArray(post.sections) ? post.sections : [];
-      items.forEach(s=>{
-        if (s.type === 'h2') body.innerHTML += `<h2 class="reveal">${s.value||''}</h2>`;
-        else if (s.type === 'p') body.innerHTML += `<p class="reveal">${s.value||''}</p>`;
-        else if (s.type === 'img') body.innerHTML += `
-          <div class="illustration reveal">
-            <img src="${escapeAttr(s.value||'')}" alt="${escapeAttr(s.alt||'')}">
-          </div>`;
-        else if (s.type === 'quote') body.innerHTML += `
-          <blockquote class="reveal" style="border-left:4px solid rgba(0,0,0,.1);margin:14px 0;padding:10px 14px;color:var(--light-muted)">
-            ${s.value||''}
-          </blockquote>`;
       });
-
-      const recent = all.filter(p => String(p.id) !== String(post.id));
-      if (recent.length){
-        const list = document.getElementById('recent_list');
-        document.getElementById('recent_wrap').style.display = 'block';
-        recent.slice(0,4).forEach(p=>{
-          const li = document.createElement('li');
-          li.className = 'reveal';
-          li.innerHTML = `<a href="blog-details.html?id=${encodeURIComponent(p.id)}">${escapeHtml(p.title||'Untitled')}</a>`;
-          list.appendChild(li);
-        });
-      }
-
-      const observer = new IntersectionObserver(entries=>{
-        entries.forEach(e=>{
-          if(e.isIntersecting){
-            e.target.classList.add('show');
-            observer.unobserve(e.target);
-          }
-        });
-      },{threshold:.12});
-      document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
     }
 
-    function readProfile(){
-      try { return JSON.parse( || '{}'); }
-      catch { return {}; }
+    // === Render "Recent articles" ===
+    const recent = posts.filter(p => String(p.id) !== String(post.id)).slice(0, 4);
+    if (recent.length) {
+      recentWrap.style.display = 'block';
+      recentList.innerHTML = '';
+      recent.forEach(r => {
+        const li = document.createElement('li');
+        li.className = 'reveal';
+        li.innerHTML = `<a href="blog-details.html?id=${encodeURIComponent(r.id)}">${escapeHtml(r.title || 'Untitled')}</a>`;
+        recentList.appendChild(li);
+      });
     }
 
-    function setText(sel,val){const el=document.querySelector(sel); if(el) el.textContent = val||'';}
-    function escapeHtml(s){return String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
-    function escapeAttr(s){return String(s||'').replace(/"/g,'&quot;');}
-  })();
+    // === Reveal animation ===
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('show');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  } catch (err) {
+    console.error('Error loading blog details:', err);
+    articleBody.innerHTML = `<p style="text-align:center;color:var(--light-faint);margin-top:40px;">Unable to load this post. Please check your connection.</p>`;
+  }
+
+  // === Helpers ===
+  function setText(sel, val){ const el = document.querySelector(sel); if(el) el.textContent = val || ''; }
+  function setSrc(sel, val){ const el = document.querySelector(sel); if(el) el.src = val || ''; }
+  function escapeHtml(s){ return String(s||'').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+  function escapeAttr(s){ return String(s||'').replace(/"/g,'&quot;'); }
+  function decodeHtml(str){ const t=document.createElement('textarea'); t.innerHTML=String(str||''); return t.value; }
+  function stripScripts(html){ return String(html||'').replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi,''); }
+  function cleanRich(val){ return stripScripts(decodeHtml(val)); }
+})();
 </script>
 <script src="js/data.js"></script>
 <script src="js/render.js"></script>

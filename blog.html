@@ -116,34 +116,20 @@
 <main>
   <div class="blog-container" id="blogList"></div>
 
-  <!-- Fallback static cards (shown only if no CMS posts) -->
-  <div class="blog-container" id="staticPosts">
-    <!-- Blog 1 -->
+  <!-- Fallback static cards -->
+  <div class="blog-container" id="staticPosts" style="display:none;">
+    <!-- Your static cards remain untouched -->
     <div class="blog-card">
-      <img src="https://images.unsplash.com/photo-1602526218894-17e6e8b47e3e?auto=format&fit=crop&w=1600&q=80" alt="Blog Thumbnail 1">
+      <img src="https://images.unsplash.com/photo-1602526218894-17e6e8b47e3e?auto=format&fit=crop&w=1600&q=80" alt="">
       <div class="blog-card-content">
         <h2>14 logic-driven UI design tips to improve any interface</h2>
         <p class="subtitle">UI design tips to improve your interface designs using logic rather than gut feel.</p>
         <div class="author">
-          <img src="https://images.unsplash.com/photo-1603415526960-f7e0328b8d1d?auto=format&fit=crop&w=400&q=80" alt="Author">
+          <img src="https://images.unsplash.com/photo-1603415526960-f7e0328b8d1d?auto=format&fit=crop&w=400&q=80" alt="">
           <div class="meta"><strong>Adham Dannaway</strong><br>23 June 2025</div>
         </div>
       </div>
     </div>
-
-    <!-- Blog 2 -->
-    <div class="blog-card">
-      <img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=1600&q=80" alt="Blog Thumbnail 2">
-      <div class="blog-card-content">
-        <h2>Designing for emotion in user interfaces</h2>
-        <p class="subtitle">How to create interfaces that connect with users on a deeper emotional level.</p>
-        <div class="author">
-          <img src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=400&q=80" alt="Author">
-          <div class="meta"><strong>bndlabs</strong><br>02 July 2025</div>
-        </div>
-      </div>
-    </div>
-    <!-- …keep your other 2 static cards here as fallback… -->
   </div>
 </main>
 
@@ -168,77 +154,64 @@
   // Menu
   const menuToggle = document.getElementById("menuToggle");
   const nav = document.querySelector(".nav");
-  if (menuToggle) { menuToggle.addEventListener("click", () => nav.classList.toggle("active")); }
+  if (menuToggle) menuToggle.addEventListener("click", () => nav.classList.toggle("active"));
 </script>
 
-<!-- ✅ Firebase v11 CDN (compat) -->
-<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-database-compat.js"></script>
-
+<!-- === Render Backend Fetch === -->
 <script>
-  // Firebase init
-  const 
+(async function(){
+  const blogList = document.getElementById('blogList');
+  const fallback = document.getElementById('staticPosts');
 
-  if (!firebase.apps.length) 
-  const db = firebase.database();
-</script>
+  try {
+    const res = await fetch('https://bndlabs-backend.onrender.com/api/blogs');
+    const blogs = await res.json();
 
-<script>
-  // Blog list loader (Firebase → fallback to localStorage)
-  (function(){
-    const key = 'cms_blogs';
-    const host = document.getElementById('blogList');
-    const fallback = document.getElementById('staticPosts');
+    if (!blogs || !blogs.length) {
+      fallback.style.display = 'block';
+      return;
+    }
 
-    db.ref(key).on('value', snap => {
-      const data = snap.val() || [];
-      if (!data.length) { fallback.style.display = 'block'; return; }
-      render(data);
-    }, err => {
-      console.warn('⚠️ Firebase failed, fallback to localStorage', err);
-      const local = JSON.parse( || '[]');
-      if (local.length) render(local); else fallback.style.display = 'block';
+    blogList.innerHTML = '';
+    fallback.style.display = 'none';
+
+    blogs.sort((a,b)=> new Date(b.date) - new Date(a.date));
+
+    blogs.forEach(post=>{
+      const card = document.createElement('a');
+      card.className = 'blog-card reveal';
+      card.href = `blog-details.html?id=${encodeURIComponent(post.id)}`;
+      card.innerHTML = `
+        <img src="${post.hero || 'https://via.placeholder.com/800x400'}" alt="">
+        <div class="blog-card-content">
+          <h2>${post.title || 'Untitled'}</h2>
+          ${post.subtitle ? `<p class="subtitle">${post.subtitle}</p>` : ''}
+          <div class="author">
+            <img src="${post.authorAvatar || 'https://via.placeholder.com/88'}" alt="">
+            <div class="meta"><strong>${post.author || ''}</strong><br>${post.date || ''}</div>
+          </div>
+        </div>`;
+      blogList.appendChild(card);
     });
 
-    function render(list){
-      host.innerHTML = '';
-      fallback.style.display = 'none';
-      list.sort((a,b)=>(b.updated||0)-(a.updated||0));
+    revealOnScroll();
+  } catch (err) {
+    console.error('Error fetching blogs:', err);
+    fallback.style.display = 'block';
+  }
 
-      list.forEach(post=>{
-        const card = document.createElement('a');
-        card.className = 'blog-card reveal';
-        card.href = `blog-details.html?id=${encodeURIComponent(post.id)}`;
-        card.innerHTML = `
-          <img src="${escapeAttr(post.hero||'')}" alt="">
-          <div class="blog-card-content">
-            <h2>${escapeHtml(post.title||'Untitled')}</h2>
-            ${post.subtitle ? `<p class="subtitle">${escapeHtml(post.subtitle)}</p>` : ''}
-            <div class="author">
-              <img src="${escapeAttr(post.authorAvatar||'https://via.placeholder.com/88')}" alt="">
-              <div class="meta"><strong>${escapeHtml(post.author||'')}</strong><br>${escapeHtml(post.date||'')}</div>
-            </div>
-          </div>`;
-        host.appendChild(card);
-      });
-
-      revealOnScroll();
-    }
-
-    function revealOnScroll(){
-      const cards = document.querySelectorAll('.blog-card');
-      const reveal = () => cards.forEach(c=>{
-        const r = c.getBoundingClientRect();
-        if (r.top < window.innerHeight - 100) c.classList.add('visible');
-      });
-      window.addEventListener('scroll', reveal);
-      reveal();
-    }
-
-    function escapeHtml(s){return String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
-    function escapeAttr(s){return String(s||'').replace(/"/g,'&quot;');}
-  })();
+  function revealOnScroll(){
+    const cards = document.querySelectorAll('.blog-card');
+    const reveal = () => cards.forEach(c=>{
+      const r = c.getBoundingClientRect();
+      if (r.top < window.innerHeight - 100) c.classList.add('visible');
+    });
+    window.addEventListener('scroll', reveal);
+    reveal();
+  }
+})();
 </script>
+
 <script src="js/data.js"></script>
 <script src="js/render.js"></script>
 
