@@ -126,58 +126,6 @@
   .footer-left{font-size:14px}
   .footer-nav{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
   .footer-nav a{color:var(--light-faint);font-size:14px;text-transform:capitalize;}
-/* ===== UNIVERSAL SKELETON LOADER STYLES ===== */
-#pageSkeleton {
-  position: fixed;
-  inset: 0;
-  background: #f6f3ef;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  z-index: 3000;
-  animation: fadeSkeleton 1.5s ease-out forwards;
-}
-
-/* The shimmer animation layer */
-#pageSkeleton::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    rgba(255,255,255,0) 0%,
-    rgba(255,255,255,0.4) 50%,
-    rgba(255,255,255,0) 100%
-  );
-  animation: shimmer 1.2s infinite;
-}
-
-/* Individual skeleton bars (optional) */
-.s-card {
-  width: 80%;
-  max-width: 700px;
-  height: 40px;
-  margin: 10px 0;
-  border-radius: 12px;
-  background: rgba(0, 0, 0, 0.05);
-  position: relative;
-  overflow: hidden;
-}
-
-/* Animation for shimmer motion */
-@keyframes shimmer {
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-/* Fade out the skeleton smoothly */
-@keyframes fadeSkeleton {
-  0% { opacity: 1; }
-  100% { opacity: 0; visibility: hidden; }
-}
-
 </style>
 </head>
 <body class="loading">
@@ -192,11 +140,6 @@
     </div>
     <div class="brand-text"><div class="name">bndlabs</div></div>
   </div>
-<div id="pageSkeleton">
-  <div class="s-card s-hero"></div>
-  <div class="s-card s-profile"></div>
-  <div class="s-card s-body"></div>
-</div>
   <nav class="nav" aria-label="Main">
     <a href="home.html">Home</a>
     <a href="about.html" class="active">About</a>
@@ -269,7 +212,6 @@
   });
 </script>
 <!-- other scripts -->
- <script src="js/skeleton.js"></script>
 <script src="js/data.js"></script>
 <script src="js/render.js"></script>
 <script>
@@ -279,8 +221,6 @@
   function num(n, d=0){ const v = Number(n); return Number.isFinite(v) ? v : d; }
 
   async function loadAbout(){
-    showSkeleton(); // 🟧 Start shimmer immediately
-
     try{
       const res = await fetch("https://bndlabs-backend.onrender.com/api/about", {credentials:"omit"});
       if(!res.ok) throw new Error("Network error");
