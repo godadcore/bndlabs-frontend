@@ -686,7 +686,7 @@ const LS_PROJECTS='cms_projects', LS_BLOGS='cms_blogs', LS_PROFILE='cms_profile'
 
 /* ===== Shortcuts ===== */
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
-const fmtTime=t=>!t?'—':new Date(t).toLocaleString(); const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmtTime=t=>!t?'—':new Date(t).toLocaleString(); const esc=s=>String(s |  | '').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 
 /* ===== Password Gate ===== */
@@ -754,10 +754,10 @@ $('#blogSearch').oninput=renderBlogs;   $('#blogFilter').onchange=renderBlogs;
 const projBody=$('#projBody'), blogBody=$('#blogBody');
 
 function renderProjects(){
-  const q=($('#projSearch').value||'').toLowerCase(), f=$('#projFilter').value;
+  const q=($('#projSearch').value |  | '').toLowerCase(), f=$('#projFilter').value;
   const list=Store.projects().filter(p=>{
-    const okQ=!q || [p.title,p.tag,p.date].join(' ').toLowerCase().includes(q);
-    const okF=!f || (p.status||'active')===f; return okQ&&okF;
+    const okQ=!q  |  |  [p.title,p.tag,p.date].join(' ').toLowerCase().includes(q);
+    const okF=!f  |  |  (p.status |  | 'active')===f; return okQ&&okF;
   });
   projBody.innerHTML='';
   if(!list.length){ projBody.innerHTML='<tr><td colspan="8" style="color:#666">No projects found.</td></tr>'; return; }
@@ -765,15 +765,15 @@ function renderProjects(){
     const tr=document.createElement('tr');
     tr.innerHTML=`
       <td>${i+1}</td>
-      <td>${esc(p.title||'—')}</td>
-      <td><span class="status" data-s="${esc(p.status||'active')}">${(p.status||'active').toUpperCase()}</span></td>
-      <td>${Number(p.views||0)}</td>
-      <td><span class="tag">${esc(p.tag||'—')}</span></td>
-      <td>${esc(p.date||'—')}</td>
+      <td>${esc(p.title |  | '—')}</td>
+      <td><span class="status" data-s="${esc(p.status |  | 'active')}">${(p.status |  | 'active').toUpperCase()}</span></td>
+      <td>${Number(p.views |  | 0)}</td>
+      <td><span class="tag">${esc(p.tag |  | '—')}</span></td>
+      <td>${esc(p.date |  | '—')}</td>
       <td>${fmtTime(p.updated)}</td>
       <td class="tools">
         <button class="ghost tiny" data-edit="${p.id}">✏️ Edit</button>
-        <button class="ghost tiny" data-toggle="${p.id}">${(p.status||'active')==='hidden'?'👁️ Show':'🙈 Hide'}</button>
+        <button class="ghost tiny" data-toggle="${p.id}">${(p.status |  | 'active')==='hidden'?'👁️ Show':'🙈 Hide'}</button>
         <button class="ghost tiny" data-del="${p.id}" style="color:#DC2626;border-color:#F3C0C0">🗑️ Delete</button>
       </td>`;
     projBody.appendChild(tr);
@@ -795,10 +795,10 @@ projBody.addEventListener('click',e=>{
 });
 
 function renderBlogs(){
-  const q=($('#blogSearch').value||'').toLowerCase(), f=$('#blogFilter').value;
+  const q=($('#blogSearch').value |  | '').toLowerCase(), f=$('#blogFilter').value;
   const list=Store.blogs().filter(b=>{
-    const okQ=!q || [b.title,b.tag,b.date,b.subtitle].join(' ').toLowerCase().includes(q);
-    const okF=!f || (b.status||'active')===f; return okQ&&okF;
+    const okQ=!q  |  |  [b.title,b.tag,b.date,b.subtitle].join(' ').toLowerCase().includes(q);
+    const okF=!f  |  |  (b.status |  | 'active')===f; return okQ&&okF;
   });
   blogBody.innerHTML='';
   if(!list.length){ blogBody.innerHTML='<tr><td colspan="8" style="color:#666">No posts found.</td></tr>'; return; }
@@ -806,15 +806,15 @@ function renderBlogs(){
     const tr=document.createElement('tr');
     tr.innerHTML=`
       <td>${i+1}</td>
-      <td>${esc(b.title||'—')}</td>
-      <td><span class="status" data-s="${esc(b.status||'active')}">${(b.status||'active').toUpperCase()}</span></td>
-      <td>${Number(b.views||0)}</td>
-      <td><span class="tag">${esc(b.tag||'—')}</span></td>
-      <td>${esc(b.date||'—')}</td>
+      <td>${esc(b.title |  | '—')}</td>
+      <td><span class="status" data-s="${esc(b.status |  | 'active')}">${(b.status |  | 'active').toUpperCase()}</span></td>
+      <td>${Number(b.views |  | 0)}</td>
+      <td><span class="tag">${esc(b.tag |  | '—')}</span></td>
+      <td>${esc(b.date |  | '—')}</td>
       <td>${fmtTime(b.updated)}</td>
       <td class="tools">
         <button class="ghost tiny" data-bed="${b.id}">✏️ Edit</button>
-        <button class="ghost tiny" data-btoggle="${b.id}">${(b.status||'active')==='hidden'?'👁️ Show':'🙈 Hide'}</button>
+        <button class="ghost tiny" data-btoggle="${b.id}">${(b.status |  | 'active')==='hidden'?'👁️ Show':'🙈 Hide'}</button>
         <button class="ghost tiny" data-bdel="${b.id}" style="color:#DC2626;border-color:#F3C0C0">🗑️ Delete</button>
       </td>`;
     blogBody.appendChild(tr);
@@ -843,22 +843,22 @@ function openProjEditor(project){
   $('#editorProjTitle').textContent=project?'Edit Project':'New Project';
   $('#delProjBtn').style.display=project?'inline-block':'none';
 
-  $('#p_title').value=project?.title||''; $('#p_tag').value=project?.tag||'';
-  $('#p_date').value=project?.date||'';   $('#p_desc').value=project?.desc||'';
-  $('#p_hero').value=project?.hero||'';   $('#p_status').value=project?.status||'active';
-  $('#p_views').value=Number(project?.views||0); $('#p_hero_file').value='';
-  $('#p_link').value=project?.link||'';
+  $('#p_title').value=project?.title |  | ''; $('#p_tag').value=project?.tag |  | '';
+  $('#p_date').value=project?.date |  | '';   $('#p_desc').value=project?.desc |  | '';
+  $('#p_hero').value=project?.hero |  | '';   $('#p_status').value=project?.status |  | 'active';
+  $('#p_views').value=Number(project?.views |  | 0); $('#p_hero_file').value='';
+  $('#p_link').value=project?.link |  | '';
 
-  p_sections.innerHTML=''; (project?.sections||[]).forEach(s=> addSectionUI(p_sections,s.type,s.value,s.alt));
+  p_sections.innerHTML=''; (project?.sections |  | []).forEach(s=> addSectionUI(p_sections,s.type,s.value,s.alt));
   $('#p_addSectionBtn').onclick=()=> addSectionUI(p_sections,$('#p_addType').value,'','');
   $('#delProjBtn').onclick=()=>{ if(project?.id && confirm('Delete this project?')){ Store.removeProject(project.id); backTo('proj'); } };
-  $('#saveProjBtn').onclick=()=> saveProject(project?.id||null);
+  $('#saveProjBtn').onclick=()=> saveProject(project?.id |  | null);
   document.querySelector('[data-back="proj"]').onclick=()=>backTo('proj');
 }
 
 function saveProject(id){
   const obj = {
-    id:id||null,
+    id:id |  | null,
     title:$('#p_title').value.trim(),
     tag:$('#p_tag').value.trim(),
     date:$('#p_date').value.trim(),
@@ -866,7 +866,7 @@ function saveProject(id){
     hero:$('#p_hero').value.trim(),
     link:$('#p_link').value.trim(), // ✅ add this line
     status:$('#p_status').value,
-    views:Number($('#p_views').value||0),
+    views:Number($('#p_views').value |  | 0),
     sections:collectSections(p_sections)
   };
   const f = $('#p_hero_file').files?.[0];
@@ -889,25 +889,25 @@ function openBlogEditor(post){
   $('#editorBlogTitle').textContent=post?'Edit Blog Post':'New Blog Post';
   $('#delBlogBtn').style.display=post?'inline-block':'none';
 
-  $('#b_title').value=post?.title||''; $('#b_tag').value=post?.tag||'';
-  $('#b_date').value=post?.date||'';   $('#b_sub').value=post?.subtitle||'';
-  $('#b_hero').value=post?.hero||'';   $('#b_status').value=post?.status||'active';
-  $('#b_views').value=Number(post?.views||0); $('#b_hero_file').value='';
+  $('#b_title').value=post?.title |  | ''; $('#b_tag').value=post?.tag |  | '';
+  $('#b_date').value=post?.date |  | '';   $('#b_sub').value=post?.subtitle |  | '';
+  $('#b_hero').value=post?.hero |  | '';   $('#b_status').value=post?.status |  | 'active';
+  $('#b_views').value=Number(post?.views |  | 0); $('#b_hero_file').value='';
 
-  b_sections.innerHTML=''; (post?.sections||[]).forEach(s=> addSectionUI(b_sections,s.type,s.value,s.alt));
+  b_sections.innerHTML=''; (post?.sections |  | []).forEach(s=> addSectionUI(b_sections,s.type,s.value,s.alt));
   $('#b_addSectionBtn').onclick=()=> addSectionUI(b_sections,$('#b_addType').value,'','');
   $('#delBlogBtn').onclick=()=>{ if(post?.id && confirm('Delete this post?')){ Store.removeBlog(post.id); backTo('blog'); } };
-  $('#saveBlogBtn').onclick=()=> saveBlog(post?.id||null);
+  $('#saveBlogBtn').onclick=()=> saveBlog(post?.id |  | null);
   document.querySelector('[data-back="blog"]').onclick=()=>backTo('blog');
 }
 
 function saveBlog(id){
   const prof=Store.profile();
   const obj={
-    id:id||null, title:$('#b_title').value.trim(), tag:$('#b_tag').value.trim(), date:$('#b_date').value.trim(),
+    id:id |  | null, title:$('#b_title').value.trim(), tag:$('#b_tag').value.trim(), date:$('#b_date').value.trim(),
     subtitle:$('#b_sub').value.trim(), hero:$('#b_hero').value.trim(),
-    status:$('#b_status').value, views:Number($('#b_views').value||0),
-    sections:collectSections(b_sections), author:prof.name||'', authorAvatar:prof.avatar||''
+    status:$('#b_status').value, views:Number($('#b_views').value |  | 0),
+    sections:collectSections(b_sections), author:prof.name |  | '', authorAvatar:prof.avatar |  | ''
   };
   const f=$('#b_hero_file').files?.[0];
   if(f){ const r=new FileReader(); r.onload=()=>{ obj.hero=r.result; Store.putBlog(obj); backTo('blog'); }; r.readAsDataURL(f); }
@@ -932,7 +932,7 @@ function addSectionUI(host,type,value='',alt=''){
     body.innerHTML='';
     el.querySelector('.s-title').textContent=(kind==='h2'?'H2':kind.toUpperCase());
 
-    const hasText = kind==='p' || kind==='h2';
+    const hasText = kind==='p'  |  |  kind==='h2';
     if(hasText){
       body.innerHTML=`
         <div class="rte">
@@ -959,7 +959,7 @@ function addSectionUI(host,type,value='',alt=''){
           <button class="btn" data-cmd="undo" title="Undo"><span class="material-symbols-rounded">undo</span></button>
           <button class="btn" data-cmd="redo" title="Redo"><span class="material-symbols-rounded">redo</span></button>
         </div>
-        <div class="rich" contenteditable="true" data-editor>${value||''}</div>`;
+        <div class="rich" contenteditable="true" data-editor>${value |  | ''}</div>`;
 
       const ddBtn=body.querySelector('[data-ddbtn]'), dd=body.querySelector('[data-dd]'), ddLabel=body.querySelector('[data-ddlabel]');
       ddBtn.onclick=()=>{ dd.style.display=dd.style.display==='block'?'none':'block'; };
@@ -980,7 +980,7 @@ function addSectionUI(host,type,value='',alt=''){
         const url=prompt('Enter URL (https://…)'); if(url) document.execCommand('createLink',false,url);
       };
       area.addEventListener('paste',e=>{
-        e.preventDefault(); const txt=(e.clipboardData||window.clipboardData).getData('text/plain'); document.execCommand('insertText',false,txt);
+        e.preventDefault(); const txt=(e.clipboardData |  | window.clipboardData).getData('text/plain'); document.execCommand('insertText',false,txt);
       });
 
     } else {
@@ -1020,7 +1020,7 @@ function addSectionUI(host,type,value='',alt=''){
   render(type);
 
   el.querySelector('[data-up]').onclick=()=>{ const i=[...host.children].indexOf(el); if(i>0) host.insertBefore(el,host.children[i-1]); };
-  el.querySelector('[data-down]').onclick=()=>{ const i=[...host.children].indexOf(el); if(i<host.children.length-1) host.insertBefore(el,host.children[i+2]||null); };
+  el.querySelector('[data-down]').onclick=()=>{ const i=[...host.children].indexOf(el); if(i<host.children.length-1) host.insertBefore(el,host.children[i+2] |  | null); };
   el.querySelector('[data-remove]').onclick=()=> el.remove();
 
   host.appendChild(el);
@@ -1030,12 +1030,12 @@ function collectSections(host){
   const out=[];
   host.querySelectorAll('.section').forEach(sec=>{
     const kind=sec.querySelector('.s-title').textContent.trim().toLowerCase();
-    const k = (kind==='h2' || kind==='heading') ? 'h2' : kind;
+    const k = (kind==='h2'  |  |  kind==='heading') ? 'h2' : kind;
     if(k==='img'){
-      const v=sec.querySelector('.s-val')?.value||''; const alt=sec.querySelector('.s-alt')?.value||'';
-      if(v||alt) out.push({type:'img', value:v, alt});
+      const v=sec.querySelector('.s-val')?.value |  | ''; const alt=sec.querySelector('.s-alt')?.value |  | '';
+      if(v |  | alt) out.push({type:'img', value:v, alt});
     }else{
-      const html=sec.querySelector('[data-editor]')?.innerHTML.trim()||'';
+      const html=sec.querySelector('[data-editor]')?.innerHTML.trim() |  | '';
       if(html) out.push({type:k, value:html});
     }
   });
@@ -1050,14 +1050,14 @@ function backTo(which){
 /* ===== Profile ===== */
 function loadProfile(){
   const p=Store.profile();
-  $('#s_name').value=p.name||''; $('#s_title').value=p.title||''; $('#s_years').value=p.years||'';
-  $('#s_location').value=p.location||''; $('#s_email').value=p.email||''; $('#s_phone').value=p.phone||'';
-  $('#s_bio').value=p.bio||''; $('#s_avatar').value=p.avatar||'';
-  $('#s_x').value=p.x||''; $('#s_instagram').value=p.instagram||''; $('#s_behance').value=p.behance||''; $('#s_linkedin').value=p.linkedin||'';
+  $('#s_name').value=p.name |  | ''; $('#s_title').value=p.title |  | ''; $('#s_years').value=p.years |  | '';
+  $('#s_location').value=p.location |  | ''; $('#s_email').value=p.email |  | ''; $('#s_phone').value=p.phone |  | '';
+  $('#s_bio').value=p.bio |  | ''; $('#s_avatar').value=p.avatar |  | '';
+  $('#s_x').value=p.x |  | ''; $('#s_instagram').value=p.instagram |  | ''; $('#s_behance').value=p.behance |  | ''; $('#s_linkedin').value=p.linkedin |  | '';
 }
 $('#s_save').onclick=()=>{
   const prof={
-    name:$('#s_name').value.trim(), title:$('#s_title').value.trim(), years:Number($('#s_years').value||0),
+    name:$('#s_name').value.trim(), title:$('#s_title').value.trim(), years:Number($('#s_years').value |  | 0),
     location:$('#s_location').value.trim(), email:$('#s_email').value.trim(), phone:$('#s_phone').value.trim(),
     bio:$('#s_bio').value.trim(), avatar:$('#s_avatar').value.trim(),
     x:$('#s_x').value.trim(), instagram:$('#s_instagram').value.trim(),
@@ -1072,11 +1072,11 @@ $('#s_avatar_file').addEventListener('change',e=>{
 /* ===== Home Settings ===== */
 function loadHome(){
   const h=Store.read(LS_HOME,'{}');
-  $('#h_title').value=h.title||'';
-  $('#h_sub').value=h.sub||'';
-  $('#h_pill').value=h.pill||'';
-  $('#h_proj_title').value=h.proj_title||'';
-  $('#h_button').value=h.button||'';
+  $('#h_title').value=h.title |  | '';
+  $('#h_sub').value=h.sub |  | '';
+  $('#h_pill').value=h.pill |  | '';
+  $('#h_proj_title').value=h.proj_title |  | '';
+  $('#h_button').value=h.button |  | '';
 }
 $('#h_save').onclick=()=>{
   const obj={
@@ -1188,7 +1188,7 @@ const About = {
     </div>`); },
 
   gather(){
-    const get = id => $(id)?.value?.trim() || '';
+    const get = id => $(id)?.value?.trim()  |  |  '';
     const list = (root,sel)=>[...root.querySelectorAll(sel)];
     const about = {
       about_hero_title: get('#about_hero_title'),
@@ -1202,14 +1202,14 @@ const About = {
       about_facts:   list(this.el.facts,'[data-item="fact"]').map(n=>({label:n.querySelectorAll('input')[0].value.trim(), k:n.querySelectorAll('input')[1].value.trim()})),
       about_skills:  list(this.el.skills,'[data-item="skill"]').map(n=>n.querySelector('input').value.trim()).filter(Boolean),
       about_gallery: list(this.el.gallery,'[data-item="gallery"]').map(n=>n.querySelector('input').value.trim()).filter(Boolean),
-      about_progress:list(this.el.progress,'[data-item="progress"]').map(n=>({label:n.querySelectorAll('input')[0].value.trim(), percent:Number(n.querySelectorAll('input')[1].value||0), color:n.querySelectorAll('input')[2].value.trim()})),
+      about_progress:list(this.el.progress,'[data-item="progress"]').map(n=>({label:n.querySelectorAll('input')[0].value.trim(), percent:Number(n.querySelectorAll('input')[1].value |  | 0), color:n.querySelectorAll('input')[2].value.trim()})),
       about_features:list(this.el.features,'[data-item="feature"]').map(n=>({img:n.querySelectorAll('input,textarea')[0].value.trim(), title:n.querySelectorAll('input,textarea')[1].value.trim(), desc:n.querySelectorAll('input,textarea')[2].value.trim(), link:n.querySelectorAll('input,textarea')[3].value.trim(), linkText:n.querySelectorAll('input,textarea')[4].value.trim()}))
     };
     return about;
   },
 
   fill(saved){
-    const set = (id,v)=>{const el=$(id); if(el) el.value=v||'';}
+    const set = (id,v)=>{const el=$(id); if(el) el.value=v |  | '';}
     set('#about_hero_title', saved.about_hero_title);
     set('#about_hero_desc',  saved.about_hero_desc);
     set('#about_name',       saved.about_name);
@@ -1220,11 +1220,11 @@ const About = {
     set('#about_random',     saved.about_random);
 
     // lists
-    this.el.facts.innerHTML=''; (saved.about_facts||[]).forEach(f=>{ this.addFact(); const last=this.el.facts.lastElementChild; last.querySelectorAll('input')[0].value=f.label||''; last.querySelectorAll('input')[1].value=f.k||''; });
-    this.el.skills.innerHTML=''; (saved.about_skills||[]).forEach(s=>{ this.addSkill(); const last=this.el.skills.lastElementChild; last.querySelector('input').value=s||''; });
-    this.el.gallery.innerHTML=''; (saved.about_gallery||[]).forEach(g=>{ this.addGallery(); const last=this.el.gallery.lastElementChild; last.querySelector('input').value=g||''; });
-    this.el.progress.innerHTML=''; (saved.about_progress||[]).forEach(p=>{ this.addProgress(); const last=this.el.progress.lastElementChild; last.querySelectorAll('input')[0].value=p.label||''; last.querySelectorAll('input')[1].value=p.percent||0; last.querySelectorAll('input')[2].value=p.color||''; });
-    this.el.features.innerHTML=''; (saved.about_features||[]).forEach(f=>{ this.addFeature(); const last=this.el.features.lastElementChild; const inputs=last.querySelectorAll('input,textarea'); inputs[0].value=f.img||''; inputs[1].value=f.title||''; inputs[2].value=f.desc||''; inputs[3].value=f.link||''; inputs[4].value=f.linkText||''; });
+    this.el.facts.innerHTML=''; (saved.about_facts |  | []).forEach(f=>{ this.addFact(); const last=this.el.facts.lastElementChild; last.querySelectorAll('input')[0].value=f.label |  | ''; last.querySelectorAll('input')[1].value=f.k |  | ''; });
+    this.el.skills.innerHTML=''; (saved.about_skills |  | []).forEach(s=>{ this.addSkill(); const last=this.el.skills.lastElementChild; last.querySelector('input').value=s |  | ''; });
+    this.el.gallery.innerHTML=''; (saved.about_gallery |  | []).forEach(g=>{ this.addGallery(); const last=this.el.gallery.lastElementChild; last.querySelector('input').value=g |  | ''; });
+    this.el.progress.innerHTML=''; (saved.about_progress |  | []).forEach(p=>{ this.addProgress(); const last=this.el.progress.lastElementChild; last.querySelectorAll('input')[0].value=p.label |  | ''; last.querySelectorAll('input')[1].value=p.percent |  | 0; last.querySelectorAll('input')[2].value=p.color |  | ''; });
+    this.el.features.innerHTML=''; (saved.about_features |  | []).forEach(f=>{ this.addFeature(); const last=this.el.features.lastElementChild; const inputs=last.querySelectorAll('input,textarea'); inputs[0].value=f.img |  | ''; inputs[1].value=f.title |  | ''; inputs[2].value=f.desc |  | ''; inputs[3].value=f.link |  | ''; inputs[4].value=f.linkText |  | ''; });
   }
 };
 
@@ -1330,7 +1330,7 @@ const Contact = {
           <option${data.platform==='Custom'?' selected':''}>Custom</option>
         </select>
       </div>
-      <div class="row"><label>Link URL</label><input class="field c-social-url" placeholder="https://…" value="${(data.url||'')}"></div>
+      <div class="row"><label>Link URL</label><input class="field c-social-url" placeholder="https://…" value="${(data.url |  | '')}"></div>
       <div class="row wide"><label>Custom SVG (optional)</label>
         <textarea class="field c-social-svg" rows="2" placeholder="<svg …>${data.svg?data.svg.replace(/</g,'&lt;'):''}</textarea>
       </div>
@@ -1342,7 +1342,7 @@ const Contact = {
   },
 
   gather(){
-    const get = id => document.querySelector(id)?.value?.trim() || '';
+    const get = id => document.querySelector(id)?.value?.trim()  |  |  '';
     const list = (sel)=>[...document.querySelectorAll(sel)];
     const socials = list('#contact_socials [data-item="social"]').map(n=>({
       platform: n.querySelector('.c-social-platform').value,
@@ -1379,7 +1379,7 @@ const Contact = {
   },
 
   fill(saved={}){
-    const set = (id,v)=>{ const el=document.querySelector(id); if(el) el.value=v||''; };
+    const set = (id,v)=>{ const el=document.querySelector(id); if(el) el.value=v |  | ''; };
     // hero
     set('#c_pill',  saved.c_pill);
     set('#c_title', saved.c_title);
@@ -1404,7 +1404,7 @@ const Contact = {
     set('#c_qc_hq_value', saved.c_qc_hq_value);
     // socials
     this.socialsRoot.innerHTML='';
-    (saved.c_socials||[
+    (saved.c_socials |  | [
       {platform:'Facebook', url:'#', svg:''},
       {platform:'Twitter',  url:'#', svg:''},
       {platform:'Instagram',url:'#', svg:''}
@@ -1490,23 +1490,23 @@ function autosaveContact(){
 (function(){
   const key='cms_404';
   const q=s=>document.getElementById(s);
-  function safeParse(j){ try{return JSON.parse(j||''); }catch{return null} }
+  function safeParse(j){ try{return JSON.parse(j |  | ''); }catch{return null} }
 
   function loadFour(){
-    const d = Store.read('cms_404', '{}') || {};
-    q('four_title').value = d.title||'Hmmm...';
-    q('four_line1').value = d.line1||'Occurred, a 404 error has. I sense much fear in you.';
-    q('four_line2').value = d.line2||'Trust in the force, clear your mind, unlearn what you have learned, and find your missing page you will.';
-    q('four_btn_do_label').value = d.btn_do_label||'Do';
-    q('four_btn_do_link').value = d.btn_do_link||'home.html';
-    q('four_btn_donot_label').value = d.btn_donot_label||'Do not';
-    q('four_btn_donot_link').value = d.btn_donot_link||'home.html';
-    q('four_btn_try_label').value = d.btn_try_label||'Try';
+    const d = Store.read('cms_404', '{}')  |  |  {};
+    q('four_title').value = d.title |  | 'Hmmm...';
+    q('four_line1').value = d.line1 |  | 'Occurred, a 404 error has. I sense much fear in you.';
+    q('four_line2').value = d.line2 |  | 'Trust in the force, clear your mind, unlearn what you have learned, and find your missing page you will.';
+    q('four_btn_do_label').value = d.btn_do_label |  | 'Do';
+    q('four_btn_do_link').value = d.btn_do_link |  | 'home.html';
+    q('four_btn_donot_label').value = d.btn_donot_label |  | 'Do not';
+    q('four_btn_donot_link').value = d.btn_donot_link |  | 'home.html';
+    q('four_btn_try_label').value = d.btn_try_label |  | 'Try';
     q('four_try_disabled').checked = Boolean(d.try_disabled);
-    q('four_image').value = d.image||'';
+    q('four_image').value = d.image |  | '';
     q('four_use_latest').checked = Boolean(d.use_latest);
-    q('four_latest_count').value = d.latest_count||3;
-    q('four_custom_projects').value = (d.custom_projects||[]).join(',');
+    q('four_latest_count').value = d.latest_count |  | 3;
+    q('four_custom_projects').value = (d.custom_projects |  | []).join(',');
     q('four_remove_nav_underline').checked = Boolean(d.remove_nav_underline);
   }
 
@@ -1523,8 +1523,8 @@ function autosaveContact(){
       try_disabled: q('four_try_disabled').checked,
       image: q('four_image').value.trim(),
       use_latest: q('four_use_latest').checked,
-      latest_count: Number(q('four_latest_count').value||0),
-      custom_projects: (q('four_custom_projects').value||'').split(',').map(s=>s.trim()).filter(Boolean),
+      latest_count: Number(q('four_latest_count').value |  | 0),
+      custom_projects: (q('four_custom_projects').value |  | '').split(',').map(s=>s.trim()).filter(Boolean),
       remove_nav_underline: q('four_remove_nav_underline').checked
     };
   }
@@ -1618,7 +1618,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const _cache = {
       home: {}, projects: [], blogs: [], profile: {}, about: {}, contact: {}, "404": {}
     };
-    const m = k => KEY_MAP[k] || k;
+    const m = k => KEY_MAP[k]  |  |  k;
 
     async function fetchJSON(endpoint, fallback){
       try{
@@ -1655,7 +1655,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.Store = {
       read(key, fallback){
         const k = m(key);
-        return structuredClone(_cache[k] ?? JSON.parse(fallback || "{}"));
+        return structuredClone(_cache[k] ?? JSON.parse(fallback  |  |  "{}"));
       },
       async write(key, value){
         const k = m(key);
@@ -1665,7 +1665,7 @@ document.addEventListener("DOMContentLoaded", () => {
       },
       projects(){
         const a = Array.isArray(_cache.projects)?[..._cache.projects]:[];
-        a.sort((x,y)=>(y.updated||0)-(x.updated||0));
+        a.sort((x,y)=>(y.updated |  | 0)-(x.updated |  | 0));
         return a;
       },
       putProject(p){
@@ -1685,7 +1685,7 @@ document.addEventListener("DOMContentLoaded", () => {
       byIdProject(id){return this.projects().find(x=>x.id===id);},
       blogs(){
         const a=Array.isArray(_cache.blogs)?[..._cache.blogs]:[];
-        a.sort((x,y)=>(y.updated||0)-(x.updated||0));
+        a.sort((x,y)=>(y.updated |  | 0)-(x.updated |  | 0));
         return a;
       },
       putBlog(b){
@@ -1703,7 +1703,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return this.write(LS_BLOGS,L);
       },
       byIdBlog(id){return this.blogs().find(x=>x.id===id);},
-      profile(){return structuredClone(_cache.profile||{});},
+      profile(){return structuredClone(_cache.profile |  | {});},
       saveProfile(p){_cache.profile=p;return this.write(LS_PROFILE,p);}
     };
 
