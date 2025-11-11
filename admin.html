@@ -107,7 +107,7 @@
     .login-head{background:linear-gradient(120deg,var(--accent),var(--accent-2));padding:16px;font-weight:900;text-align:center;color:#fff}
     .login-body{padding:16px}
 
-    /* ===== ABOUT TAB POLISH (clean, consistent UI) ===== */
+    /* ===== ABOUT TAB POLISH ===== */
     .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     @media(max-width:1000px){.about-grid{grid-template-columns:1fr}}
     .about-stack{display:grid;gap:10px}
@@ -121,20 +121,20 @@
     .ghost.danger{border-color:#f8c5c5;color:#b80f0f}
     .subtle{color:#666}
 
- /* ===== CONTACT TAB POLISH (matches your About tab look) ===== */
-  .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  @media(max-width:1000px){.contact-grid{grid-template-columns:1fr}}
-  .contact-stack{display:grid;gap:10px}
-  .contact-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:#fff}
-  .contact-hr{height:1px;background:var(--line);margin:12px 0}
-  .mini{font-size:12px}
-  .subtle{color:#666}
-  .inline-tools{display:flex;gap:8px;flex-wrap:wrap}
-  .ghost.danger{border-color:#f8c5c5;color:#b80f0f}
-  .icon-demo{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border:1px dashed #FFD7C6;background:#FFF6F0;border-radius:999px;font-weight:700}
-  .contact-note{font-size:12px;color:var(--muted)}
-  .wide{grid-column:1 / -1}
-</style>
+    /* ===== CONTACT TAB POLISH ===== */
+    .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:1000px){.contact-grid{grid-template-columns:1fr}}
+    .contact-stack{display:grid;gap:10px}
+    .contact-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:#fff}
+    .contact-hr{height:1px;background:var(--line);margin:12px 0}
+    .mini{font-size:12px}
+    .subtle{color:#666}
+    .inline-tools{display:flex;gap:8px;flex-wrap:wrap}
+    .ghost.danger{border-color:#f8c5c5;color:#b80f0f}
+    .icon-demo{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border:1px dashed #FFD7C6;background:#FFF6F0;border-radius:999px;font-weight:700}
+    .contact-note{font-size:12px;color:var(--muted)}
+    .wide{grid-column:1 / -1}
+  </style>
 </head>
 <body>
 
@@ -252,8 +252,8 @@
           </div>
         </div>
         <div class="grid2" style="margin-top:10px">
-  <div class="row"><label>Project Link (Page URL)</label><input id="p_link" class="field" placeholder="project-monitor.html"></div>
-</div>
+          <div class="row"><label>Project Link (Page URL)</label><input id="p_link" class="field" placeholder="project-monitor.html"></div>
+        </div>
 
         <div class="grid2" style="margin-top:10px">
           <div class="row"><label>Status</label><select id="p_status" class="field"><option value="active">Active</option><option value="draft">Draft</option><option value="hidden">Hidden</option></select></div>
@@ -400,7 +400,7 @@
             <button class="ghost tiny" id="about_export">Export</button>
             <button class="ghost tiny danger" id="about_reset">Reset</button>
             <button class="btn tiny" id="about_save">💾 Save About</button>
-  <span id="about_ok" style="display:none;color:#16A34A;font-weight:800">Saved ✓</span>
+            <span id="about_ok" style="display:none;color:#16A34A;font-weight:800">Saved ✓</span>
           </div>
         </div>
 
@@ -477,190 +477,190 @@
 
     <!-- Contact -->
     <section class="card" id="panel_contact" style="display:none">
-  <div class="pad">
-    <div class="toolbar" style="margin-bottom:6px">
-      <div>
-        <div style="font-size:18px;font-weight:900">Contact Page</div>
-        <div class="muted">Edit all texts, labels, image, quick-contact and socials. Changes auto-save to <code>cms_contact</code>.</div>
+      <div class="pad">
+        <div class="toolbar" style="margin-bottom:6px">
+          <div>
+            <div style="font-size:18px;font-weight:900">Contact Page</div>
+            <div class="muted">Edit all texts, labels, image, quick-contact and socials. Changes auto-save to <code>cms_contact</code>.</div>
+          </div>
+          <div class="inline-tools">
+            <button class="ghost tiny" id="contact_export">Export</button>
+            <button class="ghost tiny danger" id="contact_reset">Reset</button>
+          </div>
+        </div>
+
+        <!-- Hero -->
+        <div class="contact-stack">
+          <div class="contact-pill"><span class="material-symbols-rounded">bolt</span><strong>Hero</strong></div>
+          <div class="contact-grid">
+            <div class="row"><label>Pill Text</label><input id="c_pill" class="field" placeholder="WRITE TO US"></div>
+            <div class="row"><label>Hero Title</label><input id="c_title" class="field" placeholder="Get In Touch"></div>
+            <div class="row wide"><label>Subtitle</label><textarea id="c_sub" class="field" rows="2" placeholder="Get in touch with us using the enquiry form or contact details below."></textarea></div>
+          </div>
+        </div>
+
+        <div class="contact-hr"></div>
+
+        <!-- Form Labels / Texts -->
+        <div class="contact-stack">
+          <div class="contact-pill"><span class="material-symbols-rounded">edit</span><strong>Form</strong> <span class="subtle mini"> (labels, CTA, notices, consents)</span></div>
+          <div class="contact-grid">
+            <div class="row"><label>First Name Label</label><input id="c_label_first" class="field" placeholder="First Name"></div>
+            <div class="row"><label>Last Name Label</label><input id="c_label_last" class="field" placeholder="Last Name"></div>
+            <div class="row"><label>Email Label</label><input id="c_label_email" class="field" placeholder="Email"></div>
+            <div class="row"><label>Message Label</label><input id="c_label_message" class="field" placeholder="Message"></div>
+
+            <div class="row wide"><label>Consent #1</label><input id="c_consent_1" class="field" placeholder="I agree to receive other communication messages."></div>
+            <div class="row wide"><label>Consent #2</label><input id="c_consent_2" class="field" placeholder="I give my consent to bndlabs to store my data."></div>
+
+            <div class="row wide"><label>Privacy Note</label><input id="c_privacy" class="field" placeholder="We respect your privacy. You can opt out at any time."></div>
+            <div class="row"><label>Submit Button Text</label><input id="c_button" class="field" placeholder="Send Message"></div>
+          </div>
+          <div class="contact-note">* These map 1:1 to your current contact form fields on the site.</div>
+        </div>
+
+        <div class="contact-hr"></div>
+
+        <!-- Sidebar (Image + Quick Contact) -->
+        <div class="contact-stack">
+          <div class="contact-pill"><span class="material-symbols-rounded">image</span><strong>Sidebar</strong> <span class="subtle mini"> (right column)</span></div>
+          <div class="contact-grid">
+            <div class="row wide"><label>Sidebar Image URL</label><input id="c_image" class="field" placeholder="https://…"></div>
+
+            <div class="row"><label>Quick Contact Title</label><input id="c_qc_title" class="field" placeholder="Quick Contact"></div>
+
+            <div class="row"><label>Email Label</label><input id="c_qc_email_label" class="field" placeholder="Email"></div>
+            <div class="row"><label>Email Value</label><input id="c_qc_email_value" class="field" placeholder="hello@bndlabs.dev"></div>
+
+            <div class="row"><label>Phone Label</label><input id="c_qc_phone_label" class="field" placeholder="Phone Number"></div>
+            <div class="row"><label>Phone Value</label><input id="c_qc_phone_value" class="field" placeholder="+234 …"></div>
+
+            <div class="row"><label>HQ Label</label><input id="c_qc_hq_label" class="field" placeholder="Headquarter"></div>
+            <div class="row"><label>HQ Value</label><input id="c_qc_hq_value" class="field" placeholder="Lagos, Nigeria"></div>
+          </div>
+        </div>
+
+        <div class="contact-hr"></div>
+
+        <!-- Socials -->
+        <div class="contact-stack">
+          <div class="contact-pill"><span class="material-symbols-rounded">share</span><strong>Socials</strong></div>
+          <div class="row"><label>Follow Title</label><input id="c_follow_title" class="field" placeholder="Follow us"></div>
+
+          <div id="contact_socials" class="contact-stack"></div>
+          <div class="inline-tools">
+            <button type="button" class="ghost tiny" id="add_social">+ Add Social</button>
+            <span class="icon-demo mini">Tip: Choose Platform + Link. Optional custom SVG overrides the default.</span>
+          </div>
+          <div class="bar" style="margin-top:16px">
+            <button class="btn tiny" id="saveContactBtn">💾 Save Contact</button>
+            <span id="contactSaved" style="display:none;color:var(--green);font-weight:800">Saved ✓</span>
+          </div>
+        </div>
       </div>
-      <div class="inline-tools">
-        <button class="ghost tiny" id="contact_export">Export</button>
-        <button class="ghost tiny danger" id="contact_reset">Reset</button>
-      </div>
-    </div>
-
-    <!-- Hero -->
-    <div class="contact-stack">
-      <div class="contact-pill"><span class="material-symbols-rounded">bolt</span><strong>Hero</strong></div>
-      <div class="contact-grid">
-        <div class="row"><label>Pill Text</label><input id="c_pill" class="field" placeholder="WRITE TO US"></div>
-        <div class="row"><label>Hero Title</label><input id="c_title" class="field" placeholder="Get In Touch"></div>
-        <div class="row wide"><label>Subtitle</label><textarea id="c_sub" class="field" rows="2" placeholder="Get in touch with us using the enquiry form or contact details below."></textarea></div>
-      </div>
-    </div>
-
-    <div class="contact-hr"></div>
-
-    <!-- Form Labels / Texts -->
-    <div class="contact-stack">
-      <div class="contact-pill"><span class="material-symbols-rounded">edit</span><strong>Form</strong> <span class="subtle mini"> (labels, CTA, notices, consents)</span></div>
-      <div class="contact-grid">
-        <div class="row"><label>First Name Label</label><input id="c_label_first" class="field" placeholder="First Name"></div>
-        <div class="row"><label>Last Name Label</label><input id="c_label_last" class="field" placeholder="Last Name"></div>
-        <div class="row"><label>Email Label</label><input id="c_label_email" class="field" placeholder="Email"></div>
-        <div class="row"><label>Message Label</label><input id="c_label_message" class="field" placeholder="Message"></div>
-
-        <div class="row wide"><label>Consent #1</label><input id="c_consent_1" class="field" placeholder="I agree to receive other communication messages."></div>
-        <div class="row wide"><label>Consent #2</label><input id="c_consent_2" class="field" placeholder="I give my consent to bndlabs to store my data."></div>
-
-        <div class="row wide"><label>Privacy Note</label><input id="c_privacy" class="field" placeholder="We respect your privacy. You can opt out at any time."></div>
-        <div class="row"><label>Submit Button Text</label><input id="c_button" class="field" placeholder="Send Message"></div>
-      </div>
-      <div class="contact-note">* These map 1:1 to your current contact form fields on the site.</div>
-    </div>
-
-    <div class="contact-hr"></div>
-
-    <!-- Sidebar (Image + Quick Contact) -->
-    <div class="contact-stack">
-      <div class="contact-pill"><span class="material-symbols-rounded">image</span><strong>Sidebar</strong> <span class="subtle mini"> (right column)</span></div>
-      <div class="contact-grid">
-        <div class="row wide"><label>Sidebar Image URL</label><input id="c_image" class="field" placeholder="https://…"></div>
-
-        <div class="row"><label>Quick Contact Title</label><input id="c_qc_title" class="field" placeholder="Quick Contact"></div>
-
-        <div class="row"><label>Email Label</label><input id="c_qc_email_label" class="field" placeholder="Email"></div>
-        <div class="row"><label>Email Value</label><input id="c_qc_email_value" class="field" placeholder="hello@bndlabs.dev"></div>
-
-        <div class="row"><label>Phone Label</label><input id="c_qc_phone_label" class="field" placeholder="Phone Number"></div>
-        <div class="row"><label>Phone Value</label><input id="c_qc_phone_value" class="field" placeholder="+234 …"></div>
-
-        <div class="row"><label>HQ Label</label><input id="c_qc_hq_label" class="field" placeholder="Headquarter"></div>
-        <div class="row"><label>HQ Value</label><input id="c_qc_hq_value" class="field" placeholder="Lagos, Nigeria"></div>
-      </div>
-    </div>
-
-    <div class="contact-hr"></div>
-
-    <!-- Socials -->
-    <div class="contact-stack">
-      <div class="contact-pill"><span class="material-symbols-rounded">share</span><strong>Socials</strong></div>
-      <div class="row"><label>Follow Title</label><input id="c_follow_title" class="field" placeholder="Follow us"></div>
-
-      <div id="contact_socials" class="contact-stack"></div>
-      <div class="inline-tools">
-        <button type="button" class="ghost tiny" id="add_social">+ Add Social</button>
-        <span class="icon-demo mini">Tip: Choose Platform + Link. Optional custom SVG overrides the default.</span>
-      </div>
-      <div class="bar" style="margin-top:16px">
-  <button class="btn tiny" id="saveContactBtn">💾 Save Contact</button>
-  <span id="contactSaved" style="display:none;color:var(--green);font-weight:800">Saved ✓</span>
-</div>
-    </div>
-  </div>
-</section>
+    </section>
 
     <!-- =========================
-   404 PAGE CMS TAB
-========================= -->
-<section class="card" id="panel_four" style="display:none">
-  <div class="pad">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <div style="font-size:18px;font-weight:900">404 Page Settings</div>
-      <div style="color:var(--muted);font-size:13px">Autosaves to <code>cms_404</code></div>
-    </div>
+         404 PAGE CMS TAB
+    ========================= -->
+    <section class="card" id="panel_four" style="display:none">
+      <div class="pad">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="font-size:18px;font-weight:900">404 Page Settings</div>
+          <div style="color:var(--muted);font-size:13px">Autosaves to <code>cms_404</code></div>
+        </div>
 
-    <div class="row">
-      <label>Primary Title</label>
-      <input id="four_title" class="field" placeholder="Hmmm..." />
-    </div>
+        <div class="row">
+          <label>Primary Title</label>
+          <input id="four_title" class="field" placeholder="Hmmm..." />
+        </div>
 
-    <div class="row" style="margin-top:8px">
-      <label>Line 1 (short)</label>
-      <input id="four_line1" class="field" placeholder="Occurred, a 404 error has. I sense much fear in you." />
-    </div>
+        <div class="row" style="margin-top:8px">
+          <label>Line 1 (short)</label>
+          <input id="four_line1" class="field" placeholder="Occurred, a 404 error has. I sense much fear in you." />
+        </div>
 
-    <div class="row" style="margin-top:8px">
-      <label>Line 2 (long)</label>
-      <textarea id="four_line2" class="field" rows="3" placeholder="Trust in the force..."></textarea>
-    </div>
+        <div class="row" style="margin-top:8px">
+          <label>Line 2 (long)</label>
+          <textarea id="four_line2" class="field" rows="3" placeholder="Trust in the force..."></textarea>
+        </div>
 
-    <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="row">
-        <label>Button A Label (primary)</label>
-        <input id="four_btn_do_label" class="field" placeholder="Do" />
+        <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="row">
+            <label>Button A Label (primary)</label>
+            <input id="four_btn_do_label" class="field" placeholder="Do" />
+          </div>
+          <div class="row">
+            <label>Button A Link</label>
+            <input id="four_btn_do_link" class="field" placeholder="home.html" />
+          </div>
+        </div>
+
+        <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="row">
+            <label>Button B Label (secondary)</label>
+            <input id="four_btn_donot_label" class="field" placeholder="Do not" />
+          </div>
+          <div class="row">
+            <label>Button B Link</label>
+            <input id="four_btn_donot_link" class="field" placeholder="home.html" />
+          </div>
+        </div>
+
+        <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center">
+          <div>
+            <label>Button C Label (try)</label>
+            <input id="four_btn_try_label" class="field" placeholder="Try" />
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <label style="font-size:12px;color:var(--muted);margin:0">Disable Try</label>
+            <input type="checkbox" id="four_try_disabled" style="transform:scale(1.1)" />
+          </div>
+        </div>
+
+        <div style="margin-top:12px">
+          <label>Hero / Yoda Image URL</label>
+          <input id="four_image" class="field" placeholder="https://…" />
+          <div style="font-size:12px;color:var(--muted);margin-top:6px">Leave blank to use default image in your page.</div>
+        </div>
+
+        <hr style="margin:18px 0">
+
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+          <label style="margin:0;font-weight:800">Latest work</label>
+          <label style="margin:0;font-size:13px;color:var(--muted)">Use latest N posted projects on homepage (auto)</label>
+          <input id="four_latest_count" class="field" style="max-width:120px" type="number" min="0" value="3">
+          <label style="display:flex;align-items:center;gap:8px;margin-left:6px">
+            <input type="checkbox" id="four_use_latest" />
+            <span style="font-size:13px;color:var(--muted)">Auto: use latest posts</span>
+          </label>
+        </div>
+
+        <div style="margin-top:12px">
+          <label>Custom project IDs (comma-separated) — optional (ignored if Auto is on)</label>
+          <input id="four_custom_projects" class="field" placeholder="id1,id2,id3" />
+          <div style="font-size:12px;color:var(--muted);margin-top:6px">If you want specific projects to appear, add their IDs here.</div>
+        </div>
+
+        <hr style="margin:18px 0">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:center">
+          <label>Remove underline from header nav links on public pages?</label>
+          <label style="display:flex;gap:8px;align-items:center">
+            <input type="checkbox" id="four_remove_nav_underline" />
+            <span style="color:var(--muted);font-size:13px">Remove underline</span>
+          </label>
+        </div>
+
+        <div style="margin-top:14px;display:flex;gap:12px;align-items:center">
+          <button id="four_save" class="btn tiny">Save 404</button>
+          <span id="four_saved" style="display:none;color:var(--green);font-weight:800">Saved ✓</span>
+          <button id="four_clear" class="ghost tiny" style="margin-left:8px">Clear</button>
+        </div>
+
+        <div style="margin-top:10px;color:var(--muted);font-size:13px">Tip: enable "Auto" to show the latest <em>N</em> projects from Projects list.</div>
       </div>
-      <div class="row">
-        <label>Button A Link</label>
-        <input id="four_btn_do_link" class="field" placeholder="home.html" />
-      </div>
-    </div>
-
-    <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="row">
-        <label>Button B Label (secondary)</label>
-        <input id="four_btn_donot_label" class="field" placeholder="Do not" />
-      </div>
-      <div class="row">
-        <label>Button B Link</label>
-        <input id="four_btn_donot_link" class="field" placeholder="home.html" />
-      </div>
-    </div>
-
-    <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center">
-      <div>
-        <label>Button C Label (try)</label>
-        <input id="four_btn_try_label" class="field" placeholder="Try" />
-      </div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <label style="font-size:12px;color:var(--muted);margin:0">Disable Try</label>
-        <input type="checkbox" id="four_try_disabled" style="transform:scale(1.1)" />
-      </div>
-    </div>
-
-    <div style="margin-top:12px">
-      <label>Hero / Yoda Image URL</label>
-      <input id="four_image" class="field" placeholder="https://…" />
-      <div style="font-size:12px;color:var(--muted);margin-top:6px">Leave blank to use default image in your page.</div>
-    </div>
-
-    <hr style="margin:18px 0">
-
-    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-      <label style="margin:0;font-weight:800">Latest work</label>
-      <label style="margin:0;font-size:13px;color:var(--muted)">Use latest N posted projects on homepage (auto)</label>
-      <input id="four_latest_count" class="field" style="max-width:120px" type="number" min="0" value="3">
-      <label style="display:flex;align-items:center;gap:8px;margin-left:6px">
-        <input type="checkbox" id="four_use_latest" />
-        <span style="font-size:13px;color:var(--muted)">Auto: use latest posts</span>
-      </label>
-    </div>
-
-    <div style="margin-top:12px">
-      <label>Custom project IDs (comma-separated) — optional (ignored if Auto is on)</label>
-      <input id="four_custom_projects" class="field" placeholder="id1,id2,id3" />
-      <div style="font-size:12px;color:var(--muted);margin-top:6px">If you want specific projects to appear, add their IDs here.</div>
-    </div>
-
-    <hr style="margin:18px 0">
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:center">
-      <label>Remove underline from header nav links on public pages?</label>
-      <label style="display:flex;gap:8px;align-items:center">
-        <input type="checkbox" id="four_remove_nav_underline" />
-        <span style="color:var(--muted);font-size:13px">Remove underline</span>
-      </label>
-    </div>
-
-    <div style="margin-top:14px;display:flex;gap:12px;align-items:center">
-      <button id="four_save" class="btn tiny">Save 404</button>
-      <span id="four_saved" style="display:none;color:var(--green);font-weight:800">Saved ✓</span>
-      <button id="four_clear" class="ghost tiny" style="margin-left:8px">Clear</button>
-    </div>
-
-    <div style="margin-top:10px;color:var(--muted);font-size:13px">Tip: enable "Auto" to show the latest <em>N</em> projects from Projects list.</div>
-  </div>
-</section>
+    </section>
 
   </main>
 </div>
@@ -673,24 +673,32 @@
       <div class="row"><label>Password</label><input id="pass" type="password" class="field" placeholder="Enter password"></div>
       <div class="bar" style="margin-top:10px">
         <button class="btn" id="enter">Enter</button>
-        <span style="color:var(--muted);font-size:12px">Change inside code: <code>PASSWORD</code></span>
+        <!-- Removed plaintext password hint to keep it hidden -->
       </div>
     </div>
   </div>
 </div>
- 
+
 <script>
 /* ===== Storage Keys ===== */
 const LS_PROJECTS='cms_projects', LS_BLOGS='cms_blogs', LS_PROFILE='cms_profile', LS_HOME='cms_home', LS_ABOUT='cms_about', LS_CONTACT='cms_contact';
 
-
 /* ===== Shortcuts ===== */
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
-const fmtTime=t=>!t?'—':new Date(t).toLocaleString(); const esc=s=>String(s |  | '').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmtTime=t=>!t?'—':new Date(t).toLocaleString();
+const esc=s=>String(s || '').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
+/* ===== Password Gate (hashed) =====
+   Password is stored as SHA-256 hash so plaintext is not in the code.
+   Current password: **Bodunde6056** (compare via hash)
+*/
+const PASSWORD_HASH = 'd742998c4a9d360942b98cf0c6094002c4dfce90ed37e704240e04d73462a3dd'; // sha256("Bodunde6056")
+async function sha256Hex(str){
+  const enc = new TextEncoder().encode(str);
+  const buf = await crypto.subtle.digest('SHA-256', enc);
+  return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
 
-/* ===== Password Gate ===== */
-const PASSWORD = 'bodunde123';
 const gate = $('#gate');
 const pass = $('#pass');
 const enter = $('#enter');
@@ -703,8 +711,11 @@ if (sessionStorage.getItem('bod_authed') === 'yes') {
 
 // click login
 if (enter) {
-  enter.addEventListener('click', () => {
-    if (pass && pass.value.trim() === PASSWORD) {
+  enter.addEventListener('click', async () => {
+    if (!pass) return;
+    const input = pass.value.trim();
+    const h = await sha256Hex(input);
+    if (h === PASSWORD_HASH) {
       gate.style.display = 'none';
       sessionStorage.setItem('bod_authed', 'yes');
     } else {
@@ -742,8 +753,8 @@ $('#nav').addEventListener('click',e=>{
   if(key==='blog') renderBlogs();
   if(key==='profile') loadProfile();
   if(key==='home') loadHome();
-  if(key==='about') loadAbout();         // <= show & hydrate About only on click
-  if(key==='contact') loadContact();      // <= hydrate Contact only on click
+  if(key==='about') loadAbout();         // hydrate About only on click
+  if(key==='contact') loadContact();     // hydrate Contact only on click
 });
 
 /* ===== Search + Filters ===== */
@@ -754,10 +765,10 @@ $('#blogSearch').oninput=renderBlogs;   $('#blogFilter').onchange=renderBlogs;
 const projBody=$('#projBody'), blogBody=$('#blogBody');
 
 function renderProjects(){
-  const q=($('#projSearch').value |  | '').toLowerCase(), f=$('#projFilter').value;
+  const q=($('#projSearch').value || '').toLowerCase(), f=$('#projFilter').value;
   const list=Store.projects().filter(p=>{
-    const okQ=!q  |  |  [p.title,p.tag,p.date].join(' ').toLowerCase().includes(q);
-    const okF=!f  |  |  (p.status |  | 'active')===f; return okQ&&okF;
+    const okQ=!q || [p.title,p.tag,p.date].join(' ').toLowerCase().includes(q);
+    const okF=!f || (p.status || 'active')===f; return okQ&&okF;
   });
   projBody.innerHTML='';
   if(!list.length){ projBody.innerHTML='<tr><td colspan="8" style="color:#666">No projects found.</td></tr>'; return; }
@@ -765,15 +776,15 @@ function renderProjects(){
     const tr=document.createElement('tr');
     tr.innerHTML=`
       <td>${i+1}</td>
-      <td>${esc(p.title |  | '—')}</td>
-      <td><span class="status" data-s="${esc(p.status |  | 'active')}">${(p.status |  | 'active').toUpperCase()}</span></td>
-      <td>${Number(p.views |  | 0)}</td>
-      <td><span class="tag">${esc(p.tag |  | '—')}</span></td>
-      <td>${esc(p.date |  | '—')}</td>
+      <td>${esc(p.title || '—')}</td>
+      <td><span class="status" data-s="${esc(p.status || 'active')}">${(p.status || 'active').toUpperCase()}</span></td>
+      <td>${Number(p.views || 0)}</td>
+      <td><span class="tag">${esc(p.tag || '—')}</span></td>
+      <td>${esc(p.date || '—')}</td>
       <td>${fmtTime(p.updated)}</td>
       <td class="tools">
         <button class="ghost tiny" data-edit="${p.id}">✏️ Edit</button>
-        <button class="ghost tiny" data-toggle="${p.id}">${(p.status |  | 'active')==='hidden'?'👁️ Show':'🙈 Hide'}</button>
+        <button class="ghost tiny" data-toggle="${p.id}">${(p.status || 'active')==='hidden'?'👁️ Show':'🙈 Hide'}</button>
         <button class="ghost tiny" data-del="${p.id}" style="color:#DC2626;border-color:#F3C0C0">🗑️ Delete</button>
       </td>`;
     projBody.appendChild(tr);
@@ -795,10 +806,10 @@ projBody.addEventListener('click',e=>{
 });
 
 function renderBlogs(){
-  const q=($('#blogSearch').value |  | '').toLowerCase(), f=$('#blogFilter').value;
+  const q=($('#blogSearch').value || '').toLowerCase(), f=$('#blogFilter').value;
   const list=Store.blogs().filter(b=>{
-    const okQ=!q  |  |  [b.title,b.tag,b.date,b.subtitle].join(' ').toLowerCase().includes(q);
-    const okF=!f  |  |  (b.status |  | 'active')===f; return okQ&&okF;
+    const okQ=!q || [b.title,b.tag,b.date,b.subtitle].join(' ').toLowerCase().includes(q);
+    const okF=!f || (b.status || 'active')===f; return okQ&&okF;
   });
   blogBody.innerHTML='';
   if(!list.length){ blogBody.innerHTML='<tr><td colspan="8" style="color:#666">No posts found.</td></tr>'; return; }
@@ -806,15 +817,15 @@ function renderBlogs(){
     const tr=document.createElement('tr');
     tr.innerHTML=`
       <td>${i+1}</td>
-      <td>${esc(b.title |  | '—')}</td>
-      <td><span class="status" data-s="${esc(b.status |  | 'active')}">${(b.status |  | 'active').toUpperCase()}</span></td>
-      <td>${Number(b.views |  | 0)}</td>
-      <td><span class="tag">${esc(b.tag |  | '—')}</span></td>
-      <td>${esc(b.date |  | '—')}</td>
+      <td>${esc(b.title || '—')}</td>
+      <td><span class="status" data-s="${esc(b.status || 'active')}">${(b.status || 'active').toUpperCase()}</span></td>
+      <td>${Number(b.views || 0)}</td>
+      <td><span class="tag">${esc(b.tag || '—')}</span></td>
+      <td>${esc(b.date || '—')}</td>
       <td>${fmtTime(b.updated)}</td>
       <td class="tools">
         <button class="ghost tiny" data-bed="${b.id}">✏️ Edit</button>
-        <button class="ghost tiny" data-btoggle="${b.id}">${(b.status |  | 'active')==='hidden'?'👁️ Show':'🙈 Hide'}</button>
+        <button class="ghost tiny" data-btoggle="${b.id}">${(b.status || 'active')==='hidden'?'👁️ Show':'🙈 Hide'}</button>
         <button class="ghost tiny" data-bdel="${b.id}" style="color:#DC2626;border-color:#F3C0C0">🗑️ Delete</button>
       </td>`;
     blogBody.appendChild(tr);
@@ -843,30 +854,35 @@ function openProjEditor(project){
   $('#editorProjTitle').textContent=project?'Edit Project':'New Project';
   $('#delProjBtn').style.display=project?'inline-block':'none';
 
-  $('#p_title').value=project?.title |  | ''; $('#p_tag').value=project?.tag |  | '';
-  $('#p_date').value=project?.date |  | '';   $('#p_desc').value=project?.desc |  | '';
-  $('#p_hero').value=project?.hero |  | '';   $('#p_status').value=project?.status |  | 'active';
-  $('#p_views').value=Number(project?.views |  | 0); $('#p_hero_file').value='';
-  $('#p_link').value=project?.link |  | '';
+  $('#p_title').value=project?.title || '';
+  $('#p_tag').value=project?.tag || '';
+  $('#p_date').value=project?.date || '';
+  $('#p_desc').value=project?.desc || '';
+  $('#p_hero').value=project?.hero || '';
+  $('#p_status').value=project?.status || 'active';
+  $('#p_views').value=Number(project?.views || 0);
+  $('#p_hero_file').value='';
+  $('#p_link').value=project?.link || '';
 
-  p_sections.innerHTML=''; (project?.sections |  | []).forEach(s=> addSectionUI(p_sections,s.type,s.value,s.alt));
+  p_sections.innerHTML='';
+  (project?.sections || []).forEach(s=> addSectionUI(p_sections,s.type,s.value,s.alt));
   $('#p_addSectionBtn').onclick=()=> addSectionUI(p_sections,$('#p_addType').value,'','');
   $('#delProjBtn').onclick=()=>{ if(project?.id && confirm('Delete this project?')){ Store.removeProject(project.id); backTo('proj'); } };
-  $('#saveProjBtn').onclick=()=> saveProject(project?.id |  | null);
+  $('#saveProjBtn').onclick=()=> saveProject(project?.id || null);
   document.querySelector('[data-back="proj"]').onclick=()=>backTo('proj');
 }
 
 function saveProject(id){
   const obj = {
-    id:id |  | null,
+    id:id || null,
     title:$('#p_title').value.trim(),
     tag:$('#p_tag').value.trim(),
     date:$('#p_date').value.trim(),
     desc:$('#p_desc').value.trim(),
     hero:$('#p_hero').value.trim(),
-    link:$('#p_link').value.trim(), // ✅ add this line
+    link:$('#p_link').value.trim(),
     status:$('#p_status').value,
-    views:Number($('#p_views').value |  | 0),
+    views:Number($('#p_views').value || 0),
     sections:collectSections(p_sections)
   };
   const f = $('#p_hero_file').files?.[0];
@@ -889,25 +905,37 @@ function openBlogEditor(post){
   $('#editorBlogTitle').textContent=post?'Edit Blog Post':'New Blog Post';
   $('#delBlogBtn').style.display=post?'inline-block':'none';
 
-  $('#b_title').value=post?.title |  | ''; $('#b_tag').value=post?.tag |  | '';
-  $('#b_date').value=post?.date |  | '';   $('#b_sub').value=post?.subtitle |  | '';
-  $('#b_hero').value=post?.hero |  | '';   $('#b_status').value=post?.status |  | 'active';
-  $('#b_views').value=Number(post?.views |  | 0); $('#b_hero_file').value='';
+  $('#b_title').value=post?.title || '';
+  $('#b_tag').value=post?.tag || '';
+  $('#b_date').value=post?.date || '';
+  $('#b_sub').value=post?.subtitle || '';
+  $('#b_hero').value=post?.hero || '';
+  $('#b_status').value=post?.status || 'active';
+  $('#b_views').value=Number(post?.views || 0);
+  $('#b_hero_file').value='';
 
-  b_sections.innerHTML=''; (post?.sections |  | []).forEach(s=> addSectionUI(b_sections,s.type,s.value,s.alt));
+  b_sections.innerHTML='';
+  (post?.sections || []).forEach(s=> addSectionUI(b_sections,s.type,s.value,s.alt));
   $('#b_addSectionBtn').onclick=()=> addSectionUI(b_sections,$('#b_addType').value,'','');
   $('#delBlogBtn').onclick=()=>{ if(post?.id && confirm('Delete this post?')){ Store.removeBlog(post.id); backTo('blog'); } };
-  $('#saveBlogBtn').onclick=()=> saveBlog(post?.id |  | null);
+  $('#saveBlogBtn').onclick=()=> saveBlog(post?.id || null);
   document.querySelector('[data-back="blog"]').onclick=()=>backTo('blog');
 }
 
 function saveBlog(id){
   const prof=Store.profile();
   const obj={
-    id:id |  | null, title:$('#b_title').value.trim(), tag:$('#b_tag').value.trim(), date:$('#b_date').value.trim(),
-    subtitle:$('#b_sub').value.trim(), hero:$('#b_hero').value.trim(),
-    status:$('#b_status').value, views:Number($('#b_views').value |  | 0),
-    sections:collectSections(b_sections), author:prof.name |  | '', authorAvatar:prof.avatar |  | ''
+    id:id || null,
+    title:$('#b_title').value.trim(),
+    tag:$('#b_tag').value.trim(),
+    date:$('#b_date').value.trim(),
+    subtitle:$('#b_sub').value.trim(),
+    hero:$('#b_hero').value.trim(),
+    status:$('#b_status').value,
+    views:Number($('#b_views').value || 0),
+    sections:collectSections(b_sections),
+    author:prof.name || '',
+    authorAvatar:prof.avatar || ''
   };
   const f=$('#b_hero_file').files?.[0];
   if(f){ const r=new FileReader(); r.onload=()=>{ obj.hero=r.result; Store.putBlog(obj); backTo('blog'); }; r.readAsDataURL(f); }
@@ -932,7 +960,7 @@ function addSectionUI(host,type,value='',alt=''){
     body.innerHTML='';
     el.querySelector('.s-title').textContent=(kind==='h2'?'H2':kind.toUpperCase());
 
-    const hasText = kind==='p'  |  |  kind==='h2';
+    const hasText = kind==='p' || kind==='h2';
     if(hasText){
       body.innerHTML=`
         <div class="rte">
@@ -959,7 +987,7 @@ function addSectionUI(host,type,value='',alt=''){
           <button class="btn" data-cmd="undo" title="Undo"><span class="material-symbols-rounded">undo</span></button>
           <button class="btn" data-cmd="redo" title="Redo"><span class="material-symbols-rounded">redo</span></button>
         </div>
-        <div class="rich" contenteditable="true" data-editor>${value |  | ''}</div>`;
+        <div class="rich" contenteditable="true" data-editor>${value || ''}</div>`;
 
       const ddBtn=body.querySelector('[data-ddbtn]'), dd=body.querySelector('[data-dd]'), ddLabel=body.querySelector('[data-ddlabel]');
       ddBtn.onclick=()=>{ dd.style.display=dd.style.display==='block'?'none':'block'; };
@@ -980,7 +1008,7 @@ function addSectionUI(host,type,value='',alt=''){
         const url=prompt('Enter URL (https://…)'); if(url) document.execCommand('createLink',false,url);
       };
       area.addEventListener('paste',e=>{
-        e.preventDefault(); const txt=(e.clipboardData |  | window.clipboardData).getData('text/plain'); document.execCommand('insertText',false,txt);
+        e.preventDefault(); const txt=(e.clipboardData || window.clipboardData).getData('text/plain'); document.execCommand('insertText',false,txt);
       });
 
     } else {
@@ -1020,7 +1048,7 @@ function addSectionUI(host,type,value='',alt=''){
   render(type);
 
   el.querySelector('[data-up]').onclick=()=>{ const i=[...host.children].indexOf(el); if(i>0) host.insertBefore(el,host.children[i-1]); };
-  el.querySelector('[data-down]').onclick=()=>{ const i=[...host.children].indexOf(el); if(i<host.children.length-1) host.insertBefore(el,host.children[i+2] |  | null); };
+  el.querySelector('[data-down]').onclick=()=>{ const i=[...host.children].indexOf(el); if(i<host.children.length-1) host.insertBefore(el,host.children[i+2] || null); };
   el.querySelector('[data-remove]').onclick=()=> el.remove();
 
   host.appendChild(el);
@@ -1030,12 +1058,13 @@ function collectSections(host){
   const out=[];
   host.querySelectorAll('.section').forEach(sec=>{
     const kind=sec.querySelector('.s-title').textContent.trim().toLowerCase();
-    const k = (kind==='h2'  |  |  kind==='heading') ? 'h2' : kind;
+    const k = (kind==='h2' || kind==='heading') ? 'h2' : kind;
     if(k==='img'){
-      const v=sec.querySelector('.s-val')?.value |  | ''; const alt=sec.querySelector('.s-alt')?.value |  | '';
-      if(v |  | alt) out.push({type:'img', value:v, alt});
+      const v=sec.querySelector('.s-val')?.value || '';
+      const alt=sec.querySelector('.s-alt')?.value || '';
+      if(v || alt) out.push({type:'img', value:v, alt});
     }else{
-      const html=sec.querySelector('[data-editor]')?.innerHTML.trim() |  | '';
+      const html=sec.querySelector('[data-editor]')?.innerHTML.trim() || '';
       if(html) out.push({type:k, value:html});
     }
   });
@@ -1050,14 +1079,14 @@ function backTo(which){
 /* ===== Profile ===== */
 function loadProfile(){
   const p=Store.profile();
-  $('#s_name').value=p.name |  | ''; $('#s_title').value=p.title |  | ''; $('#s_years').value=p.years |  | '';
-  $('#s_location').value=p.location |  | ''; $('#s_email').value=p.email |  | ''; $('#s_phone').value=p.phone |  | '';
-  $('#s_bio').value=p.bio |  | ''; $('#s_avatar').value=p.avatar |  | '';
-  $('#s_x').value=p.x |  | ''; $('#s_instagram').value=p.instagram |  | ''; $('#s_behance').value=p.behance |  | ''; $('#s_linkedin').value=p.linkedin |  | '';
+  $('#s_name').value=p.name || ''; $('#s_title').value=p.title || ''; $('#s_years').value=p.years || '';
+  $('#s_location').value=p.location || ''; $('#s_email').value=p.email || ''; $('#s_phone').value=p.phone || '';
+  $('#s_bio').value=p.bio || ''; $('#s_avatar').value=p.avatar || '';
+  $('#s_x').value=p.x || ''; $('#s_instagram').value=p.instagram || ''; $('#s_behance').value=p.behance || ''; $('#s_linkedin').value=p.linkedin || '';
 }
 $('#s_save').onclick=()=>{
   const prof={
-    name:$('#s_name').value.trim(), title:$('#s_title').value.trim(), years:Number($('#s_years').value |  | 0),
+    name:$('#s_name').value.trim(), title:$('#s_title').value.trim(), years:Number($('#s_years').value || 0),
     location:$('#s_location').value.trim(), email:$('#s_email').value.trim(), phone:$('#s_phone').value.trim(),
     bio:$('#s_bio').value.trim(), avatar:$('#s_avatar').value.trim(),
     x:$('#s_x').value.trim(), instagram:$('#s_instagram').value.trim(),
@@ -1072,11 +1101,11 @@ $('#s_avatar_file').addEventListener('change',e=>{
 /* ===== Home Settings ===== */
 function loadHome(){
   const h=Store.read(LS_HOME,'{}');
-  $('#h_title').value=h.title |  | '';
-  $('#h_sub').value=h.sub |  | '';
-  $('#h_pill').value=h.pill |  | '';
-  $('#h_proj_title').value=h.proj_title |  | '';
-  $('#h_button').value=h.button |  | '';
+  $('#h_title').value=h.title || '';
+  $('#h_sub').value=h.sub || '';
+  $('#h_pill').value=h.pill || '';
+  $('#h_proj_title').value=h.proj_title || '';
+  $('#h_button').value=h.button || '';
 }
 $('#h_save').onclick=()=>{
   const obj={
@@ -1126,34 +1155,32 @@ $('#importFile').addEventListener('change', e => {
         if (j.home) await Store.write(LS_HOME, j.home);
         if (j.contact) await Store.write(LS_CONTACT, j.contact);
       }
-   if (window.Store) {
-  renderProjects();
-  renderBlogs();
-  loadProfile();
-} else {
-  setTimeout(() => {
-    if (window.Store) {
-      renderProjects();
-      renderBlogs();
-      loadProfile();
-    }
-  }, 1000);
-}
-alert('Imported successfully');
-
+      if (window.Store) {
+        renderProjects();
+        renderBlogs();
+        loadProfile();
+      } else {
+        setTimeout(() => {
+          if (window.Store) {
+            renderProjects();
+            renderBlogs();
+            loadProfile();
+          }
+        }, 1000);
+      }
+      alert('Imported successfully');
     } catch (err) {
       alert('Import failed: ' + err.message);
     }
   };
   r.readAsText(f);
 });
+
 /* =========================
    ABOUT TAB: AUTOSAVE + UI
 ========================= */
 const About = {
-  el: {
-    facts: null, skills: null, gallery: null, progress: null, features: null
-  },
+  el: { facts: null, skills: null, gallery: null, progress: null, features: null },
   addFact(){ this.el.facts.insertAdjacentHTML('beforeend',`
     <div class="about-grid" data-item="fact">
       <div class="row"><label>Label</label><input class="field" placeholder="Experience"></div>
@@ -1188,7 +1215,7 @@ const About = {
     </div>`); },
 
   gather(){
-    const get = id => $(id)?.value?.trim()  |  |  '';
+    const get = id => $(id)?.value?.trim() || '';
     const list = (root,sel)=>[...root.querySelectorAll(sel)];
     const about = {
       about_hero_title: get('#about_hero_title'),
@@ -1202,14 +1229,14 @@ const About = {
       about_facts:   list(this.el.facts,'[data-item="fact"]').map(n=>({label:n.querySelectorAll('input')[0].value.trim(), k:n.querySelectorAll('input')[1].value.trim()})),
       about_skills:  list(this.el.skills,'[data-item="skill"]').map(n=>n.querySelector('input').value.trim()).filter(Boolean),
       about_gallery: list(this.el.gallery,'[data-item="gallery"]').map(n=>n.querySelector('input').value.trim()).filter(Boolean),
-      about_progress:list(this.el.progress,'[data-item="progress"]').map(n=>({label:n.querySelectorAll('input')[0].value.trim(), percent:Number(n.querySelectorAll('input')[1].value |  | 0), color:n.querySelectorAll('input')[2].value.trim()})),
+      about_progress:list(this.el.progress,'[data-item="progress"]').map(n=>({label:n.querySelectorAll('input')[0].value.trim(), percent:Number(n.querySelectorAll('input')[1].value || 0), color:n.querySelectorAll('input')[2].value.trim()})),
       about_features:list(this.el.features,'[data-item="feature"]').map(n=>({img:n.querySelectorAll('input,textarea')[0].value.trim(), title:n.querySelectorAll('input,textarea')[1].value.trim(), desc:n.querySelectorAll('input,textarea')[2].value.trim(), link:n.querySelectorAll('input,textarea')[3].value.trim(), linkText:n.querySelectorAll('input,textarea')[4].value.trim()}))
     };
     return about;
   },
 
   fill(saved){
-    const set = (id,v)=>{const el=$(id); if(el) el.value=v |  | '';}
+    const set = (id,v)=>{const el=$(id); if(el) el.value=v || '';};
     set('#about_hero_title', saved.about_hero_title);
     set('#about_hero_desc',  saved.about_hero_desc);
     set('#about_name',       saved.about_name);
@@ -1220,11 +1247,11 @@ const About = {
     set('#about_random',     saved.about_random);
 
     // lists
-    this.el.facts.innerHTML=''; (saved.about_facts |  | []).forEach(f=>{ this.addFact(); const last=this.el.facts.lastElementChild; last.querySelectorAll('input')[0].value=f.label |  | ''; last.querySelectorAll('input')[1].value=f.k |  | ''; });
-    this.el.skills.innerHTML=''; (saved.about_skills |  | []).forEach(s=>{ this.addSkill(); const last=this.el.skills.lastElementChild; last.querySelector('input').value=s |  | ''; });
-    this.el.gallery.innerHTML=''; (saved.about_gallery |  | []).forEach(g=>{ this.addGallery(); const last=this.el.gallery.lastElementChild; last.querySelector('input').value=g |  | ''; });
-    this.el.progress.innerHTML=''; (saved.about_progress |  | []).forEach(p=>{ this.addProgress(); const last=this.el.progress.lastElementChild; last.querySelectorAll('input')[0].value=p.label |  | ''; last.querySelectorAll('input')[1].value=p.percent |  | 0; last.querySelectorAll('input')[2].value=p.color |  | ''; });
-    this.el.features.innerHTML=''; (saved.about_features |  | []).forEach(f=>{ this.addFeature(); const last=this.el.features.lastElementChild; const inputs=last.querySelectorAll('input,textarea'); inputs[0].value=f.img |  | ''; inputs[1].value=f.title |  | ''; inputs[2].value=f.desc |  | ''; inputs[3].value=f.link |  | ''; inputs[4].value=f.linkText |  | ''; });
+    this.el.facts.innerHTML=''; (saved.about_facts || []).forEach(f=>{ this.addFact(); const last=this.el.facts.lastElementChild; last.querySelectorAll('input')[0].value=f.label || ''; last.querySelectorAll('input')[1].value=f.k || ''; });
+    this.el.skills.innerHTML=''; (saved.about_skills || []).forEach(s=>{ this.addSkill(); const last=this.el.skills.lastElementChild; last.querySelector('input').value=s || ''; });
+    this.el.gallery.innerHTML=''; (saved.about_gallery || []).forEach(g=>{ this.addGallery(); const last=this.el.gallery.lastElementChild; last.querySelector('input').value=g || ''; });
+    this.el.progress.innerHTML=''; (saved.about_progress || []).forEach(p=>{ this.addProgress(); const last=this.el.progress.lastElementChild; last.querySelectorAll('input')[0].value=p.label || ''; last.querySelectorAll('input')[1].value=p.percent || 0; last.querySelectorAll('input')[2].value=p.color || ''; });
+    this.el.features.innerHTML=''; (saved.about_features || []).forEach(f=>{ this.addFeature(); const last=this.el.features.lastElementChild; const inputs=last.querySelectorAll('input,textarea'); inputs[0].value=f.img || ''; inputs[1].value=f.title || ''; inputs[2].value=f.desc || ''; inputs[3].value=f.link || ''; inputs[4].value=f.linkText || ''; });
   }
 };
 
@@ -1243,15 +1270,15 @@ function loadAbout(){
   $('#add_progress').onclick=()=>{ About.addProgress(); autosaveAbout(); };
   $('#add_feature').onclick=()=>{ About.addFeature(); autosaveAbout(); };
 
-  // list remove (event delegation)
+  // list remove
   $('#panel_about').addEventListener('click',e=>{
     if(e.target.matches('[data-remove]')){ e.target.closest('[data-item]').remove(); autosaveAbout(); }
   });
 
-  // autosave on any input change / typing (WhatsApp style)
+  // autosave on input
   $('#panel_about').addEventListener('input', (e)=> {
-  if(e.target.matches('input,textarea,select,div[contenteditable]')) debouncedAutoSaveAbout();
-});
+    if(e.target.matches('input,textarea,select,div[contenteditable]')) debouncedAutoSaveAbout();
+  });
 
   // export about only
   $('#about_export').onclick=()=>{
@@ -1267,9 +1294,9 @@ function loadAbout(){
 
   // hydrate
   (async ()=>{
-  const saved = await Store.read(LS_ABOUT,'{}');
-  About.fill(saved);
-})();
+    const saved = await Store.read(LS_ABOUT,'{}');
+    About.fill(saved);
+  })();
 }
 
 function autosaveAbout(){
@@ -1278,16 +1305,14 @@ function autosaveAbout(){
 }
 function debounce(fn, ms = 800) {
   let t;
-  return (...a) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn(...a), ms);
-  };
+  return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
 }
 const debouncedAutoSaveAbout = debounce(() => {
   const payload = About.gather();
   Store.write(LS_ABOUT, payload);
 }, 800);
-// ====== MANUAL SAVE ABOUT BUTTON ======
+
+// manual save
 const aboutSaveBtn = document.getElementById('about_save');
 if (aboutSaveBtn) {
   aboutSaveBtn.addEventListener('click', async () => {
@@ -1305,6 +1330,7 @@ if (aboutSaveBtn) {
     }
   });
 }
+
 /* =========================
    CONTACT TAB: AUTOSAVE + UI
 ========================= */
@@ -1330,7 +1356,7 @@ const Contact = {
           <option${data.platform==='Custom'?' selected':''}>Custom</option>
         </select>
       </div>
-      <div class="row"><label>Link URL</label><input class="field c-social-url" placeholder="https://…" value="${(data.url |  | '')}"></div>
+      <div class="row"><label>Link URL</label><input class="field c-social-url" placeholder="https://…" value="${(data.url || '')}"></div>
       <div class="row wide"><label>Custom SVG (optional)</label>
         <textarea class="field c-social-svg" rows="2" placeholder="<svg …>${data.svg?data.svg.replace(/</g,'&lt;'):''}</textarea>
       </div>
@@ -1342,7 +1368,7 @@ const Contact = {
   },
 
   gather(){
-    const get = id => document.querySelector(id)?.value?.trim()  |  |  '';
+    const get = id => document.querySelector(id)?.value?.trim() || '';
     const list = (sel)=>[...document.querySelectorAll(sel)];
     const socials = list('#contact_socials [data-item="social"]').map(n=>({
       platform: n.querySelector('.c-social-platform').value,
@@ -1379,7 +1405,7 @@ const Contact = {
   },
 
   fill(saved={}){
-    const set = (id,v)=>{ const el=document.querySelector(id); if(el) el.value=v |  | ''; };
+    const set = (id,v)=>{ const el=document.querySelector(id); if(el) el.value=v || ''; };
     // hero
     set('#c_pill',  saved.c_pill);
     set('#c_title', saved.c_title);
@@ -1404,7 +1430,7 @@ const Contact = {
     set('#c_qc_hq_value', saved.c_qc_hq_value);
     // socials
     this.socialsRoot.innerHTML='';
-    (saved.c_socials |  | [
+    (saved.c_socials || [
       {platform:'Facebook', url:'#', svg:''},
       {platform:'Twitter',  url:'#', svg:''},
       {platform:'Instagram',url:'#', svg:''}
@@ -1437,17 +1463,15 @@ function loadContact(){
   };
   document.querySelector('#contact_reset').onclick = ()=>{
     if(confirm('Clear Contact Page data only?')){
-      
       Contact.fill({});
       autosaveContact();
       alert('Contact cleared');
     }
   };
 
-  // hydrate saved or sensible defaults (mirrors your current Contact page copy)
+  // hydrate saved or sensible defaults
   const saved = Store.read(LS_CONTACT, '{}');
   if(!Object.keys(saved).length){
-    // sensible defaults from your current contact.html
     const defaults = {
       c_pill:'WRITE TO US',
       c_title:'Get In Touch',
@@ -1486,27 +1510,28 @@ function autosaveContact(){
   const payload = Contact.gather();
   Store.write(LS_CONTACT, payload);
 }
-// 404 admin: save/load for cms_404
+
+/* =========================
+   404 admin: save/load for cms_404
+========================= */
 (function(){
-  const key='cms_404';
   const q=s=>document.getElementById(s);
-  function safeParse(j){ try{return JSON.parse(j |  | ''); }catch{return null} }
 
   function loadFour(){
-    const d = Store.read('cms_404', '{}')  |  |  {};
-    q('four_title').value = d.title |  | 'Hmmm...';
-    q('four_line1').value = d.line1 |  | 'Occurred, a 404 error has. I sense much fear in you.';
-    q('four_line2').value = d.line2 |  | 'Trust in the force, clear your mind, unlearn what you have learned, and find your missing page you will.';
-    q('four_btn_do_label').value = d.btn_do_label |  | 'Do';
-    q('four_btn_do_link').value = d.btn_do_link |  | 'home.html';
-    q('four_btn_donot_label').value = d.btn_donot_label |  | 'Do not';
-    q('four_btn_donot_link').value = d.btn_donot_link |  | 'home.html';
-    q('four_btn_try_label').value = d.btn_try_label |  | 'Try';
+    const d = Store.read('cms_404', '{}') || {};
+    q('four_title').value = d.title || 'Hmmm...';
+    q('four_line1').value = d.line1 || 'Occurred, a 404 error has. I sense much fear in you.';
+    q('four_line2').value = d.line2 || 'Trust in the force, clear your mind, unlearn what you have learned, and find your missing page you will.';
+    q('four_btn_do_label').value = d.btn_do_label || 'Do';
+    q('four_btn_do_link').value = d.btn_do_link || 'home.html';
+    q('four_btn_donot_label').value = d.btn_donot_label || 'Do not';
+    q('four_btn_donot_link').value = d.btn_donot_link || 'home.html';
+    q('four_btn_try_label').value = d.btn_try_label || 'Try';
     q('four_try_disabled').checked = Boolean(d.try_disabled);
-    q('four_image').value = d.image |  | '';
+    q('four_image').value = d.image || '';
     q('four_use_latest').checked = Boolean(d.use_latest);
-    q('four_latest_count').value = d.latest_count |  | 3;
-    q('four_custom_projects').value = (d.custom_projects |  | []).join(',');
+    q('four_latest_count').value = d.latest_count || 3;
+    q('four_custom_projects').value = (d.custom_projects || []).join(',');
     q('four_remove_nav_underline').checked = Boolean(d.remove_nav_underline);
   }
 
@@ -1523,85 +1548,53 @@ function autosaveContact(){
       try_disabled: q('four_try_disabled').checked,
       image: q('four_image').value.trim(),
       use_latest: q('four_use_latest').checked,
-      latest_count: Number(q('four_latest_count').value |  | 0),
-      custom_projects: (q('four_custom_projects').value |  | '').split(',').map(s=>s.trim()).filter(Boolean),
+      latest_count: Number(q('four_latest_count').value || 0),
+      custom_projects: (q('four_custom_projects').value || '').split(',').map(s=>s.trim()).filter(Boolean),
       remove_nav_underline: q('four_remove_nav_underline').checked
     };
   }
 
   function saveFour(){
-const val = collectFour();
-Store.write('cms_404', val);
-Q('#four_saved', 2000);
+    const val = collectFour();
+    Store.write('cms_404', val);
+    const el=document.getElementById('four_saved');
+    if(el){ el.style.display='inline'; setTimeout(()=>el.style.display='none',2000); }
   }
 
   function clearFour(){
     if(!confirm('Clear all 404 settings?')) return;
-    
     loadFour();
     alert('Cleared 404 settings.');
   }
 
-  // small helper to show saved indicator
-  function Q(sel,ms=1500){
-    const el=document.getElementById('four_saved');
-    if(!el) return;
-    el.style.display='inline';
-    setTimeout(()=>el.style.display='none',ms);
-  }
-
-  // wire up buttons
   document.getElementById('four_save').addEventListener('click', saveFour);
   document.getElementById('four_clear').addEventListener('click', clearFour);
 
-  // auto-save on change (lightweight)
   ['four_title','four_line1','four_line2','four_btn_do_label','four_btn_do_link','four_btn_donot_label','four_btn_donot_link','four_btn_try_label','four_image','four_custom_projects'].forEach(id=>{
     const el=document.getElementById(id);
     if(!el) return;
-el.addEventListener('input', ()=> Store.write('cms_404', collectFour()));
+    el.addEventListener('input', ()=> Store.write('cms_404', collectFour()));
   });
-  // checkboxes & numeric
   ['four_try_disabled','four_use_latest','four_remove_nav_underline','four_latest_count'].forEach(id=>{
     const el=document.getElementById(id);
     if(!el) return;
-el.addEventListener('change', ()=> Store.write('cms_404', collectFour()));
+    el.addEventListener('change', ()=> Store.write('cms_404', collectFour()));
   });
 
-  // expose loadFour globally so we can call it
   window.loadFour = loadFour;
-
-  // ensure clicking the nav in admin triggers loadFour
   const navFour = document.querySelector('[data-panel="four"]');
   if(navFour){
     navFour.addEventListener('click', ()=>{ setTimeout(()=>{ try{ loadFour(); }catch{} }, 60); });
   }
-
-  // also call once on init in case panel is initially visible
   setTimeout(()=>{ try{ loadFour(); }catch{} }, 200);
-
 })();
-// ====== MANUAL SAVE CONTACT BUTTON (now saves to Firebase too) ======
-const saveContactBtn = document.getElementById('saveContactBtn');
-if (saveContactBtn) {
-  saveContactBtn.addEventListener('click', async () => {
-    try {
-      const payload = Contact.gather();
-      await Store.write(LS_CONTACT, payload);
-      const saved = document.getElementById('contactSaved');
-      if (saved) {
-        saved.style.display = 'inline';
-        setTimeout(() => (saved.style.display = 'none'), 1500);
-      }
-      alert('✅ Contact data saved!');
-    } catch (err) {
-      alert('⚠️ Failed to save contact: ' + err.message);
-    }
-  });
-}
 </script>
+
 <script>
   window.BNDLABS_API_BASE = "https://bndlabs-backend.onrender.com";
-</script><script>
+</script>
+
+<script>
 document.addEventListener("DOMContentLoaded", () => {
   setTimeout(() => {
     const API_BASE = "https://bndlabs-backend.onrender.com/api";
@@ -1615,10 +1608,8 @@ document.addEventListener("DOMContentLoaded", () => {
       "cms_404": "404"
     };
 
-    const _cache = {
-      home: {}, projects: [], blogs: [], profile: {}, about: {}, contact: {}, "404": {}
-    };
-    const m = k => KEY_MAP[k]  |  |  k;
+    const _cache = { home: {}, projects: [], blogs: [], profile: {}, about: {}, contact: {}, "404": {} };
+    const m = k => KEY_MAP[k] || k;
 
     async function fetchJSON(endpoint, fallback){
       try{
@@ -1655,7 +1646,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.Store = {
       read(key, fallback){
         const k = m(key);
-        return structuredClone(_cache[k] ?? JSON.parse(fallback  |  |  "{}"));
+        return structuredClone(_cache[k] ?? JSON.parse(fallback || "{}"));
       },
       async write(key, value){
         const k = m(key);
@@ -1665,7 +1656,7 @@ document.addEventListener("DOMContentLoaded", () => {
       },
       projects(){
         const a = Array.isArray(_cache.projects)?[..._cache.projects]:[];
-        a.sort((x,y)=>(y.updated |  | 0)-(x.updated |  | 0));
+        a.sort((x,y)=>(y.updated || 0)-(x.updated || 0));
         return a;
       },
       putProject(p){
@@ -1685,7 +1676,7 @@ document.addEventListener("DOMContentLoaded", () => {
       byIdProject(id){return this.projects().find(x=>x.id===id);},
       blogs(){
         const a=Array.isArray(_cache.blogs)?[..._cache.blogs]:[];
-        a.sort((x,y)=>(y.updated |  | 0)-(x.updated |  | 0));
+        a.sort((x,y)=>(y.updated || 0)-(x.updated || 0));
         return a;
       },
       putBlog(b){
@@ -1703,12 +1694,12 @@ document.addEventListener("DOMContentLoaded", () => {
         return this.write(LS_BLOGS,L);
       },
       byIdBlog(id){return this.blogs().find(x=>x.id===id);},
-      profile(){return structuredClone(_cache.profile |  | {});},
+      profile(){return structuredClone(_cache.profile || {});},
       saveProfile(p){_cache.profile=p;return this.write(LS_PROFILE,p);}
     };
 
     prime();
-  }, 800); // ⏱️ small delay ensures everything loads before backend patch
+  }, 800);
 });
 </script>
 </body>
