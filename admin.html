@@ -689,43 +689,47 @@ const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 const fmtTime=t=>!t?'—':new Date(t).toLocaleString(); const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 
-/* ===== Secure Password Gate (Bodunde6056$) ===== */
+/* ===== Secure Password Gate (for Bodunde6056$) ===== */
 const gate = document.getElementById("gate");
 const pass = document.getElementById("pass");
 const enter = document.getElementById("enter");
 const logout = document.getElementById("logout");
 
-// 🔐 Hidden hash for "Bodunde6056$"
-const hiddenHash = "426f64756e64653630353624"; // ✅ correct UTF-8 hex for Bodunde6056$
+// Correct hidden hash of "Bodunde6056$"
+const hiddenHash = "426f64756e64653630353624"; // one-way UTF-8 hex hash
 
-// Convert string to hex (simple internal hash)
 function hashString(str) {
   return Array.from(new TextEncoder().encode(str))
     .reduce((acc, b) => acc + b.toString(16).padStart(2, "0"), "");
 }
 
 function checkPassword(input) {
-  return hashString(input.trim()) === hiddenHash;
+  if (!input) return false; // prevent empty input from logging in
+  const cleaned = input.normalize('NFKC').trim();
+  const hashed = hashString(cleaned);
+  return hashed === hiddenHash;
 }
 
-// Restore session
+// Restore session if already logged in
 if (sessionStorage.getItem("bod_authed") === "yes") {
   gate.style.display = "none";
 }
 
 // Handle login button
 enter.addEventListener("click", () => {
-  if (checkPassword(pass.value)) {
-    gate.style.display = "none";
+  const inputValue = pass.value;
+  if (checkPassword(inputValue)) {
     sessionStorage.setItem("bod_authed", "yes");
+    gate.style.display = "none";
     pass.value = "";
   } else {
-    alert("⚠️ Wrong password");
+    alert("⚠️ Incorrect password");
+    sessionStorage.removeItem("bod_authed");
     pass.focus();
   }
 });
 
-// Handle Enter key
+// Handle Enter key press
 pass.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     e.preventDefault();
@@ -733,10 +737,10 @@ pass.addEventListener("keydown", (e) => {
   }
 });
 
-// Logout
+// Logout button
 logout.addEventListener("click", () => {
-  gate.style.display = "flex";
   sessionStorage.removeItem("bod_authed");
+  gate.style.display = "flex";
 });
 
 // press Enter key
