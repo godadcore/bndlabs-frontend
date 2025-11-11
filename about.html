@@ -165,6 +165,25 @@
   opacity: 0.6;
   transition: filter 0.4s ease, opacity 0.4s ease;
 }
+
+/* === Skeleton shimmer only between header and footer === */
+.page-content.skeleton-wrap {
+  position: relative;
+}
+.page-content.skeleton-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.1) 0%,
+    rgba(255,255,255,0.3) 50%,
+    rgba(255,255,255,0.1) 100%
+  );
+  backdrop-filter: blur(8px);
+  animation: shimmer 1.5s infinite;
+  z-index: 1000;
+}
 </style>
 </head>
 <body>
@@ -191,12 +210,41 @@
   <button class="menu-toggle" id="menuToggle" aria-label="Open menu">☰</button>
 </header>
 
-<section class="page-hero">
-  <div class="hero-card">
-    <h1 id="about_hero_title"></h1>
-    <p id="about_hero_desc"></p>
-  </div>
-</section>
+<!-- PAGE CONTENT WRAPPER -->
+<div class="page-content">
+  <section class="page-hero">
+    <div class="hero-card">
+      <h1 id="about_hero_title"></h1>
+      <p id="about_hero_desc"></p>
+    </div>
+  </section>
+
+  <section class="about-wrap">
+    <aside class="about-card">
+      <div class="profile">
+        <div class="avatar"><img id="about_image" src="" alt="portrait"></div>
+        <div class="name-lg" id="about_name"></div>
+        <div class="role" id="about_role"></div>
+        <div class="facts" id="about_facts"></div>
+        <div class="skills" id="about_skills"></div>
+        <div class="mini-gallery" id="about_gallery"></div>
+        <div class="cta-stack">
+          <a class="cta-link" id="about_resume" href="#" target="_blank" rel="noopener">Résumé</a>
+          <a class="cta-ghost" id="about_contact" href="contact.html">Contact</a>
+        </div>
+        <div class="random-fact" id="about_random"></div>
+      </div>
+    </aside>
+
+    <div class="about-card about-body">
+      <h2>Background</h2>
+      <div id="about_story"></div>
+      <div class="skills-chart" id="about_progress"></div>
+      <div class="feature-block" id="about_features"></div>
+    </div>
+  </section>
+</div>
+<!-- END PAGE CONTENT WRAPPER -->
 
 <section class="about-wrap">
   <aside class="about-card">
