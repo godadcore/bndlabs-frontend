@@ -248,7 +248,10 @@
     nav.classList.remove('active');
   });
 </script>
-
+<!-- other scripts -->
+ <script src="js/skeleton.js"></script>
+<script src="js/data.js"></script>
+<script src="js/render.js"></script>
 <script>
   // ===== Robust About loader with skeleton support =====
   const esc = s => s ? String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])) : '';
@@ -346,9 +349,5 @@
   loadAbout(); // Run it
 </script>
 
-<!-- other scripts -->
- <script src="js/skeleton.js"></script>
-<script src="js/data.js"></script>
-<script src="js/render.js"></script>
 </body>
 </html>
