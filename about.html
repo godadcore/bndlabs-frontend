@@ -186,7 +186,7 @@
 }
 </style>
 </head>
-<body>
+<body class="loading">
 <div class="tech-bg"></div>
 
 <header>
@@ -198,7 +198,11 @@
     </div>
     <div class="brand-text"><div class="name">bndlabs</div></div>
   </div>
-
+<div id="pageSkeleton">
+  <div class="s-card s-hero"></div>
+  <div class="s-card s-profile"></div>
+  <div class="s-card s-body"></div>
+</div>
   <nav class="nav" aria-label="Main">
     <a href="home.html">Home</a>
     <a href="about.html" class="active">About</a>
@@ -244,32 +248,6 @@
     </div>
   </section>
 </div>
-<!-- END PAGE CONTENT WRAPPER -->
-
-<section class="about-wrap">
-  <aside class="about-card">
-    <div class="profile">
-      <div class="avatar"><img id="about_image" src="" alt="portrait"></div>
-      <div class="name-lg" id="about_name"></div>
-      <div class="role" id="about_role"></div>
-      <div class="facts" id="about_facts"></div>
-      <div class="skills" id="about_skills"></div>
-      <div class="mini-gallery" id="about_gallery"></div>
-      <div class="cta-stack">
-        <a class="cta-link" id="about_resume" href="#" target="_blank" rel="noopener">Résumé</a>
-        <a class="cta-ghost" id="about_contact" href="contact.html">Contact</a>
-      </div>
-      <div class="random-fact" id="about_random"></div>
-    </div>
-  </aside>
-
-  <div class="about-card about-body">
-    <h2>Background</h2>
-    <div id="about_story"></div>
-    <div class="skills-chart" id="about_progress"></div>
-    <div class="feature-block" id="about_features"></div>
-  </div>
-</section>
 
 <footer>
   <div class="footer-inner">
