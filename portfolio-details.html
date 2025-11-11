@@ -308,110 +308,90 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
   document.querySelector('.nav').classList.toggle('active');
 });
 
-/* ===== PROJECT DETAIL LOADER =====
-   Uses the same Admin store key: 'cms_projects'
-   Groups sections strictly as: image(s) -> heading -> paragraph (one block)
-   UPDATED: supports up to 4 images; for 3–4 images shows a smooth horizontal scroll row. */
-(function(){
+/* ===== PROJECT DETAIL LOADER (connected to backend) ===== */
+(async()=>{
   const params = new URLSearchParams(location.search);
   const id = params.get('id');
-
-  const projects = safeParse() || [];
-  if (!projects.length) {
-    renderEmpty('No CMS data found. Open Admin and create a project, then reload.');
-    return;
-  }
-
-  // If the URL id is missing, use the newest (index 0).
-  const project = projects.find(p => String(p.id) === String(id)) || projects[0];
-  if (!project) {
-    renderEmpty('Project not found. Check the URL id or create a project in Admin.');
-    return;
-  }
-
-  // HERO
-  setText('#proj_title', project.title);
-  setText('#proj_desc', project.desc);
-  setText('#proj_tag', project.tag);
-  setText('#proj_date', project.date);
-  setSrc('#proj_image', project.hero);
-
-  // CONTENT SECTIONS
-  const secWrap = document.getElementById('sections');
-  secWrap.innerHTML = '';
-
-  const items = Array.isArray(project.sections) ? project.sections : [];
-  if (!items.length) {
-    const empty = document.createElement('section');
-    empty.className = 'block grey';
-    empty.innerHTML = `<div class="container"><div class="empty" style="text-align:center;color:var(--muted)">No sections yet.</div></div>`;
-    secWrap.appendChild(empty);
-  } else {
-    renderBlocks(items, secWrap);
-  }
-
-  // MORE PROJECTS — Always show 3 cards (latest), excluding current
+  const container = document.getElementById('sections');
   const more = document.getElementById('moreGrid');
-  more.innerHTML = '';
 
-  const currentId = String(project.id);
-  const top3 = projects.slice(0, 3);
-  let pool = top3.filter(p => String(p.id) !== currentId);
-
-  if (pool.length < 3) {
-    // add from the rest
-    for (let i = 3; i < projects.length && pool.length < 3; i++) {
-      const p = projects[i];
-      if (String(p.id) !== currentId && !pool.some(x => String(x.id) === String(p.id))) {
-        pool.push(p);
-      }
+  try {
+    const res = await fetch('https://bndlabs-backend.onrender.com/api/projects');
+    const data = await res.json();
+    const projects = Array.isArray(data) ? data : Object.values(data || {});
+    if (!projects.length) {
+      renderEmpty('No CMS data found. Open Admin and create a project, then reload.');
+      return;
     }
+
+    const project = projects.find(p => String(p.id) === String(id)) || projects[0];
+    if (!project) {
+      renderEmpty('Project not found. Check the URL id or create a project in Admin.');
+      return;
+    }
+
+    // HERO
+    setText('#proj_title', project.title);
+    setText('#proj_desc', project.desc);
+    setText('#proj_tag', project.tag);
+    setText('#proj_date', project.date);
+    setSrc('#proj_image', project.hero);
+
+    // SECTIONS
+    container.innerHTML = '';
+    const items = Array.isArray(project.sections) ? project.sections : [];
+    if (!items.length) {
+      const empty = document.createElement('section');
+      empty.className = 'block grey';
+      empty.innerHTML = `<div class="container"><div class="empty" style="text-align:center;color:var(--muted)">No sections yet.</div></div>`;
+      container.appendChild(empty);
+    } else {
+      renderBlocks(items, container);
+    }
+
+    // MORE PROJECTS (limit 3)
+    more.innerHTML = '';
+    const currentId = String(project.id);
+    const pool = projects.filter(p => String(p.id) !== currentId).slice(0, 3);
+
+    pool.forEach(p => {
+      const a = document.createElement('a');
+      a.className = 'more-item';
+      a.href = `portfolio-details.html?id=${encodeURIComponent(p.id)}`;
+      a.innerHTML = `
+        <img src="${escapeAttr(p.hero || '')}" alt="">
+        <div class="p"><h3>${escapeHtml(p.title || '')}</h3><small>${escapeHtml(p.tag || '')}</small></div>
+      `;
+      more.appendChild(a);
+    });
+
+  } catch (err) {
+    console.error(err);
+    renderEmpty('Error loading project data.');
   }
 
-  pool = pool.slice(0, 3);
-
-  pool.forEach(p=>{
-    const a=document.createElement('a');
-    a.className='more-item';
-    a.href=`project-monitor.html?id=${encodeURIComponent(p.id)}`;
-    a.innerHTML=`
-      <img src="${escapeAttr(p.hero||'')}" alt="">
-      <div class="p"><h3>${escapeHtml(p.title||'')}</h3><small>${escapeHtml(p.tag||'')}</small></div>
-    `;
-    more.appendChild(a);
-  });
-
-  /* ======= Block Renderer (image-first) ======= */
-  function renderBlocks(items, host){
+  /* ======= BLOCK RENDERER ======= */
+  function renderBlocks(items, host) {
     let i = 0, grey = false;
     while (i < items.length) {
-      let imgs = [];
-      let h2 = '';
-      let p = '';
-
-      // CASE A: start with img(s)  — UPDATED: up to 4 images
+      let imgs = [], h2 = '', p = '';
       if (items[i]?.type === 'img') {
-        while (i < items.length && items[i].type === 'img' && imgs.length < 4) { // UPDATED (2 -> 4)
+        while (i < items.length && items[i].type === 'img' && imgs.length < 4) {
           imgs.push(items[i].value || '');
           i++;
         }
         if (i < items.length && items[i].type === 'h2') { h2 = items[i].value || ''; i++; }
         if (i < items.length && items[i].type === 'p')  { p  = items[i].value || ''; i++; }
-      }
-      // CASE B: start with h2/p — still render image(s) first by looking ahead
-      else if (items[i]?.type === 'h2' || items[i]?.type === 'p') {
+      } else if (items[i]?.type === 'h2' || items[i]?.type === 'p') {
         if (items[i]?.type === 'h2') { h2 = items[i].value || ''; i++; }
         if (i < items.length && items[i].type === 'p') { p = items[i].value || ''; i++; }
         let k = i;
-        while (k < items.length && items[k].type === 'img' && imgs.length < 4) { // UPDATED (2 -> 4)
+        while (k < items.length && items[k].type === 'img' && imgs.length < 4) {
           imgs.push(items[k].value || '');
           k++;
         }
         if (imgs.length) i = k;
-      } else {
-        i++; // unknown type
-        continue;
-      }
+      } else { i++; continue; }
 
       if (!imgs.length && !h2 && !p) continue;
 
@@ -419,7 +399,6 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
       section.className = 'block' + (grey ? ' grey' : '');
       grey = !grey;
 
-      // UPDATED: choose layout
       let imgsHTML = '';
       if (imgs.length === 1) {
         imgsHTML = `<img src="${escapeAttr(imgs[0])}" alt="">`;
@@ -428,53 +407,36 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
           <img src="${escapeAttr(imgs[0])}" alt=""> 
           <img src="${escapeAttr(imgs[1])}" alt="">
         </div>`;
-      } else if (imgs.length >= 3) { // 3–4 images → horizontal scroll strip
+      } else if (imgs.length >= 3) {
         imgsHTML = `<div class="img-scroll">
-          ${imgs.map(src=>`<img src="${escapeAttr(src)}" alt="">`).join('')}
+          ${imgs.map(src => `<img src="${escapeAttr(src)}" alt="">`).join('')}
         </div>`;
       }
 
-section.innerHTML = `
-  <div class="container">
-    ${imgsHTML}
-    ${h2 ? `<h2>${cleanRich(h2)}</h2>` : ''}
-    ${p  ? `<div class="rte-body">${cleanRich(p)}</div>` : ''}
-  </div>
-`;
-
+      section.innerHTML = `
+        <div class="container">
+          ${imgsHTML}
+          ${h2 ? `<h2>${cleanRich(h2)}</h2>` : ''}
+          ${p  ? `<div class="rte-body">${cleanRich(p)}</div>` : ''}
+        </div>`;
       host.appendChild(section);
     }
   }
 
-  /* ===== Helpers ===== */
-  function renderEmpty(msg){
-    const secWrap = document.getElementById('sections');
-    secWrap.innerHTML = `<section class="block grey"><div class="container"><div class="empty" style="text-align:center;color:var(--muted)">${escapeHtml(msg)}</div></div></section>`;
+  /* ===== HELPERS ===== */
+  function renderEmpty(msg) {
+    container.innerHTML = `<section class="block grey"><div class="container"><div style="text-align:center;color:var(--muted)">${escapeHtml(msg)}</div></div></section>`;
   }
-
-  function setText(sel, val){ const el = document.querySelector(sel); if (el) el.textContent = val || ''; }
-  function setSrc(sel, val){ const el = document.querySelector(sel); if (el) el.src = val || ''; }
-  function escapeHtml(s){ return String(s||'').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
-  function escapeAttr(s){ return String(s||'').replace(/"/g,'&quot;'); }
-  function safeParse(json){ try{ return JSON.parse(json||''); } catch(e){ return null; } }
-  function decodeHtml(str){
-  const t = document.createElement('textarea');
-  t.innerHTML = String(str || '');
-  return t.value;
-}
-
-function stripScripts(html){
-  return String(html || '').replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '');
-}
-
-function cleanRich(val){
-  // 1) decode &lt;b&gt; → <b> so your saved formatting shows
-  // 2) strip scripts for safety
-  return stripScripts(decodeHtml(val));
-}
+  function setText(sel, val){const el=document.querySelector(sel);if(el)el.textContent=val||'';}
+  function setSrc(sel, val){const el=document.querySelector(sel);if(el)el.src=val||'';}
+  function escapeHtml(s){return String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+  function escapeAttr(s){return String(s||'').replace(/"/g,'&quot;');}
+  function decodeHtml(str){const t=document.createElement('textarea');t.innerHTML=String(str||'');return t.value;}
+  function stripScripts(html){return String(html||'').replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi,'');}
+  function cleanRich(val){return stripScripts(decodeHtml(val));}
 })();
-
 </script>
+
 <script src="js/data.js"></script>
 <script src="js/render.js"></script>
 
