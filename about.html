@@ -127,63 +127,57 @@
   .footer-nav{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
   .footer-nav a{color:var(--light-faint);font-size:14px;text-transform:capitalize;}
 /* ===== UNIVERSAL SKELETON LOADER STYLES ===== */
-
-.skeleton-wrap {
-  position: relative;
-  overflow: hidden;
-  background: rgba(0, 0, 0, 0.05);
-  color: transparent !important;
-  border-radius: 6px;
+#pageSkeleton {
+  position: fixed;
+  inset: 0;
+  background: #f6f3ef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 3000;
+  animation: fadeSkeleton 1.5s ease-out forwards;
 }
 
-/* Shimmer animation effect */
-.skeleton-wrap::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -150px;
-  width: 150px;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.35),
-    transparent
-  );
-  animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-  100% {
-    transform: translateX(150%);
-  }
-}
-
-/* Optional blur/fade for smoother transition */
-.loading-blur {
-  filter: blur(8px);
-  opacity: 0.6;
-  transition: filter 0.4s ease, opacity 0.4s ease;
-}
-
-/* === Skeleton shimmer only between header and footer === */
-.page-content.skeleton-wrap {
-  position: relative;
-}
-.page-content.skeleton-wrap::after {
+/* The shimmer animation layer */
+#pageSkeleton::after {
   content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(
     90deg,
-    rgba(255,255,255,0.1) 0%,
-    rgba(255,255,255,0.3) 50%,
-    rgba(255,255,255,0.1) 100%
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.4) 50%,
+    rgba(255,255,255,0) 100%
   );
-  backdrop-filter: blur(8px);
-  animation: shimmer 1.5s infinite;
-  z-index: 1000;
+  animation: shimmer 1.2s infinite;
 }
+
+/* Individual skeleton bars (optional) */
+.s-card {
+  width: 80%;
+  max-width: 700px;
+  height: 40px;
+  margin: 10px 0;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animation for shimmer motion */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Fade out the skeleton smoothly */
+@keyframes fadeSkeleton {
+  0% { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
+}
+
 </style>
 </head>
 <body class="loading">
@@ -367,9 +361,19 @@
       console.error("Failed to load about data", err);
       document.querySelector('.about-body').innerHTML =
         `<p style="text-align:center;color:var(--light-faint);">⚠️ Unable to load About data. Please check your backend connection.</p>`;
-    } finally {
-      fadeOutSkeleton(); // 🟩 Stop shimmer smoothly
+      } finally {
+      // ⏳ Short full-page skeleton duration (1.5 seconds max)
+      setTimeout(() => {
+        const skeleton = document.getElementById("pageSkeleton");
+        if (skeleton) {
+          skeleton.style.opacity = "0";
+          skeleton.style.transition = "opacity 0.4s ease";
+          setTimeout(() => skeleton.remove(), 400);
+        }
+        document.body.classList.remove("loading");
+      }, 1500);
     }
+
   }
 
   loadAbout(); // Run it
