@@ -235,46 +235,6 @@
     line-height: 1.5 !important;
   }
 }
-
-/* ===== UNIVERSAL SKELETON LOADER STYLES ===== */
-
-.skeleton-wrap {
-  position: relative;
-  overflow: hidden;
-  background: rgba(0, 0, 0, 0.05);
-  color: transparent !important;
-  border-radius: 6px;
-}
-
-/* Shimmer animation effect */
-.skeleton-wrap::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -150px;
-  width: 150px;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.35),
-    transparent
-  );
-  animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-  100% {
-    transform: translateX(150%);
-  }
-}
-
-/* Optional blur/fade for smoother transition */
-.loading-blur {
-  filter: blur(8px);
-  opacity: 0.6;
-  transition: filter 0.4s ease, opacity 0.4s ease;
-}
 </style>
 </head>
 
@@ -478,6 +438,5 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
 
 <script src="js/data.js"></script>
 <script src="js/render.js"></script>
-<script src="js/skeleton.js"></script>
 </body>
 </html>

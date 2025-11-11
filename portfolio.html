@@ -57,45 +57,6 @@ footer{background:#f6f3ef;color:var(--light-faint);padding:20px;margin-top:40px;
 .socials a{width:36px;height:36px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,0.1);}
 .socials a svg{width:18px;height:18px;fill:#000;}
 @media(max-width:900px){.hero{flex-direction:column;gap:40px;text-align:center;}.hero-text h1{font-size:54px;}.hero-right{align-items:center;}.preview-cards{justify-content:center;}}
-/* ===== UNIVERSAL SKELETON LOADER STYLES ===== */
-
-.skeleton-wrap {
-  position: relative;
-  overflow: hidden;
-  background: rgba(0, 0, 0, 0.05);
-  color: transparent !important;
-  border-radius: 6px;
-}
-
-/* Shimmer animation effect */
-.skeleton-wrap::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -150px;
-  width: 150px;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.35),
-    transparent
-  );
-  animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-  100% {
-    transform: translateX(150%);
-  }
-}
-
-/* Optional blur/fade for smoother transition */
-.loading-blur {
-  filter: blur(8px);
-  opacity: 0.6;
-  transition: filter 0.4s ease, opacity 0.4s ease;
-}
 </style>
 </head>
 
@@ -188,6 +149,5 @@ document.addEventListener("click",e=>{if(!nav.contains(e.target)&&!menuToggle.co
 </script>
 <script src="js/data.js"></script>
 <script src="js/render.js"></script>
-<script src="js/skeleton.js"></script>
 </body>
 </html>
