@@ -228,7 +228,6 @@
     <div class="footer-left">© 2025 <strong>bndlabs</strong>. Designed & coded by Godadcore.</div>
   </div>
 </footer>
-
 <script>
   // ===== Menu (same behavior as your other pages) =====
   const menuToggle = document.getElementById('menuToggle');
@@ -241,7 +240,6 @@
       nav.classList.remove('active');
     }
   });
-  // optional: set active on click
   nav.addEventListener('click', (e) => {
     const a = e.target.closest('a');
     if (!a) return;
@@ -252,13 +250,14 @@
 </script>
 
 <script>
-  // ===== Robust About loader (accepts multiple CMS shapes) =====
+  // ===== Robust About loader with skeleton support =====
   const esc = s => s ? String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])) : '';
-
   function pick(o, keys, d=''){ for (const k of keys){ if (o && o[k] != null && o[k] !== '') return o[k]; } return d; }
   function num(n, d=0){ const v = Number(n); return Number.isFinite(v) ? v : d; }
 
   async function loadAbout(){
+    showSkeleton(); // 🟧 Start shimmer immediately
+
     try{
       const res = await fetch("https://bndlabs-backend.onrender.com/api/about", {credentials:"omit"});
       if(!res.ok) throw new Error("Network error");
@@ -277,15 +276,14 @@
       // Story (allow HTML)
       document.getElementById('about_story').innerHTML = pick(data, ['story','about_story'], '');
 
-      // Facts (supports {k,v} or {label,k})
+      // Facts
       const factsArr = Array.isArray(data.facts) ? data.facts
                      : Array.isArray(data.about_facts) ? data.about_facts : [];
-      const factsHTML = factsArr.map(f=>{
+      document.getElementById('about_facts').innerHTML = factsArr.map(f=>{
         const k = pick(f, ['k','value','v'], '');
         const v = pick(f, ['v','label'], '');
         return `<div class="fact"><div class="k">${esc(k)}</div><div>${esc(v)}</div></div>`;
       }).join('');
-      document.getElementById('about_facts').innerHTML = factsHTML;
 
       // Skills
       const skillsArr = Array.isArray(data.skills) ? data.skills
@@ -299,7 +297,7 @@
       document.getElementById('about_gallery').innerHTML =
         galArr.map(g=>`<img src="${esc(g)}" alt="gallery image">`).join('');
 
-      // Progress (supports {name,value,color} or {label,percent,color})
+      // Progress
       const progArr = Array.isArray(data.progress) ? data.progress
                     : Array.isArray(data.about_progress) ? data.about_progress : [];
       document.getElementById('about_progress').innerHTML =
@@ -340,10 +338,15 @@
       console.error("Failed to load about data", err);
       document.querySelector('.about-body').innerHTML =
         `<p style="text-align:center;color:var(--light-faint);">⚠️ Unable to load About data. Please check your backend connection.</p>`;
+    } finally {
+      fadeOutSkeleton(); // 🟩 Stop shimmer smoothly
     }
   }
-  loadAbout();
+
+  loadAbout(); // Run it
 </script>
+
+<!-- other scripts -->
 <script src="js/data.js"></script>
 <script src="js/render.js"></script>
 <script src="js/skeleton.js"></script>
