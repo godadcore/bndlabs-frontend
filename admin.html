@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>bndlabs CMS — Admin</title>
+  <title>bndlabs CMS | Admin</title>
 
   <style>
     :root{
@@ -28,7 +28,16 @@
     .app{display:grid;grid-template-columns:260px 1fr;min-height:100%}
     .side{background:var(--panel-2);border-right:1px solid var(--line);padding:18px;position:sticky;top:0;height:100dvh}
     .brand{display:flex;align-items:center;gap:10px;margin-bottom:16px}
-    .brand .logo{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:linear-gradient(120deg,var(--accent),var(--accent-2));box-shadow:0 6px 16px rgba(255,77,0,.25)}
+    .brand .logo {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:auto;
+  height:auto;
+  border-radius:0;
+  background:none;
+  box-shadow:none;
+}
     .brand .logo svg{width:20px;height:20px;fill:#fff}
     .brand .name{font-weight:900}
     .mutey{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.12em;margin:12px 0 8px}
@@ -137,17 +146,15 @@
 </style>
 </head>
 <body>
-
 <div class="app">
   <!-- Sidebar -->
   <aside class="side">
     <div class="brand">
       <div class="logo">
-        <svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-2.9h2v-2.2c0-2 1.2-3.1 3-3.1.9 0 1.8.1 2 .1v2.3h-1.1c-1 0-1.3.6-1.3 1.2v1.7h2.6l-.4 2.9h-2.2v7A10 10 0 0 0 22 12z" fill="currentColor"/></svg>
-      </div>
-      <div class="name">bndlabs CMS</div>
+  <img src="assets/images/favicon.svg" alt="bndlabs logo" style="width:50px;height:auto;max-height:60px;object-fit:contain;">
+</div>
+      <div class="name">Bodunde CMS</div>
     </div>
-
     <div class="mutey">Manage</div>
     <nav class="nav" id="nav">
       <a href="#" data-panel="portfolio" class="active"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4zM9 6V4h6v2" /></svg> Portfolio</a>
