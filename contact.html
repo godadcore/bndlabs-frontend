@@ -328,5 +328,41 @@
   <!-- CMS Data Loader -->
   <script src="js/data.js"></script>
   <script src="js/render.js"></script>
+<script>
+  const form = document.querySelector("#contactForm");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    // Combine first name + last name into "name"
+    const fullName = `${form.first_name.value.trim()} ${form.last_name.value.trim()}`.trim();
+
+    const data = {
+      name: fullName,
+      email: form.email.value.trim(),
+      message: form.message.value.trim(),
+    };
+
+    try {
+      const res = await fetch("https://bndlabs-backend.onrender.com/api/send-message", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const result = await res.json();
+
+      if (result.ok) {
+        alert("✅ Message sent successfully!");
+        form.reset();
+      } else {
+        alert("⚠️ Failed to send. Try again later.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("⚠️ Network error.");
+    }
+  });
+</script>
+
 </body>
 </html>

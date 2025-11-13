@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Messages | bndlabs</title>
+<meta name="theme-color" content="#FF4D00">
+<link rel="icon" type="image/png" href="favicon.png">
+
+<style>
+:root {
+  --primary:#FF4D00;
+  --primary-2:#FF8C00;
+  --primary-gradient:linear-gradient(120deg,#FF4D00,#FF8C00);
+  --light-bg:#fff;
+  --light-text:#0B0B0B;
+  --light-muted:rgba(11,11,11,0.65);
+  --light-faint:rgba(11,11,11,0.55);
+  --max-width:1100px;
+}
+
+/* Base */
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:"SF Pro Text",-apple-system,BlinkMacSystemFont,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:var(--light-bg);
+  color:var(--light-text);
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+/* Header */
+header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:2000;
+  background:rgba(0,0,0,0.9);
+  backdrop-filter:blur(10px);
+  padding:16px 24px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.brand {
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.brand-text .name {
+  font-weight:700;
+  font-size:20px;
+  color:#fff;
+}
+.logo img {
+  width:100px;
+  max-height:60px;
+  object-fit:contain;
+  display:block;
+}
+.nav {
+  display:none;
+  flex-direction:column;
+  align-items:flex-end;
+  position:absolute;
+  top:64px;
+  right:16px;
+  width:220px;
+  background:rgba(20,20,20,0.92);
+  backdrop-filter:blur(10px);
+  border-radius:20px;
+  padding:12px 10px;
+  gap:10px;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);
+}
+.nav.active { display:flex; }
+.nav a {
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  padding:12px 0;
+  border-radius:999px;
+  width:100%;
+  text-align:center;
+  font-weight:500;
+  transition:.2s;
+  text-decoration:none;
+}
+.nav a:hover { background:rgba(255,255,255,.2); }
+.nav a.active {
+  background:var(--primary-gradient);
+  color:#fff;
+  font-weight:700;
+}
+.menu-toggle {
+  display:block;
+  background:transparent;
+  border:0;
+  color:#fff;
+  font-size:22px;
+  cursor:pointer;
+}
+main{padding-top:100px;}
+
+/* Top Controls */
+.controls {
+  max-width:var(--max-width);
+  margin:0 auto 24px;
+  padding:0 36px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:12px;
+}
+.controls-left {
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.controls-left h1 {
+  font-size:24px;
+  font-weight:700;
+}
+.badge {
+  background:var(--primary-gradient);
+  color:#fff;
+  border-radius:999px;
+  padding:4px 10px;
+  font-size:13px;
+  font-weight:600;
+}
+.controls-right {
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.controls-right input,
+.controls-right select {
+  padding:10px 14px;
+  border-radius:10px;
+  border:1px solid rgba(0,0,0,0.1);
+  font-size:14px;
+}
+.controls-right input {
+  min-width:220px;
+}
+
+/* Message Cards */
+.grid {
+  max-width:var(--max-width);
+  margin:0 auto;
+  padding:0 36px 60px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:22px;
+}
+.card {
+  background:#fff;
+  border-left:4px solid var(--primary);
+  border-radius:16px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.06);
+  padding:18px 16px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  transition:transform .2s,box-shadow .2s;
+}
+.card.unread {background:linear-gradient(180deg,#fff,#fff7f3);}
+.card:hover {transform:translateY(-4px);box-shadow:0 12px 24px rgba(0,0,0,0.08);}
+.card .email {font-size:14px;color:var(--light-muted);}
+.card .date {font-size:13px;color:var(--light-faint);}
+.card .preview {color:var(--light-text);font-size:15px;}
+.card-buttons {margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;}
+.card-buttons button {
+  border:0;
+  cursor:pointer;
+  border-radius:8px;
+  background:var(--primary-gradient);
+  color:#fff;
+  padding:8px 14px;
+  font-weight:600;
+  font-size:14px;
+  transition:opacity .2s;
+}
+.card-buttons button:hover {opacity:0.9;}
+
+/* Modal */
+.modal-bg {
+  position:fixed;
+  top:0;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,0.4);
+  backdrop-filter:blur(6px);
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  z-index:3000;
+}
+.modal-bg.active {display:flex;animation:fadeIn .3s ease forwards;}
+@keyframes fadeIn {from{opacity:0;}to{opacity:1;}}
+.modal {
+  width:100%;
+  max-width:520px;
+  background:rgba(255,255,255,0.7);
+  backdrop-filter:blur(15px);
+  border-radius:24px 24px 0 0;
+  padding:24px 20px;
+  box-shadow:0 -4px 40px rgba(0,0,0,0.15);
+  transform:translateY(100%);
+  animation:slideUp .4s ease forwards;
+}
+@keyframes slideUp {to{transform:translateY(0);}}
+.modal-header{text-align:center;margin-bottom:12px;}
+.modal-header img {width:80px;display:block;margin:0 auto;}
+.modal h3 {margin:8px 0 4px;font-size:20px;}
+.modal p {color:var(--light-muted);font-size:15px;}
+.modal-buttons {margin-top:20px;display:flex;gap:10px;justify-content:center;}
+.modal-buttons button {
+  border:0;
+  border-radius:10px;
+  padding:10px 16px;
+  background:var(--primary-gradient);
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+}
+.modal-footer {text-align:center;margin-top:16px;font-size:13px;color:var(--light-faint);}
+</style>
+</head>
+
+<body>
+<header>
+  <a href="home.html" class="brand" aria-label="Go to Home">
+    <div class="logo">
+      <img src="assets/images/logo.svg" alt="bndlabs logo">
+    </div>
+  </a>
+  <nav class="nav">
+    <a href="home.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="portfolio.html">Portfolio</a>
+    <a href="blog.html">Blog</a>
+    <a href="contact.html">Contact</a>
+    <a href="admin.html">Admin</a>
+    <a class="active" href="admin-messages.html">Messages</a>
+  </nav>
+  <button class="menu-toggle" id="menuToggle">☰</button>
+</header>
+
+<main>
+  <div class="controls">
+    <div class="controls-left">
+      <h1>Inbox</h1>
+      <span class="badge" id="unreadCount">0 Unread</span>
+    </div>
+    <div class="controls-right">
+      <input type="text" id="searchInput" placeholder="Search messages...">
+      <select id="filterSelect">
+        <option value="all">All</option>
+        <option value="unread">Unread</option>
+        <option value="read">Read</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="grid" id="messageGrid"></div>
+  <div style="text-align:center; padding-bottom:40px;">
+  <button id="loadMoreBtn"
+    style="
+      padding:12px 24px;
+      border:0;
+      border-radius:999px;
+      background:var(--primary-gradient);
+      color:#fff;
+      font-weight:600;
+      font-size:15px;
+      cursor:pointer;
+      display:none;
+    ">
+    Load More
+  </button>
+</div>
+
+</main>
+
+<!-- Modal -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal" id="messageModal">
+    <div class="modal-header">
+      <img src="assets/images/logo.svg" alt="bndlabs logo">
+    </div>
+    <div id="modalContent"></div>
+    <div class="modal-buttons">
+      <button id="replyBtn">Reply</button>
+      <button id="markBtn">Mark as Read</button>
+    </div>
+    <div class="modal-footer">You are subscribed to updates from bndlabs.</div>
+  </div>
+</div>
+
+<script>
+const menuToggle=document.getElementById("menuToggle");
+const nav=document.querySelector(".nav");
+menuToggle.addEventListener("click",()=>nav.classList.toggle("active"));
+
+const modalBg=document.getElementById('modalBg');
+const modalContent=document.getElementById('modalContent');
+let selectedMsg=null;
+modalBg.addEventListener('click',e=>{if(e.target===modalBg)modalBg.classList.remove('active');});
+
+// ====== CONFIG ======
+const API_BASE = "https://bndlabs-backend.onrender.com/api";
+let currentPage = 1;
+let limit = 20;
+let allMessages = [];
+let totalMessages = 0;
+
+// ====== LOAD MESSAGES (PAGINATION) ======
+async function loadMessages(page = 1) {
+  currentPage = page;
+
+  try {
+    const res = await fetch(`${API_BASE}/messages/paginated?page=${page}&limit=${limit}`);
+    const data = await res.json();
+
+    totalMessages = data.total;
+
+    if (page === 1) {
+      allMessages = data.messages;
+    } else {
+      allMessages = [...allMessages, ...data.messages];
+    }
+
+    render();
+    toggleLoadMore();
+  } catch (e) {
+    console.error("Load error", e);
+  }
+}
+
+// ====== TOGGLE “LOAD MORE” ======
+function toggleLoadMore() {
+  const btn = document.getElementById("loadMoreBtn");
+  const loadedCount = allMessages.length;
+
+  if (loadedCount < totalMessages) {
+    btn.style.display = "inline-block";
+  } else {
+    btn.style.display = "none";
+  }
+}
+
+// BUTTON — LOAD NEXT PAGE
+document.getElementById("loadMoreBtn").addEventListener("click", () => {
+  loadMessages(currentPage + 1);
+});
+
+// ====== RENDER UI ======
+function render(){
+  const grid=document.getElementById('messageGrid');
+  const unreadCount=document.getElementById('unreadCount');
+  const searchInput=document.getElementById('searchInput');
+  const filterSelect=document.getElementById('filterSelect');
+
+  const q = searchInput.value.toLowerCase();
+  const f = filterSelect.value;
+
+  const filtered = allMessages.filter(m => {
+    const match =
+      m.name?.toLowerCase().includes(q) ||
+      m.email?.toLowerCase().includes(q) ||
+      m.message?.toLowerCase().includes(q);
+
+    const pass =
+      f === "all" ||
+      (f === "unread" && !m.read) ||
+      (f === "read" && m.read);
+
+    return match && pass;
+  });
+
+  unreadCount.textContent = `${allMessages.filter(m=>!m.read).length} Unread`;
+
+  grid.innerHTML = filtered.map(m => `
+    <div class="card ${!m.read ? 'unread' : ''}">
+      <div class="name"><strong>${m.name || 'No name'}</strong></div>
+      <div class="email">${m.email || ''}</div>
+      <div class="preview">${(m.message || '').slice(0, 80)}...</div>
+      <div class="date">${m.date || ''}</div>
+
+      <div class="card-buttons">
+        <button onclick="viewMsg('${m.id}')">View</button>
+        <button onclick="markRead('${m.id}')">Mark Read</button>
+        <button onclick="deleteMsg('${m.id}')">Delete</button>
+        <button onclick="replyMail('${m.email || ''}')">Reply</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ====== VIEW MESSAGE ======
+window.viewMsg = (id) => {
+  selectedMsg = allMessages.find(m => m.id == id);
+  if(!selectedMsg) return;
+
+  modalContent.innerHTML = `
+    <h3>${selectedMsg.name}</h3>
+    <p><strong>Email:</strong> ${selectedMsg.email}</p>
+    <p><strong>Date:</strong> ${selectedMsg.date || ''}</p>
+    <p>${selectedMsg.message}</p>
+  `;
+
+  modalBg.classList.add('active');
+};
+
+// ====== MARK READ (PERMANENT) ======
+window.markRead = async (id) => {
+  try {
+    await fetch(`${API_BASE}/messages/mark-read`, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ id })
+    });
+
+    await loadMessages(1); // refresh messages fully
+  } catch (e) {
+    console.error("Mark read error", e);
+  }
+};
+
+// ====== DELETE MESSAGE (PERMANENT) ======
+window.deleteMsg = async (id) => {
+  if (!confirm("Delete this message permanently?")) return;
+
+  try {
+    await fetch(`${API_BASE}/messages/delete`, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ id })
+    });
+
+    await loadMessages(1); // refresh messages fully
+  } catch (e) {
+    console.error("Delete error", e);
+  }
+};
+
+// ====== REPLY ======
+window.replyMail = (email) => {
+  if (!email) return;
+  window.location.href = `mailto:${email}?subject=Reply from bndlabs`;
+};
+
+// ====== LISTENERS ======
+document.getElementById('searchInput').addEventListener('input', render);
+document.getElementById('filterSelect').addEventListener('change', render);
+
+// ====== INITIAL LOAD ======
+loadMessages();
+</script>
+</body>
+</html>
