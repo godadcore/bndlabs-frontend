@@ -1,5 +1,7 @@
 services:
-  # FRONTEND: Static website
+  # =====================================================
+  # FRONTEND (Static Hosting)
+  # =====================================================
   - type: static
     name: bndlabs-frontend
     env: static
@@ -7,8 +9,8 @@ services:
     branch: main
     buildCommand: ""
     publishPath: .
+
     routes:
-      # Route setup
       - type: rewrite
         source: /
         destination: /home.html
@@ -29,11 +31,15 @@ services:
         source: /contact
         destination: /contact.html
 
+      # Correct SPA fallback (must be last)
       - type: rewrite
         source: /*
-        destination: /:splat
+        destination: /home.html
 
-  # BACKEND: Express CMS API
+
+  # =====================================================
+  # BACKEND (Node.js API)
+  # =====================================================
   - type: web
     name: bndlabs-backend
     env: node
@@ -42,6 +48,11 @@ services:
     buildCommand: npm install
     startCommand: node server.js
     plan: free
+
     envVars:
       - key: NODE_VERSION
         value: 18
+
+      # You MUST add this inside Render dashboard
+      # - key: MONGODB_URI
+      #   value: <your MongoDB connection string>

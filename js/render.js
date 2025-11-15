@@ -50,13 +50,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (page === "contact") {
       const c = Data.get("contact") || {};
 
-      // Hero
       putText("#c_pill", c.c_pill);
       putText("#c_title", c.c_title);
       putText("#c_sub", c.c_sub);
       putSrc("#c_image", c.c_image);
 
-      // Form
       if ($("#firstName")) $("#firstName").placeholder = c.c_label_first || "";
       if ($("#lastName")) $("#lastName").placeholder = c.c_label_last || "";
       if ($("#email")) $("#email").placeholder = c.c_label_email || "";
@@ -67,25 +65,26 @@ document.addEventListener("DOMContentLoaded", async () => {
       putText("#c_privacy", c.c_privacy);
       putText("#c_button", c.c_button);
 
-      // Quick contact
       putText("#c_qc_title", c.c_qc_title);
       putText("#c_qc_email_label", c.c_qc_email_label);
+
       if (c.c_qc_email_value) {
         const el = $("#c_qc_email_value");
         el.textContent = c.c_qc_email_value;
         el.href = `mailto:${c.c_qc_email_value}`;
       }
+
       putText("#c_qc_phone_label", c.c_qc_phone_label);
       if (c.c_qc_phone_value) {
         const el = $("#c_qc_phone_value");
         el.textContent = c.c_qc_phone_value;
         el.href = `tel:${c.c_qc_phone_value.replace(/\s|\(|\)|-/g, "")}`;
       }
+
       putText("#c_qc_hq_label", c.c_qc_hq_label);
       putText("#c_qc_hq_value", c.c_qc_hq_value);
       putText("#c_follow_title", c.c_follow_title || "");
 
-      // Socials
       if (Array.isArray(c.c_socials)) {
         const box = $("#c_socials");
         if (box) {
@@ -137,9 +136,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   } catch (err) {
     console.warn("⚠️ Render initialization failed:", err);
   }
-})();
+});
 
-// FOOTER SOCIALS (from backend)
+// ==================================================
+// FOOTER SOCIALS (separate async function, FIXED)
+// ==================================================
 (async () => {
   try {
     const res = await fetch("https://bndlabs-backend.onrender.com/api/socials");
