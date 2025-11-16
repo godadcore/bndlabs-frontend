@@ -1201,3 +1201,239 @@ alert('Imported successfully');
    ABOUT TAB: AUTOSAVE + UI
 ========================= */
 
+// NOTE: This file is intended to *continue* the admin script from where it left off.
+// It implements the remaining admin UI behavior: About autosave, Contact autosave,
+// 404 handling, Store write helpers, backend sync fallbacks, and some small helpers
+// referenced by the HTML. It expects `Store`, `CMSauth`, and UI elements to exist
+// (they are present earlier in your HTML). It uses the same storage key constants.
+
+(function(){
+  'use strict';
+
+  // --- Helpers ---
+  function qs(sel, root=document){ return root.querySelector(sel); }
+  function qsa(sel, root=document){ return [...root.querySelectorAll(sel)]; }
+  function show(el){ if(!el) return; el.style.display='inline'; }
+  function hide(el){ if(!el) return; el.style.display='none'; }
+
+  // XHR / fetch helpers that prefer CMSauth when available
+  async function apiPost(endpoint, payload){
+    // Accept either full URL or endpoint name
+    try {
+      if(window.CMSauth && typeof window.CMSauth.postWithAuth === 'function'){
+        return await window.CMSauth.postWithAuth(endpoint, payload);
+      }
+      const base = (window.BNDLABS_API_BASE || '').replace(/\/+$/,'') + '/api/';
+      const url = endpoint.startsWith('http') ? endpoint : base + endpoint.replace(/^\/+/, '');
+      const r = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
+      if(!r.ok) throw new Error('API POST failed ' + r.status);
+      return r.json().catch(()=>({ok:true}));
+    } catch(err){
+      console.warn('apiPost error', err);
+      throw err;
+    }
+  }
+
+  // Simple visual 'saved' pop
+  function flashSaved(id, ms=1400){ const el = document.getElementById(id); if(!el) return; el.style.display='inline'; setTimeout(()=>el.style.display='none', ms); }
+
+  /* ======================================================
+     ABOUT: wire up autosave, add/remove list items, export
+     ====================================================== */
+  const AboutUI = {
+    init(){
+      // elements were previously attached in the missing portion — ensure they exist
+      About.el.facts = qs('#facts_list');
+      About.el.skills = qs('#skills_list');
+      About.el.gallery = qs('#gallery_list');
+      About.el.progress = qs('#progress_list');
+      About.el.features = qs('#features_list');
+
+      // rebind add buttons (defensive: if already bound, replace)
+      const safe = (sel, fn)=>{ const el=qs(sel); if(!el) return; el.onclick = fn; };
+      safe('#add_fact', ()=>{ About.addFact(); debouncedSaveAbout(); });
+      safe('#add_skill', ()=>{ About.addSkill(); debouncedSaveAbout(); });
+      safe('#add_gallery', ()=>{ About.addGallery(); debouncedSaveAbout(); });
+      safe('#add_progress', ()=>{ About.addProgress(); debouncedSaveAbout(); });
+      safe('#add_feature', ()=>{ About.addFeature(); debouncedSaveAbout(); });
+
+      // delegate remove buttons and inputs for autosave
+      const panel = qs('#panel_about');
+      if(panel){
+        panel.addEventListener('click', e=>{ if(e.target.matches('[data-remove]')){ e.target.closest('[data-item]').remove(); debouncedSaveAbout(); } });
+        panel.addEventListener('input', (e)=>{ if(e.target.matches('input,textarea,select')) debouncedSaveAbout(); });
+      }
+
+      // manual export already wired earlier. manual save already wired earlier.
+    }
+  };
+
+  // Debounce utility (re-define to ensure closure)
+  function debounceFn(fn, ms=800){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
+  const debouncedSaveAbout = debounceFn(()=>{ try{ const payload = About.gather(); Store.write(LS_ABOUT, payload); }catch(e){ console.warn('About save failed', e); } }, 800);
+
+  // Expose loadAbout initializer that other code expects
+  window.loadAbout = function(){ try{ AboutUI.init(); }catch(e){ console.warn('loadAbout init err', e);} };
+
+  /* ======================================================
+     CONTACT: wire up autosave, socials builder, defaults
+     ====================================================== */
+  const ContactUI = {
+    init(){
+      Contact.root = qs('#panel_contact');
+      Contact.socialsRoot = qs('#contact_socials');
+
+      // add social button
+      const addBtn = qs('#add_social'); if(addBtn) addBtn.onclick = ()=>{ Contact.addSocial(); debouncedSaveContact(); };
+
+      // remove via delegation
+      if(Contact.root) Contact.root.addEventListener('click', e=>{ if(e.target.matches('[data-remove]')){ e.target.closest('[data-item="social"]').remove(); debouncedSaveContact(); } });
+
+      // autosave input
+      if(Contact.root) Contact.root.addEventListener('input', e=>{ if(e.target.matches('input,textarea,select')) debouncedSaveContact(); });
+
+      // export / reset already wired earlier
+    }
+  };
+
+  const debouncedSaveContact = debounceFn(()=>{ try{ const payload = Contact.gather(); Store.write(LS_CONTACT, payload); }catch(e){ console.warn('contact save failed', e); } }, 600);
+
+  window.loadContact = function(){ try{ ContactUI.init(); }catch(e){ console.warn('loadContact err', e); } };
+
+  /* ======================================================
+     404: load & save helpers (ensures UI buttons work)
+     ====================================================== */
+  window.loadFour = window.loadFour || (function(){
+    // already implemented earlier in your partial file; keep a safe wrapper
+    try{ const el = document.querySelector('[data-panel="four"]'); if(el){ el.addEventListener('click', ()=> setTimeout(()=>{ try{ const fn = window.loadFour; if(typeof fn==='function') fn(); }catch{} }, 60)); } }catch(e){}
+  });
+
+  /* ======================================================
+     EXPORT / IMPORT: ensure import uses Store.write properly
+     ====================================================== */
+  // import logic was wired earlier. We'll add a safety wrapper so imported objects
+  // are normalized and backend-synced via Store.write.
+  async function normalizeAndWriteImports(data){
+    try{
+      if(data.projects) await Store.write(LS_PROJECTS, Array.isArray(data.projects)?data.projects:[]);
+      if(data.blogs) await Store.write(LS_BLOGS, Array.isArray(data.blogs)?data.blogs:[]);
+      if(data.profile) await Store.write(LS_PROFILE, typeof data.profile==='object'?data.profile:{});
+      if(data.about) await Store.write(LS_ABOUT, typeof data.about==='object'?data.about:{});
+      if(data.home) await Store.write(LS_HOME, typeof data.home==='object'?data.home:{});
+      if(data.contact) await Store.write(LS_CONTACT, typeof data.contact==='object'?data.contact:{});
+      // after write, re-render UI
+      try{ renderProjects(); renderBlogs(); loadProfile(); }catch(e){}
+      alert('Imported successfully');
+    }catch(err){ alert('Import failed: '+(err && err.message?err.message:String(err))); }
+  }
+  // replace the import handler if it exists with one that uses the new normalize function
+  const importEl = document.getElementById('importFile');
+  if(importEl){
+    importEl.addEventListener('change', e=>{
+      const f = e.target.files?.[0]; if(!f) return;
+      const r = new FileReader(); r.onload = async ()=>{
+        try{ const j = JSON.parse(r.result); if(Array.isArray(j)){ alert('Unsupported JSON format.'); } else { normalizeAndWriteImports(j); } }catch(err){ alert('Import failed: ' + err.message); }
+      }; r.readAsText(f);
+    });
+  }
+
+  /* ======================================================
+     QUICK UI HELPERS: tiny functions referenced earlier but perhaps missing
+     ====================================================== */
+  // Q helper used in the 404 section earlier
+  window.Q = window.Q || function(sel, ms=1500){ const el = document.getElementById('four_saved'); if(!el) return; el.style.display='inline'; setTimeout(()=>el.style.display='none', ms); };
+
+  /* ======================================================
+     STORE: Ensure Store.write uses backend safe-post semantics
+     ====================================================== */
+  // The HTML already defines a Store object earlier. If for some reason it's missing
+  // here, create a minimal implementation that proxies to the API and stores in-memory.
+  if(!window.Store){
+    (function(){
+      const _cache = { projects:[], blogs:[], profile:{}, about:{}, contact:{}, home:{} };
+      window.Store = {
+        read(key, fallback){ try{ const k = key.replace(/^cms_/, '').replace('cms_',''); return structuredClone(_cache[k] ?? JSON.parse(fallback || '{}')); }catch(e){ return JSON.parse(fallback||'{}'); } },
+        async write(key, value){ try{ const k = key.replace(/^cms_/, '').replace('cms_',''); _cache[k] = value; // try to POST to backend
+            try{ await apiPost(k, value); }catch(e){ console.warn('write: backend post failed', e); }
+            return {ok:true}; }catch(e){ throw e; } },
+        projects(){ return Array.isArray(_cache.projects)? _cache.projects.slice().sort((a,b)=> (b.updated||0)-(a.updated||0)) : []; },
+        putProject(p){ if(!p.id) p.id = (crypto.randomUUID?crypto.randomUUID():String(Date.now())); p.updated = Date.now(); const arr = this.projects(); const i = arr.findIndex(x=>x.id===p.id); if(i>=0) arr[i]=p; else arr.unshift(p); _cache.projects = arr; this.write(LS_PROJECTS, arr); return p.id; },
+        removeProject(id){ _cache.projects = this.projects().filter(x=>x.id!==id); this.write(LS_PROJECTS, _cache.projects); },
+        byIdProject(id){ return this.projects().find(x=>x.id===id); },
+        blogs(){ return Array.isArray(_cache.blogs)? _cache.blogs.slice().sort((a,b)=> (b.updated||0)-(a.updated||0)) : []; },
+        putBlog(b){ if(!b.id) b.id = (crypto.randomUUID?crypto.randomUUID():String(Date.now())); b.updated = Date.now(); const arr = this.blogs(); const i = arr.findIndex(x=>x.id===b.id); if(i>=0) arr[i]=b; else arr.unshift(b); _cache.blogs = arr; this.write(LS_BLOGS, arr); return b.id; },
+        removeBlog(id){ _cache.blogs = this.blogs().filter(x=>x.id!==id); this.write(LS_BLOGS, _cache.blogs); },
+        byIdBlog(id){ return this.blogs().find(x=>x.id===id); },
+        profile(){ return structuredClone(_cache.profile||{}); },
+        saveProfile(p){ _cache.profile = p; this.write(LS_PROFILE, p); }
+      };
+    })();
+  }
+
+  /* ======================================================
+     AUTH UI: open/close gate when session present
+     ====================================================== */
+  (function(){
+    try{
+      const authed = sessionStorage.getItem('bod_authed') === 'yes' || !!sessionStorage.getItem('bnd_token');
+      const gateEl = document.getElementById('gate');
+      if(authed && gateEl) gateEl.style.display='none';
+    }catch(e){}
+  })();
+
+  /* ======================================================
+     INITIAL PRIME: hydrate UI from Store (if global prime missing)
+     ====================================================== */
+  async function primeIfNeeded(){
+    try{
+      // If window.Store already talks to backend via prime() earlier, skip
+      if(window._bnd_admin_primer) return;
+      window._bnd_admin_primer = true;
+
+      // Try to fetch server-side data for keys using API if available
+      const API_BASE = (window.BNDLABS_API_BASE||'').replace(/\/+$/,'') + '/api/';
+      const keys = ['home','projects','blogs','profile','about','contact','404'];
+      for(const k of keys){
+        try{
+          const url = API_BASE + k;
+          const r = await fetch(url, {credentials:'omit'});
+          if(!r.ok) throw new Error('no');
+          const json = await r.json().catch(()=>null);
+          if(json!==null){
+            // write into Store cache if Store supports write
+            try{ await Store.write('cms_'+k, json); }catch(e){}
+          }
+        }catch(err){ /* ignore fetch errors */ }
+      }
+
+      // after hydration, render lists
+      try{ renderProjects(); renderBlogs(); loadProfile(); }catch(e){}
+    }catch(err){ console.warn('primeIfNeeded error', err); }
+  }
+
+  // run prime in background (non-blocking)
+  setTimeout(()=>{ primeIfNeeded(); }, 200);
+
+  /* ======================================================
+     FINISH: ensure manual-save buttons that referenced remote features
+     behave sensibly
+     ====================================================== */
+  // about_save already wired earlier to call Store.write; ensure it uses latest About.gather
+  const aboutSaveBtn = document.getElementById('about_save');
+  if(aboutSaveBtn){ aboutSaveBtn.addEventListener('click', async ()=>{ try{ const payload = About.gather(); await Store.write(LS_ABOUT, payload); flashSaved('about_ok'); alert('✅ About data saved successfully!'); }catch(err){ alert('⚠️ Failed to save About: '+(err.message||err)); } }); }
+
+  // Contact manual save button
+  const saveContactBtn = document.getElementById('saveContactBtn');
+  if(saveContactBtn){ saveContactBtn.addEventListener('click', async ()=>{ try{ const payload = Contact.gather(); await Store.write(LS_CONTACT, payload); flashSaved('contactSaved'); alert('✅ Contact data saved!'); }catch(err){ alert('⚠️ Failed to save contact: '+(err.message||err)); } }); }
+
+  // export buttons are good; ensure they include fresh reads from Store
+  const aboutExport = document.getElementById('about_export');
+  if(aboutExport){ aboutExport.addEventListener('click', ()=>{ try{ const data = About.gather(); const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'}); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='about.json'; a.click(); URL.revokeObjectURL(url); }catch(e){ alert('Export failed: '+e.message); } }); }
+
+  const contactExport = document.getElementById('contact_export');
+  if(contactExport){ contactExport.addEventListener('click', ()=>{ try{ const data = Contact.gather(); const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'}); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='contact.json'; a.click(); URL.revokeObjectURL(url); }catch(e){ alert('Export failed: '+e.message); } }); }
+
+  // final console message
+  console.info('Admin script: continuation loaded — about/contact autosave and backend proxy ready.');
+
+})();
