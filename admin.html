@@ -1865,59 +1865,59 @@ async function postJSON(endpoint, data){
  /*__CLEAN_URLS_INJECTED__*/ 
 </script>
 <script>
-(function(){
-  // Make sure script only runs once
-  if (window.__CLEAN_URLS_INJECTED) return;
-  window.__CLEAN_URLS_INJECTED = true;
+// Wait until the page is fully ready
+setTimeout(() => {
 
-  document.addEventListener("DOMContentLoaded", () => {
-    try {
-      const links = document.querySelectorAll("a[href]");
+    function forceCleanLinks() {
+        const links = document.querySelectorAll("a[href]");
 
-      links.forEach(link => {
-        let href = link.getAttribute("href");
-        if (!href) return;
+        links.forEach(link => {
+            let href = link.getAttribute("href");
+            if (!href) return;
 
-        // Skip external links, hash links, mailto links, JS void links
-        if (/^(https?:|\/\/|#|mailto:|javascript:)/i.test(href)) return;
+            // Convert Node.js URL objects / absolute URLs to plain string
+            href = String(href);
 
-        // Handle only links containing .html, .htm, index.html
-        if (href.match(/\.html?$|\/index\.html?$/i)) {
+            // Skip external sites EXCEPT your own domain
+            if (/^(https?:\/\/)/i.test(href)) {
+                // Allow your own domain
+                if (!href.includes("bndlabs-frontend.onrender.com")) return;
+            }
 
-          // Ensure string type
-          let hrefString = String(href);
+            // Remove domain so we can treat it like a relative link
+            href = href.replace("https://bndlabs-frontend.onrender.com", "");
+            href = href.replace("http://bndlabs-frontend.onrender.com", "");
 
-          // Split query/hash
-          const parts = hrefString.split(/(#|\?)/);
-          const main = parts[0]
-            .replace(/index\.html?$/i, '')
-            .replace(/\.html?$/i, '');
+            // Skip hashes, mailto, js functions
+            if (/^(#|mailto:|javascript:)/i.test(href)) return;
 
-          const tail = parts.slice(1).join('');
+            // Only convert .html links
+            if (href.match(/\.html?$|\/index\.html?$/i)) {
+                const parts = href.split(/(#|\?)/);
+                const main = parts[0]
+                    .replace(/index\.html?$/i, "")
+                    .replace(/\.html?$/i, "");
+                const tail = parts.slice(1).join("");
 
-          let clean = main || '/';
+                let clean = main || "/";
+                clean = String(clean);
 
-          // Force clean to string
-          clean = String(clean);
+                if (!clean.startsWith("/")) clean = "/" + clean;
+                if (tail) clean += tail;
 
-          // Ensure leading slash
-          if (!clean.startsWith('/')) {
-            clean = '/' + clean;
-          }
-
-          // Add back query/hash
-          if (tail) clean += tail;
-
-          // Update the link
-          link.setAttribute('href', clean);
-        }
-      });
-
-    } catch (err) {
-      console.warn("Clean URL script error:", err);
+                link.setAttribute("href", clean);
+            }
+        });
     }
-  });
-})();
+
+    // Run immediately
+    forceCleanLinks();
+
+    // Watch for any DOM changes (menus opening, CMS content loading, etc.)
+    const obs = new MutationObserver(forceCleanLinks);
+    obs.observe(document.body, { childList: true, subtree: true });
+
+}, 300);
 </script>
 </body>
 </html>
