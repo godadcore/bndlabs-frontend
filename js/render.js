@@ -272,36 +272,8 @@
     }
   }
 
-  // ========== FOOTER SOCIALS (independent loader) ==========
-  // Runs immediately but does its own safe checks.
-  (async function loadFooterSocials() {
-    try {
-      const api = "https://bndlabs-backend.onrender.com/api/socials";
-      const footer = document.querySelector(".footer-inner .socials");
-      if (!footer) return;
-
-      // Perform fetch but catch errors gracefully
-      const resp = await fetch(api, { credentials: "omit" });
-      if (!resp.ok) {
-        throw new Error(`HTTP ${resp.status} ${resp.statusText}`);
-      }
-      const socials = await resp.json();
-      if (!Array.isArray(socials)) {
-        throw new Error("Invalid socials data");
-      }
-
-      footer.innerHTML = socials
-        .map((s) => {
-          const url = s.url || "#";
-          const title = s.platform || "";
-          const svg = s.svg || "";
-          return `<a href="${escapeAttr(url)}" target="_blank" rel="noopener" title="${escapeHtml(title)}">${svg || `<span>${escapeHtml(title)}</span>`}</a>`;
-        })
-        .join("");
-    } catch (err) {
-      console.warn("⚠️ Could not load footer socials:", err && err.message ? err.message : err);
-    }
-  })();
+// Footer socials disabled — using static footer icons.
+// Dynamic CMS override removed intentionally.
 
   // ======================
   // Small helpers: escape
