@@ -710,17 +710,6 @@ function hashString(str) {
     .reduce((acc, b) => acc + b.toString(16).padStart(2, "0"), "");
 }
 
-function checkPassword(input) {
-  if (!input) return false; // prevent empty input from logging in
-  const cleaned = input.normalize('NFKC').trim();
-  const hashed = hashString(cleaned);
-  return hashed === hiddenHash;
-}
-
-// Restore session if already logged in
-if (sessionStorage.getItem("bod_authed") === "yes") {
-  gate.style.display = "none";
-}
 
 // ===========================================
 // ADMIN LOGIN — JWT AUTH WITH YOUR BACKEND
@@ -729,26 +718,34 @@ if (sessionStorage.getItem("bod_authed") === "yes") {
 enter.addEventListener("click", async () => {
   const password = pass.value.trim();
   if (!password) {
-    alert("⚠️ Enter your password");
+    alert("Enter password");
     return;
   }
 
   try {
-    // Try to login to backend
-    const auth = await CMSauth.loginAdmin(password);
+    // login to backend
+    const res = await fetch("https://bndlabs-backend.onrender.com/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password })
+    });
 
-    // If successful:
-    sessionStorage.setItem("bod_authed", "yes");   // your old UI logic
-    gate.style.display = "none";                   // hide the gate
-    pass.value = "";                               // clear input
+    const data = await res.json();
 
-    console.log("✅ Admin authenticated successfully");
+    if (!res.ok || !data.ok) {
+      alert("Incorrect password");
+      return;
+    }
+
+    // Save token
+    sessionStorage.setItem("bnd_token", data.token);
+    sessionStorage.setItem("bod_authed", "yes");
+
+    // Hide login
+    gate.style.display = "none";
+    pass.value = "";
   } catch (err) {
-    alert("⚠️ Incorrect password");
-    console.warn("Login failed:", err);
-
-    sessionStorage.removeItem("bod_authed");
-    pass.focus();
+    alert("Login failed");
   }
 });
 
