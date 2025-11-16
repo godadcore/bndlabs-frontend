@@ -26,7 +26,7 @@
 
     /* Layout */
     .app{display:grid;grid-template-columns:260px 1fr;min-height:100%}
-    .side{background:var(--panel-2);border-right:1px solid var(--line);Padding:18px;position:sticky;top:0;height:100dvh}
+    .side{background:var(--panel-2);border-right:1px solid var(--line);padding:18px;position:sticky;top:0;height:100dvh}
     .brand{display:flex;align-items:center;gap:10px;margin-bottom:16px}
     .brand .logo {
   display:inline-flex;
@@ -693,7 +693,7 @@ const LS_PROJECTS='cms_projects', LS_BLOGS='cms_blogs', LS_PROFILE='cms_profile'
 
 /* ===== Shortcuts ===== */
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
-const fmtTime=t=>!t?'—':new Date(t).toLocaleString(); const esc=s=>String(s||'').replace(/[&<>"]*/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmtTime=t=>!t?'—':new Date(t).toLocaleString(); const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 
 /* ===== Secure Password Gate (for Bodunde6056$) ===== */
@@ -717,35 +717,21 @@ function hashString(str) {
 
 enter.addEventListener("click", async () => {
   const password = pass.value.trim();
-  if (!password) {
-    alert("Enter password");
-    return;
-  }
+  if (!password) return alert("Enter password");
 
   try {
-    // login to backend
-    const res = await fetch("https://bndlabs-backend.onrender.com/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password })
-    });
+    const res = await CMSauth.loginAdmin(password);
 
-    const data = await res.json();
-
-    if (!res.ok || !data.ok) {
+    if (!res.ok) {
       alert("Incorrect password");
       return;
     }
 
-    // Save token
-    sessionStorage.setItem("bnd_token", data.token);
     sessionStorage.setItem("bod_authed", "yes");
-
-    // Hide login
     gate.style.display = "none";
     pass.value = "";
   } catch (err) {
-    alert("Login failed");
+    alert("Login failed: " + err.message);
   }
 });
 
@@ -1200,240 +1186,653 @@ alert('Imported successfully');
 /* =========================
    ABOUT TAB: AUTOSAVE + UI
 ========================= */
+const About = {
+  el: {
+    facts: null, skills: null, gallery: null, progress: null, features: null
+  },
+  addFact(){ this.el.facts.insertAdjacentHTML('beforeend',`
+    <div class="about-grid" data-item="fact">
+      <div class="row"><label>Label</label><input class="field" placeholder="Experience"></div>
+      <div class="row"><label>Value</label><input class="field" placeholder="2+ yrs"></div>
+      <div class="row" style="align-self:end"><button class="ghost tiny" data-remove>Remove</button></div>
+    </div>`); },
+  addSkill(){ this.el.skills.insertAdjacentHTML('beforeend',`
+    <div class="about-grid" data-item="skill">
+      <div class="row"><label>Skill</label><input class="field" placeholder="Figma"></div>
+      <div class="row" style="align-self:end"><button class="ghost tiny" data-remove>Remove</button></div>
+    </div>`); },
+  addGallery(){ this.el.gallery.insertAdjacentHTML('beforeend',`
+    <div class="about-grid" data-item="gallery">
+      <div class="row"><label>Image URL</label><input class="field" placeholder="https://…"></div>
+      <div class="row" style="align-self:end"><button class="ghost tiny" data-remove>Remove</button></div>
+    </div>`); },
+  addProgress(){ this.el.progress.insertAdjacentHTML('beforeend',`
+    <div class="about-grid" data-item="progress">
+      <div class="row"><label>Label</label><input class="field" placeholder="Figma"></div>
+      <div class="row"><label>Percent</label><input class="field" type="number" min="0" max="100" placeholder="95"></div>
+      <div class="row"><label>Color</label><input class="field" placeholder="#FF4D00"></div>
+      <div class="row" style="align-self:end"><button class="ghost tiny" data-remove>Remove</button></div>
+    </div>`); },
+  addFeature(){ this.el.features.insertAdjacentHTML('beforeend',`
+    <div class="about-grid" data-item="feature">
+      <div class="row"><label>Image URL</label><input class="field" placeholder="https://…"></div>
+      <div class="row"><label>Title</label><input class="field" placeholder="My Story"></div>
+      <div class="row"><label>Description</label><textarea class="field" rows="2" placeholder="…"></textarea></div>
+      <div class="row"><label>Link URL</label><input class="field" placeholder="blog.html#my-story"></div>
+      <div class="row"><label>Link Text</label><input class="field" placeholder="View Story"></div>
+      <div class="row" style="align-self:end"><button class="ghost tiny" data-remove>Remove</button></div>
+    </div>`); },
 
-// NOTE: This file is intended to *continue* the admin script from where it left off.
-// It implements the remaining admin UI behavior: About autosave, Contact autosave,
-// 404 handling, Store write helpers, backend sync fallbacks, and some small helpers
-// referenced by the HTML. It expects `Store`, `CMSauth`, and UI elements to exist
-// (they are present earlier in your HTML). It uses the same storage key constants.
+  gather(){
+    const get = id => $(id)?.value?.trim() || '';
+    const list = (root,sel)=>[...root.querySelectorAll(sel)];
+    const about = {
+      about_hero_title: get('#about_hero_title'),
+      about_hero_desc:  get('#about_hero_desc'),
+      about_name:       get('#about_name'),
+      about_role:       get('#about_role'),
+      about_image:      get('#about_image'),
+      about_resume:     get('#about_resume'),
+      about_contact:    get('#about_contact'),
+      about_random:     get('#about_random'),
+      about_facts:   list(this.el.facts,'[data-item="fact"]').map(n=>({label:n.querySelectorAll('input')[0].value.trim(), k:n.querySelectorAll('input')[1].value.trim()})),
+      about_skills:  list(this.el.skills,'[data-item="skill"]').map(n=>n.querySelector('input').value.trim()).filter(Boolean),
+      about_gallery: list(this.el.gallery,'[data-item="gallery"]').map(n=>n.querySelector('input').value.trim()).filter(Boolean),
+      about_progress:list(this.el.progress,'[data-item="progress"]').map(n=>({label:n.querySelectorAll('input')[0].value.trim(), percent:Number(n.querySelectorAll('input')[1].value||0), color:n.querySelectorAll('input')[2].value.trim()})),
+      about_features:list(this.el.features,'[data-item="feature"]').map(n=>({img:n.querySelectorAll('input,textarea')[0].value.trim(), title:n.querySelectorAll('input,textarea')[1].value.trim(), desc:n.querySelectorAll('input,textarea')[2].value.trim(), link:n.querySelectorAll('input,textarea')[3].value.trim(), linkText:n.querySelectorAll('input,textarea')[4].value.trim()}))
+    };
+    return about;
+  },
 
-(function(){
-  'use strict';
+  fill(saved){
+    const set = (id,v)=>{const el=$(id); if(el) el.value=v||'';}
+    set('#about_hero_title', saved.about_hero_title);
+    set('#about_hero_desc',  saved.about_hero_desc);
+    set('#about_name',       saved.about_name);
+    set('#about_role',       saved.about_role);
+    set('#about_image',      saved.about_image);
+    set('#about_resume',     saved.about_resume);
+    set('#about_contact',    saved.about_contact);
+    set('#about_random',     saved.about_random);
 
-  // --- Helpers ---
-  function qs(sel, root=document){ return root.querySelector(sel); }
-  function qsa(sel, root=document){ return [...root.querySelectorAll(sel)]; }
-  function show(el){ if(!el) return; el.style.display='inline'; }
-  function hide(el){ if(!el) return; el.style.display='none'; }
-
-  // XHR / fetch helpers that prefer CMSauth when available
-  async function apiPost(endpoint, payload){
-    // Accept either full URL or endpoint name
-    try {
-      if(window.CMSauth && typeof window.CMSauth.postWithAuth === 'function'){
-        return await window.CMSauth.postWithAuth(endpoint, payload);
-      }
-      const base = (window.BNDLABS_API_BASE || '').replace(/\/+$/,'') + '/api/';
-      const url = endpoint.startsWith('http') ? endpoint : base + endpoint.replace(/^\/+/, '');
-      const r = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
-      if(!r.ok) throw new Error('API POST failed ' + r.status);
-      return r.json().catch(()=>({ok:true}));
-    } catch(err){
-      console.warn('apiPost error', err);
-      throw err;
-    }
+    // lists
+    this.el.facts.innerHTML=''; (saved.about_facts||[]).forEach(f=>{ this.addFact(); const last=this.el.facts.lastElementChild; last.querySelectorAll('input')[0].value=f.label||''; last.querySelectorAll('input')[1].value=f.k||''; });
+    this.el.skills.innerHTML=''; (saved.about_skills||[]).forEach(s=>{ this.addSkill(); const last=this.el.skills.lastElementChild; last.querySelector('input').value=s||''; });
+    this.el.gallery.innerHTML=''; (saved.about_gallery||[]).forEach(g=>{ this.addGallery(); const last=this.el.gallery.lastElementChild; last.querySelector('input').value=g||''; });
+    this.el.progress.innerHTML=''; (saved.about_progress||[]).forEach(p=>{ this.addProgress(); const last=this.el.progress.lastElementChild; last.querySelectorAll('input')[0].value=p.label||''; last.querySelectorAll('input')[1].value=p.percent||0; last.querySelectorAll('input')[2].value=p.color||''; });
+    this.el.features.innerHTML=''; (saved.about_features||[]).forEach(f=>{ this.addFeature(); const last=this.el.features.lastElementChild; const inputs=last.querySelectorAll('input,textarea'); inputs[0].value=f.img||''; inputs[1].value=f.title||''; inputs[2].value=f.desc||''; inputs[3].value=f.link||''; inputs[4].value=f.linkText||''; });
   }
+};
 
-  // Simple visual 'saved' pop
-  function flashSaved(id, ms=1400){ const el = document.getElementById(id); if(!el) return; el.style.display='inline'; setTimeout(()=>el.style.display='none', ms); }
+function loadAbout(){
+  // hook lists
+  About.el.facts = $('#facts_list');
+  About.el.skills = $('#skills_list');
+  About.el.gallery = $('#gallery_list');
+  About.el.progress = $('#progress_list');
+  About.el.features = $('#features_list');
 
-  /* ======================================================
-     ABOUT: wire up autosave, add/remove list items, export
-     ====================================================== */
-  const AboutUI = {
-    init(){
-      // elements were previously attached in the missing portion — ensure they exist
-      About.el.facts = qs('#facts_list');
-      About.el.skills = qs('#skills_list');
-      About.el.gallery = qs('#gallery_list');
-      About.el.progress = qs('#progress_list');
-      About.el.features = qs('#features_list');
+  // buttons
+  $('#add_fact').onclick=()=>{ About.addFact(); autosaveAbout(); };
+  $('#add_skill').onclick=()=>{ About.addSkill(); autosaveAbout(); };
+  $('#add_gallery').onclick=()=>{ About.addGallery(); autosaveAbout(); };
+  $('#add_progress').onclick=()=>{ About.addProgress(); autosaveAbout(); };
+  $('#add_feature').onclick=()=>{ About.addFeature(); autosaveAbout(); };
 
-      // rebind add buttons (defensive: if already bound, replace)
-      const safe = (sel, fn)=>{ const el=qs(sel); if(!el) return; el.onclick = fn; };
-      safe('#add_fact', ()=>{ About.addFact(); debouncedSaveAbout(); });
-      safe('#add_skill', ()=>{ About.addSkill(); debouncedSaveAbout(); });
-      safe('#add_gallery', ()=>{ About.addGallery(); debouncedSaveAbout(); });
-      safe('#add_progress', ()=>{ About.addProgress(); debouncedSaveAbout(); });
-      safe('#add_feature', ()=>{ About.addFeature(); debouncedSaveAbout(); });
-
-      // delegate remove buttons and inputs for autosave
-      const panel = qs('#panel_about');
-      if(panel){
-        panel.addEventListener('click', e=>{ if(e.target.matches('[data-remove]')){ e.target.closest('[data-item]').remove(); debouncedSaveAbout(); } });
-        panel.addEventListener('input', (e)=>{ if(e.target.matches('input,textarea,select')) debouncedSaveAbout(); });
-      }
-
-      // manual export already wired earlier. manual save already wired earlier.
-    }
-  };
-
-  // Debounce utility (re-define to ensure closure)
-  function debounceFn(fn, ms=800){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
-  const debouncedSaveAbout = debounceFn(()=>{ try{ const payload = About.gather(); Store.write(LS_ABOUT, payload); }catch(e){ console.warn('About save failed', e); } }, 800);
-
-  // Expose loadAbout initializer that other code expects
-  window.loadAbout = function(){ try{ AboutUI.init(); }catch(e){ console.warn('loadAbout init err', e);} };
-
-  /* ======================================================
-     CONTACT: wire up autosave, socials builder, defaults
-     ====================================================== */
-  const ContactUI = {
-    init(){
-      Contact.root = qs('#panel_contact');
-      Contact.socialsRoot = qs('#contact_socials');
-
-      // add social button
-      const addBtn = qs('#add_social'); if(addBtn) addBtn.onclick = ()=>{ Contact.addSocial(); debouncedSaveContact(); };
-
-      // remove via delegation
-      if(Contact.root) Contact.root.addEventListener('click', e=>{ if(e.target.matches('[data-remove]')){ e.target.closest('[data-item="social"]').remove(); debouncedSaveContact(); } });
-
-      // autosave input
-      if(Contact.root) Contact.root.addEventListener('input', e=>{ if(e.target.matches('input,textarea,select')) debouncedSaveContact(); });
-
-      // export / reset already wired earlier
-    }
-  };
-
-  const debouncedSaveContact = debounceFn(()=>{ try{ const payload = Contact.gather(); Store.write(LS_CONTACT, payload); }catch(e){ console.warn('contact save failed', e); } }, 600);
-
-  window.loadContact = function(){ try{ ContactUI.init(); }catch(e){ console.warn('loadContact err', e); } };
-
-  /* ======================================================
-     404: load & save helpers (ensures UI buttons work)
-     ====================================================== */
-  window.loadFour = window.loadFour || (function(){
-    // already implemented earlier in your partial file; keep a safe wrapper
-    try{ const el = document.querySelector('[data-panel="four"]'); if(el){ el.addEventListener('click', ()=> setTimeout(()=>{ try{ const fn = window.loadFour; if(typeof fn==='function') fn(); }catch{} }, 60)); } }catch(e){}
+  // list remove (event delegation)
+  $('#panel_about').addEventListener('click',e=>{
+    if(e.target.matches('[data-remove]')){ e.target.closest('[data-item]').remove(); autosaveAbout(); }
   });
 
-  /* ======================================================
-     EXPORT / IMPORT: ensure import uses Store.write properly
-     ====================================================== */
-  // import logic was wired earlier. We'll add a safety wrapper so imported objects
-  // are normalized and backend-synced via Store.write.
-  async function normalizeAndWriteImports(data){
-    try{
-      if(data.projects) await Store.write(LS_PROJECTS, Array.isArray(data.projects)?data.projects:[]);
-      if(data.blogs) await Store.write(LS_BLOGS, Array.isArray(data.blogs)?data.blogs:[]);
-      if(data.profile) await Store.write(LS_PROFILE, typeof data.profile==='object'?data.profile:{});
-      if(data.about) await Store.write(LS_ABOUT, typeof data.about==='object'?data.about:{});
-      if(data.home) await Store.write(LS_HOME, typeof data.home==='object'?data.home:{});
-      if(data.contact) await Store.write(LS_CONTACT, typeof data.contact==='object'?data.contact:{});
-      // after write, re-render UI
-      try{ renderProjects(); renderBlogs(); loadProfile(); }catch(e){}
-      alert('Imported successfully');
-    }catch(err){ alert('Import failed: '+(err && err.message?err.message:String(err))); }
-  }
-  // replace the import handler if it exists with one that uses the new normalize function
-  const importEl = document.getElementById('importFile');
-  if(importEl){
-    importEl.addEventListener('change', e=>{
-      const f = e.target.files?.[0]; if(!f) return;
-      const r = new FileReader(); r.onload = async ()=>{
-        try{ const j = JSON.parse(r.result); if(Array.isArray(j)){ alert('Unsupported JSON format.'); } else { normalizeAndWriteImports(j); } }catch(err){ alert('Import failed: ' + err.message); }
-      }; r.readAsText(f);
-    });
-  }
+  // autosave on any input change / typing (WhatsApp style)
+  $('#panel_about').addEventListener('input', (e)=> {
+  if(e.target.matches('input,textarea,select,div[contenteditable]')) debouncedAutoSaveAbout();
+});
 
-  /* ======================================================
-     QUICK UI HELPERS: tiny functions referenced earlier but perhaps missing
-     ====================================================== */
-  // Q helper used in the 404 section earlier
-  window.Q = window.Q || function(sel, ms=1500){ const el = document.getElementById('four_saved'); if(!el) return; el.style.display='inline'; setTimeout(()=>el.style.display='none', ms); };
+  // export about only
+  $('#about_export').onclick=()=>{
+    const data = About.gather();
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='about.json'; a.click(); URL.revokeObjectURL(url);
+  };
 
-  /* ======================================================
-     STORE: Ensure Store.write uses backend safe-post semantics
-     ====================================================== */
-  // The HTML already defines a Store object earlier. If for some reason it's missing
-  // here, create a minimal implementation that proxies to the API and stores in-memory.
-  if(!window.Store){
-    (function(){
-      const _cache = { projects:[], blogs:[], profile:{}, about:{}, contact:{}, home:{} };
-      window.Store = {
-        read(key, fallback){ try{ const k = key.replace(/^cms_/, '').replace('cms_',''); return structuredClone(_cache[k] ?? JSON.parse(fallback || '{}')); }catch(e){ return JSON.parse(fallback||'{}'); } },
-        async write(key, value){ try{ const k = key.replace(/^cms_/, '').replace('cms_',''); _cache[k] = value; // try to POST to backend
-            try{ await apiPost(k, value); }catch(e){ console.warn('write: backend post failed', e); }
-            return {ok:true}; }catch(e){ throw e; } },
-        projects(){ return Array.isArray(_cache.projects)? _cache.projects.slice().sort((a,b)=> (b.updated||0)-(a.updated||0)) : []; },
-        putProject(p){ if(!p.id) p.id = (crypto.randomUUID?crypto.randomUUID():String(Date.now())); p.updated = Date.now(); const arr = this.projects(); const i = arr.findIndex(x=>x.id===p.id); if(i>=0) arr[i]=p; else arr.unshift(p); _cache.projects = arr; this.write(LS_PROJECTS, arr); return p.id; },
-        removeProject(id){ _cache.projects = this.projects().filter(x=>x.id!==id); this.write(LS_PROJECTS, _cache.projects); },
-        byIdProject(id){ return this.projects().find(x=>x.id===id); },
-        blogs(){ return Array.isArray(_cache.blogs)? _cache.blogs.slice().sort((a,b)=> (b.updated||0)-(a.updated||0)) : []; },
-        putBlog(b){ if(!b.id) b.id = (crypto.randomUUID?crypto.randomUUID():String(Date.now())); b.updated = Date.now(); const arr = this.blogs(); const i = arr.findIndex(x=>x.id===b.id); if(i>=0) arr[i]=b; else arr.unshift(b); _cache.blogs = arr; this.write(LS_BLOGS, arr); return b.id; },
-        removeBlog(id){ _cache.blogs = this.blogs().filter(x=>x.id!==id); this.write(LS_BLOGS, _cache.blogs); },
-        byIdBlog(id){ return this.blogs().find(x=>x.id===id); },
-        profile(){ return structuredClone(_cache.profile||{}); },
-        saveProfile(p){ _cache.profile = p; this.write(LS_PROFILE, p); }
-      };
-    })();
-  }
+  // reset about only
+  $('#about_reset').onclick=()=>{
+    if(confirm('Clear About Page data only?')){  About.fill({}); autosaveAbout(); alert('About cleared'); }
+  };
 
-  /* ======================================================
-     AUTH UI: open/close gate when session present
-     ====================================================== */
-  (function(){
-    try{
-      const authed = sessionStorage.getItem('bod_authed') === 'yes' || !!sessionStorage.getItem('bnd_token');
-      const gateEl = document.getElementById('gate');
-      if(authed && gateEl) gateEl.style.display='none';
-    }catch(e){}
-  })();
+  // hydrate
+  (async ()=>{
+  const saved = await Store.read(LS_ABOUT,'{}');
+  About.fill(saved);
+})();
+}
 
-  /* ======================================================
-     INITIAL PRIME: hydrate UI from Store (if global prime missing)
-     ====================================================== */
-  async function primeIfNeeded(){
-    try{
-      // If window.Store already talks to backend via prime() earlier, skip
-      if(window._bnd_admin_primer) return;
-      window._bnd_admin_primer = true;
-
-      // Try to fetch server-side data for keys using API if available
-      const API_BASE = (window.BNDLABS_API_BASE||'').replace(/\/+$/,'') + '/api/';
-      const keys = ['home','projects','blogs','profile','about','contact','404'];
-      for(const k of keys){
-        try{
-          const url = API_BASE + k;
-          const r = await fetch(url, {credentials:'omit'});
-          if(!r.ok) throw new Error('no');
-          const json = await r.json().catch(()=>null);
-          if(json!==null){
-            // write into Store cache if Store supports write
-            try{ await Store.write('cms_'+k, json); }catch(e){}
-          }
-        }catch(err){ /* ignore fetch errors */ }
+function autosaveAbout(){
+  const payload = About.gather();
+  Store.write(LS_ABOUT, payload);
+}
+function debounce(fn, ms = 800) {
+  let t;
+  return (...a) => {
+    clearTimeout(t);
+    t = setTimeout(() => fn(...a), ms);
+  };
+}
+const debouncedAutoSaveAbout = debounce(() => {
+  const payload = About.gather();
+  Store.write(LS_ABOUT, payload);
+}, 800);
+// ====== MANUAL SAVE ABOUT BUTTON ======
+const aboutSaveBtn = document.getElementById('about_save');
+if (aboutSaveBtn) {
+  aboutSaveBtn.addEventListener('click', async () => {
+    try {
+      const payload = About.gather();
+      await Store.write(LS_ABOUT, payload);
+      const ok = document.getElementById('about_ok');
+      if (ok) {
+        ok.style.display = 'inline';
+        setTimeout(() => (ok.style.display = 'none'), 1500);
       }
+      alert('✅ About data saved successfully!');
+    } catch (err) {
+      alert('⚠️ Failed to save About: ' + err.message);
+    }
+  });
+}
+/* =========================
+   CONTACT TAB: AUTOSAVE + UI
+========================= */
+const Contact = {
+  root: null,
+  socialsRoot: null,
 
-      // after hydration, render lists
-      try{ renderProjects(); renderBlogs(); loadProfile(); }catch(e){}
-    }catch(err){ console.warn('primeIfNeeded error', err); }
+  addSocial(data={platform:'Instagram', url:'', svg:''}){
+    const wrap = document.createElement('div');
+    wrap.className='contact-grid';
+    wrap.setAttribute('data-item','social');
+    wrap.innerHTML = `
+      <div class="row"><label>Platform</label>
+        <select class="field c-social-platform">
+          <option${data.platform==='Facebook'?' selected':''}>Facebook</option>
+          <option${data.platform==='Twitter'?' selected':''}>Twitter</option>
+          <option${data.platform==='X'?' selected':''}>X</option>
+          <option${data.platform==='Instagram'?' selected':''}>Instagram</option>
+          <option${data.platform==='LinkedIn'?' selected':''}>LinkedIn</option>
+          <option${data.platform==='Behance'?' selected':''}>Behance</option>
+          <option${data.platform==='Dribbble'?' selected':''}>Dribbble</option>
+          <option${data.platform==='YouTube'?' selected':''}>YouTube</option>
+          <option${data.platform==='Custom'?' selected':''}>Custom</option>
+        </select>
+      </div>
+      <div class="row"><label>Link URL</label><input class="field c-social-url" placeholder="https://…" value="${(data.url||'')}"></div>
+      <div class="row wide"><label>Custom SVG (optional)</label>
+        <textarea class="field c-social-svg" rows="2" placeholder="<svg …>${data.svg?data.svg.replace(/</g,'&lt;'):''}</textarea>
+      </div>
+      <div class="row" style="align-self:end">
+        <button class="ghost tiny" data-remove>Remove</button>
+      </div>
+    `;
+    this.socialsRoot.appendChild(wrap);
+  },
+
+  gather(){
+    const get = id => document.querySelector(id)?.value?.trim() || '';
+    const list = (sel)=>[...document.querySelectorAll(sel)];
+    const socials = list('#contact_socials [data-item="social"]').map(n=>({
+      platform: n.querySelector('.c-social-platform').value,
+      url: n.querySelector('.c-social-url').value.trim(),
+      svg: n.querySelector('.c-social-svg').value.trim()
+    }));
+    return {
+      // hero
+      c_pill:   get('#c_pill'),
+      c_title:  get('#c_title'),
+      c_sub:    get('#c_sub'),
+      // form
+      c_label_first:   get('#c_label_first'),
+      c_label_last:    get('#c_label_last'),
+      c_label_email:   get('#c_label_email'),
+      c_label_message: get('#c_label_message'),
+      c_consent_1: get('#c_consent_1'),
+      c_consent_2: get('#c_consent_2'),
+      c_privacy:  get('#c_privacy'),
+      c_button:   get('#c_button'),
+      // sidebar
+      c_image:          get('#c_image'),
+      c_qc_title:       get('#c_qc_title'),
+      c_qc_email_label: get('#c_qc_email_label'),
+      c_qc_email_value: get('#c_qc_email_value'),
+      c_qc_phone_label: get('#c_qc_phone_label'),
+      c_qc_phone_value: get('#c_qc_phone_value'),
+      c_qc_hq_label:    get('#c_qc_hq_label'),
+      c_qc_hq_value:    get('#c_qc_hq_value'),
+      // socials
+      c_follow_title: get('#c_follow_title'),
+      c_socials: socials
+    };
+  },
+
+  fill(saved={}){
+    const set = (id,v)=>{ const el=document.querySelector(id); if(el) el.value=v||''; };
+    // hero
+    set('#c_pill',  saved.c_pill);
+    set('#c_title', saved.c_title);
+    set('#c_sub',   saved.c_sub);
+    // form
+    set('#c_label_first',   saved.c_label_first);
+    set('#c_label_last',    saved.c_label_last);
+    set('#c_label_email',   saved.c_label_email);
+    set('#c_label_message', saved.c_label_message);
+    set('#c_consent_1', saved.c_consent_1);
+    set('#c_consent_2', saved.c_consent_2);
+    set('#c_privacy',   saved.c_privacy);
+    set('#c_button',    saved.c_button);
+    // sidebar
+    set('#c_image', saved.c_image);
+    set('#c_qc_title', saved.c_qc_title);
+    set('#c_qc_email_label', saved.c_qc_email_label);
+    set('#c_qc_email_value', saved.c_qc_email_value);
+    set('#c_qc_phone_label', saved.c_qc_phone_label);
+    set('#c_qc_phone_value', saved.c_qc_phone_value);
+    set('#c_qc_hq_label', saved.c_qc_hq_label);
+    set('#c_qc_hq_value', saved.c_qc_hq_value);
+    // socials
+    this.socialsRoot.innerHTML='';
+    (saved.c_socials||[
+      {platform:'Facebook', url:'#', svg:''},
+      {platform:'Twitter',  url:'#', svg:''},
+      {platform:'Instagram',url:'#', svg:''}
+    ]).forEach(s=> this.addSocial(s));
+  }
+};
+
+function loadContact(){
+  Contact.root = document.querySelector('#panel_contact');
+  Contact.socialsRoot = document.querySelector('#contact_socials');
+
+  // buttons
+  document.querySelector('#add_social').onclick = ()=>{ Contact.addSocial(); autosaveContact(); };
+
+  // remove via delegation
+  Contact.root.addEventListener('click', e=>{
+    if(e.target.matches('[data-remove]')){ e.target.closest('[data-item="social"]').remove(); autosaveContact(); }
+  });
+
+  // autosave on any input
+  Contact.root.addEventListener('input', (e)=>{
+    if(e.target.matches('input,textarea,select')) autosaveContact();
+  });
+
+  // export/reset
+  document.querySelector('#contact_export').onclick = ()=>{
+    const data = Contact.gather();
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='contact.json'; a.click(); URL.revokeObjectURL(url);
+  };
+  document.querySelector('#contact_reset').onclick = ()=>{
+    if(confirm('Clear Contact Page data only?')){
+      
+      Contact.fill({});
+      autosaveContact();
+      alert('Contact cleared');
+    }
+  };
+
+  // hydrate saved or sensible defaults (mirrors your current Contact page copy)
+  const saved = Store.read(LS_CONTACT, '{}');
+  if(!Object.keys(saved).length){
+    // sensible defaults from your current contact.html
+    const defaults = {
+      c_pill:'WRITE TO US',
+      c_title:'Get In Touch',
+      c_sub:'Get in touch with us using the enquiry form or contact details below.',
+      c_label_first:'First Name',
+      c_label_last:'Last Name',
+      c_label_email:'Email',
+      c_label_message:'Message',
+      c_consent_1:'I agree to receive other communication messages.',
+      c_consent_2:'I give my consent to bndlabs to store my data.',
+      c_privacy:'We respect your privacy. You can opt out at any time.',
+      c_button:'Send Message',
+      c_image:'',
+      c_qc_title:'Quick Contact',
+      c_qc_email_label:'Email',
+      c_qc_email_value:'hello@bndlabs.dev',
+      c_qc_phone_label:'Phone Number',
+      c_qc_phone_value:'+234 (0) 800 000 0000',
+      c_qc_hq_label:'Headquarter',
+      c_qc_hq_value:'Lagos, Nigeria',
+      c_follow_title:'Follow us',
+      c_socials:[
+        {platform:'Facebook', url:'#', svg:''},
+        {platform:'Twitter',  url:'#', svg:''},
+        {platform:'Instagram',url:'#', svg:''}
+      ]
+    };
+    Contact.fill(defaults);
+    autosaveContact();
+  } else {
+    Contact.fill(saved);
+  }
+}
+
+function autosaveContact(){
+  const payload = Contact.gather();
+  Store.write(LS_CONTACT, payload);
+}
+// 404 admin: save/load for cms_404
+(function(){
+  const key='cms_404';
+  const q=s=>document.getElementById(s);
+  function safeParse(j){ try{return JSON.parse(j||''); }catch{return null} }
+
+  function loadFour(){
+    const d = Store.read('cms_404', '{}') || {};
+    q('four_title').value = d.title||'Hmmm...';
+    q('four_line1').value = d.line1||'Occurred, a 404 error has. I sense much fear in you.';
+    q('four_line2').value = d.line2||'Trust in the force, clear your mind, unlearn what you have learned, and find your missing page you will.';
+    q('four_btn_do_label').value = d.btn_do_label||'Do';
+    q('four_btn_do_link').value = d.btn_do_link||'home.html';
+    q('four_btn_donot_label').value = d.btn_donot_label||'Do not';
+    q('four_btn_donot_link').value = d.btn_donot_link||'home.html';
+    q('four_btn_try_label').value = d.btn_try_label||'Try';
+    q('four_try_disabled').checked = Boolean(d.try_disabled);
+    q('four_image').value = d.image||'';
+    q('four_use_latest').checked = Boolean(d.use_latest);
+    q('four_latest_count').value = d.latest_count||3;
+    q('four_custom_projects').value = (d.custom_projects||[]).join(',');
+    q('four_remove_nav_underline').checked = Boolean(d.remove_nav_underline);
   }
 
-  // run prime in background (non-blocking)
-  setTimeout(()=>{ primeIfNeeded(); }, 200);
+  function collectFour(){
+    return {
+      title: q('four_title').value.trim(),
+      line1: q('four_line1').value.trim(),
+      line2: q('four_line2').value.trim(),
+      btn_do_label: q('four_btn_do_label').value.trim(),
+      btn_do_link: q('four_btn_do_link').value.trim(),
+      btn_donot_label: q('four_btn_donot_label').value.trim(),
+      btn_donot_link: q('four_btn_donot_link').value.trim(),
+      btn_try_label: q('four_btn_try_label').value.trim(),
+      try_disabled: q('four_try_disabled').checked,
+      image: q('four_image').value.trim(),
+      use_latest: q('four_use_latest').checked,
+      latest_count: Number(q('four_latest_count').value||0),
+      custom_projects: (q('four_custom_projects').value||'').split(',').map(s=>s.trim()).filter(Boolean),
+      remove_nav_underline: q('four_remove_nav_underline').checked
+    };
+  }
 
-  /* ======================================================
-     FINISH: ensure manual-save buttons that referenced remote features
-     behave sensibly
-     ====================================================== */
-  // about_save already wired earlier to call Store.write; ensure it uses latest About.gather
-  const aboutSaveBtn = document.getElementById('about_save');
-  if(aboutSaveBtn){ aboutSaveBtn.addEventListener('click', async ()=>{ try{ const payload = About.gather(); await Store.write(LS_ABOUT, payload); flashSaved('about_ok'); alert('✅ About data saved successfully!'); }catch(err){ alert('⚠️ Failed to save About: '+(err.message||err)); } }); }
+  function saveFour(){
+const val = collectFour();
+Store.write('cms_404', val);
+Q('#four_saved', 2000);
+  }
 
-  // Contact manual save button
-  const saveContactBtn = document.getElementById('saveContactBtn');
-  if(saveContactBtn){ saveContactBtn.addEventListener('click', async ()=>{ try{ const payload = Contact.gather(); await Store.write(LS_CONTACT, payload); flashSaved('contactSaved'); alert('✅ Contact data saved!'); }catch(err){ alert('⚠️ Failed to save contact: '+(err.message||err)); } }); }
+  function clearFour(){
+    if(!confirm('Clear all 404 settings?')) return;
+    
+    loadFour();
+    alert('Cleared 404 settings.');
+  }
 
-  // export buttons are good; ensure they include fresh reads from Store
-  const aboutExport = document.getElementById('about_export');
-  if(aboutExport){ aboutExport.addEventListener('click', ()=>{ try{ const data = About.gather(); const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'}); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='about.json'; a.click(); URL.revokeObjectURL(url); }catch(e){ alert('Export failed: '+e.message); } }); }
+  // small helper to show saved indicator
+  function Q(sel,ms=1500){
+    const el=document.getElementById('four_saved');
+    if(!el) return;
+    el.style.display='inline';
+    setTimeout(()=>el.style.display='none',ms);
+  }
 
-  const contactExport = document.getElementById('contact_export');
-  if(contactExport){ contactExport.addEventListener('click', ()=>{ try{ const data = Contact.gather(); const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'}); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='contact.json'; a.click(); URL.revokeObjectURL(url); }catch(e){ alert('Export failed: '+e.message); } }); }
+  // wire up buttons
+  document.getElementById('four_save').addEventListener('click', saveFour);
+  document.getElementById('four_clear').addEventListener('click', clearFour);
 
-  // final console message
-  console.info('Admin script: continuation loaded — about/contact autosave and backend proxy ready.');
+  // auto-save on change (lightweight)
+  ['four_title','four_line1','four_line2','four_btn_do_label','four_btn_do_link','four_btn_donot_label','four_btn_donot_link','four_btn_try_label','four_image','four_custom_projects'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+el.addEventListener('input', ()=> Store.write('cms_404', collectFour()));
+  });
+  // checkboxes & numeric
+  ['four_try_disabled','four_use_latest','four_remove_nav_underline','four_latest_count'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+el.addEventListener('change', ()=> Store.write('cms_404', collectFour()));
+  });
+
+  // expose loadFour globally so we can call it
+  window.loadFour = loadFour;
+
+  // ensure clicking the nav in admin triggers loadFour
+  const navFour = document.querySelector('[data-panel="four"]');
+  if(navFour){
+    navFour.addEventListener('click', ()=>{ setTimeout(()=>{ try{ loadFour(); }catch{} }, 60); });
+  }
+
+  // also call once on init in case panel is initially visible
+  setTimeout(()=>{ try{ loadFour(); }catch{} }, 200);
 
 })();
+// ====== MANUAL SAVE CONTACT BUTTON (now saves to Firebase too) ======
+const saveContactBtn = document.getElementById('saveContactBtn');
+if (saveContactBtn) {
+  saveContactBtn.addEventListener('click', async () => {
+    try {
+      const payload = Contact.gather();
+      await Store.write(LS_CONTACT, payload);
+      const saved = document.getElementById('contactSaved');
+      if (saved) {
+        saved.style.display = 'inline';
+        setTimeout(() => (saved.style.display = 'none'), 1500);
+      }
+      alert('✅ Contact data saved!');
+    } catch (err) {
+      alert('⚠️ Failed to save contact: ' + err.message);
+    }
+  });
+}
+</script>
+<script>
+  window.BNDLABS_API_BASE = "https://bndlabs-backend.onrender.com";
+</script>
+<script>
+/**
+ * CMSauth — client-side auth helper for admin
+ * - Post password to /api/auth/login
+ * - Stores token in sessionStorage under "bnd_token"
+ * - Exposes authFetch/postWithAuth helpers that include Authorization header
+ */
+window.CMSauth = (function () {
+  const BASE = (window.BNDLABS_API_BASE || "").replace(/\/$/, "") + "/api";
+  const TOKEN_KEY = "bnd_token";
+
+  function _getToken() {
+    return sessionStorage.getItem(TOKEN_KEY) || null;
+  }
+  function _setToken(t) {
+    if (t) sessionStorage.setItem(TOKEN_KEY, t);
+    else sessionStorage.removeItem(TOKEN_KEY);
+  }
+
+  async function loginAdmin(password) {
+    if (!password) throw new Error("Password required");
+    const res = await fetch(`${BASE}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password })
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      const msg = body?.error || `Login failed (${res.status})`;
+      throw new Error(msg);
+    }
+    const body = await res.json().catch(() => ({}));
+    const token = body?.token || body?.Token || null;
+    if (!token) throw new Error("No token returned from server");
+    _setToken(token);
+    return { ok: true, token };
+  }
+
+  function logout() {
+    _setToken(null);
+    // keep UI state control in admin page (sessionStorage bod_authed, gate) as is
+  }
+
+  function authHeaders(add = {}) {
+    const token = _getToken();
+    const h = Object.assign({ "Content-Type": "application/json" }, add || {});
+    if (token) h.Authorization = `Bearer ${token}`;
+    return h;
+  }
+
+  async function authFetch(url, opts = {}) {
+    const headers = Object.assign({}, opts.headers || {}, authHeaders());
+    const cfg = Object.assign({}, opts, { headers });
+    return fetch(url, cfg);
+  }
+
+  async function postWithAuth(endpoint, data) {
+    const url = endpoint.startsWith("http") ? endpoint : `${BASE}/${endpoint.replace(/^\/+/, "")}`;
+    const resp = await authFetch(url, {
+      method: "POST",
+      body: JSON.stringify(data)
+    });
+    if (!resp.ok) {
+      const text = await resp.text().catch(() => "");
+      throw new Error(`Request failed ${resp.status} ${text}`);
+    }
+    return resp.json().catch(() => ({ ok: true }));
+  }
+
+  return {
+    loginAdmin,
+    logout,
+    token: _getToken,
+    authHeaders,
+    authFetch,
+    postWithAuth
+  };
+})();
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    const API_BASE = "https://bndlabs-backend.onrender.com/api";
+    const KEY_MAP = {
+      [LS_HOME]: "home",
+      [LS_PROJECTS]: "projects",
+      [LS_BLOGS]: "blogs",
+      [LS_PROFILE]: "profile",
+      [LS_ABOUT]: "about",
+      [LS_CONTACT]: "contact",
+      "cms_404": "404"
+    };
+
+    const _cache = {
+      home: {}, projects: [], blogs: [], profile: {}, about: {}, contact: {}, "404": {}
+    };
+    const m = k => KEY_MAP[k] || k;
+
+    async function fetchJSON(endpoint, fallback){
+      try{
+        const r = await fetch(`${API_BASE}/${endpoint}`, { credentials:"omit" });
+        if(!r.ok) throw new Error(r.status);
+        return await r.json();
+      }catch(e){
+        console.warn(`⚠️ GET /${endpoint} failed`, e);
+        return fallback;
+      }
+    }
+async function postJSON(endpoint, data){
+  // Use CMSauth.postWithAuth if available, otherwise fallback to fetch
+  if (window.CMSauth && typeof window.CMSauth.postWithAuth === "function") {
+    return window.CMSauth.postWithAuth(endpoint, data);
+  }
+
+  // Fallback (no auth header)
+  const r = await fetch(`${API_BASE}/${endpoint}`, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify(data)
+  });
+  if(!r.ok) throw new Error(`POST /${endpoint} ${r.status}`);
+  return r.json().catch(()=>({ok:true}));
+}
+
+    async function prime(){
+      _cache.home     = await fetchJSON("home", {});
+      _cache.projects = await fetchJSON("projects", []);
+      _cache.blogs    = await fetchJSON("blogs", []);
+      _cache.profile  = await fetchJSON("profile", {});
+      _cache.about    = await fetchJSON("about", {});
+      _cache.contact  = await fetchJSON("contact", {});
+      _cache["404"]   = await fetchJSON("404", {});
+      try{ typeof renderProjects==="function" && renderProjects(); }catch{}
+      try{ typeof renderBlogs==="function" && renderBlogs(); }catch{}
+    }
+
+    window.Store = {
+      read(key, fallback){
+        const k = m(key);
+        return structuredClone(_cache[k] ?? JSON.parse(fallback || "{}"));
+      },
+      async write(key, value){
+        const k = m(key);
+        _cache[k] = value;
+        await postJSON(k, value);
+        return {ok:true};
+      },
+      projects(){
+        const a = Array.isArray(_cache.projects)?[..._cache.projects]:[];
+        a.sort((x,y)=>(y.updated||0)-(x.updated||0));
+        return a;
+      },
+      putProject(p){
+        const L=this.projects();
+        if(!p.id) p.id=(crypto.randomUUID?crypto.randomUUID():String(Date.now()));
+        p.updated=Date.now();
+        const i=L.findIndex(x=>x.id===p.id);
+        if(i>=0)L[i]=p;else L.unshift(p);
+        _cache.projects=L;
+        return this.write(LS_PROJECTS,L).then(()=>p.id);
+      },
+      removeProject(id){
+        const L=this.projects().filter(x=>x.id!==id);
+        _cache.projects=L;
+        return this.write(LS_PROJECTS,L);
+      },
+      byIdProject(id){return this.projects().find(x=>x.id===id);},
+      blogs(){
+        const a=Array.isArray(_cache.blogs)?[..._cache.blogs]:[];
+        a.sort((x,y)=>(y.updated||0)-(x.updated||0));
+        return a;
+      },
+      putBlog(b){
+        const L=this.blogs();
+        if(!b.id)b.id=(crypto.randomUUID?crypto.randomUUID():String(Date.now()));
+        b.updated=Date.now();
+        const i=L.findIndex(x=>x.id===b.id);
+        if(i>=0)L[i]=b;else L.unshift(b);
+        _cache.blogs=L;
+        return this.write(LS_BLOGS,L).then(()=>b.id);
+      },
+      removeBlog(id){
+        const L=this.blogs().filter(x=>x.id!==id);
+        _cache.blogs=L;
+        return this.write(LS_BLOGS,L);
+      },
+      byIdBlog(id){return this.blogs().find(x=>x.id===id);},
+      profile(){return structuredClone(_cache.profile||{});},
+      saveProfile(p){_cache.profile=p;return this.write(LS_PROFILE,p);}
+    };
+
+    prime();
+  }, 800); // ⏱️ small delay ensures everything loads before backend patch
+});
+</script>
+</body>
+</html>
