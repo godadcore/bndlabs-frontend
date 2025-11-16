@@ -289,7 +289,35 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
     setSrc('#proj_image', project.hero);
 
     const items = Array.isArray(project.sections) ? project.sections : [];
-    container.innerHTML = items.length ? '' : `<section class="block grey"><div class="container"><div style="text-align:center;color:var(--muted)">No sections yet.</div></div></section>`;
+    if (!items.length) {
+  container.innerHTML = `
+    <section class="block grey">
+      <div class="container" style="text-align:center;color:var(--muted)">
+        No sections yet.
+      </div>
+    </section>`;
+} else {
+  items.forEach(sec => {
+    const block = document.createElement("section");
+    block.className = "block";
+
+    let html = `<div class="container">`;
+
+    if (sec.type === "h2") {
+      html += `<h2>${sec.value}</h2>`;
+    }
+    else if (sec.type === "p") {
+      html += `<p>${sec.value}</p>`;
+    }
+    else if (sec.type === "img") {
+      html += `<img src="${sec.value}" alt="">`;
+    }
+
+    html += `</div>`;
+    block.innerHTML = html;
+    container.appendChild(block);
+  });
+}
 
   } catch (err) {
     console.error(err);

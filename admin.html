@@ -952,31 +952,38 @@ function saveBlog(id){
   else { Store.putBlog(obj); backTo('blog'); }
 }
 
-/* ===== Sections Builder (shared) ===== */
-function addSectionUI(host,type,value='',alt=''){
-  const el=document.createElement('div'); el.className='section';
-  el.innerHTML=`<div class="s-head">
-      <div class="s-title">${type.toUpperCase()}</div>
+function addSectionUI(host, type, value = '', alt = '') {
+
+  const el = document.createElement('div');
+  el.className = 'section';
+
+  el.innerHTML = `
+    <div class="s-head">
+      <div class="s-title">${type}</div>
       <div class="s-tools">
         <button class="iconbtn" data-up>⬆</button>
         <button class="iconbtn" data-down>⬇</button>
         <button class="iconbtn" data-remove style="color:#DC2626">✖</button>
       </div>
     </div>
-    <div class="row s-body"></div>`;
-  const body=el.querySelector('.s-body');
+    <div class="row s-body"></div>
+  `;
 
-  function render(kind){
-    body.innerHTML='';
-    el.querySelector('.s-title').textContent=(kind==='h2'?'H2':kind.toUpperCase());
+  const body = el.querySelector('.s-body');
 
-    const hasText = kind==='p' || kind==='h2';
-    if(hasText){
-      body.innerHTML=`
+  function render(kind) {
+    body.innerHTML = '';
+
+    // Normalize the title
+    el.querySelector('.s-title').textContent = kind;
+
+    // TEXT BLOCKS (p, h2)
+    if (kind === 'p' || kind === 'h2') {
+      body.innerHTML = `
         <div class="rte">
           <div class="dropdown">
             <button class="dd-btn" type="button" data-ddbtn>
-              <span data-ddlabel>${kind==='h2'?'Heading':'Paragraph'}</span>
+              <span data-ddlabel>${kind.toUpperCase()}</span>
               <span class="material-symbols-rounded">arrow_drop_down</span>
             </button>
             <div class="dd" data-dd>
@@ -985,98 +992,161 @@ function addSectionUI(host,type,value='',alt=''){
               <button type="button" data-type="img">Image</button>
             </div>
           </div>
-          <button class="btn" data-cmd="bold" title="Bold"><span class="material-symbols-rounded">format_bold</span></button>
-          <button class="btn" data-cmd="italic" title="Italic"><span class="material-symbols-rounded">format_italic</span></button>
-          <button class="btn" data-cmd="underline" title="Underline"><span class="material-symbols-rounded">format_underlined</span></button>
-          <button class="btn" data-link title="Link"><span class="material-symbols-rounded">link</span></button>
-          <button class="btn" data-cmd="insertUnorderedList" title="Bulleted list"><span class="material-symbols-rounded">format_list_bulleted</span></button>
-          <button class="btn" data-cmd="insertOrderedList" title="Numbered list"><span class="material-symbols-rounded">format_list_numbered</span></button>
-          <button class="btn" data-cmd="justifyLeft" title="Align left"><span class="material-symbols-rounded">format_align_left</span></button>
-          <button class="btn" data-cmd="justifyCenter" title="Align center"><span class="material-symbols-rounded">format_align_center</span></button>
-          <button class="btn" data-cmd="justifyRight" title="Align right"><span class="material-symbols-rounded">format_align_right</span></button>
-          <button class="btn" data-cmd="undo" title="Undo"><span class="material-symbols-rounded">undo</span></button>
-          <button class="btn" data-cmd="redo" title="Redo"><span class="material-symbols-rounded">redo</span></button>
+
+          <button class="btn" data-cmd="bold"><span class="material-symbols-rounded">format_bold</span></button>
+          <button class="btn" data-cmd="italic"><span class="material-symbols-rounded">format_italic</span></button>
+          <button class="btn" data-cmd="underline"><span class="material-symbols-rounded">format_underlined</span></button>
+          <button class="btn" data-link><span class="material-symbols-rounded">link</span></button>
+          <button class="btn" data-cmd="insertUnorderedList"><span class="material-symbols-rounded">format_list_bulleted</span></button>
+          <button class="btn" data-cmd="insertOrderedList"><span class="material-symbols-rounded">format_list_numbered</span></button>
         </div>
-        <div class="rich" contenteditable="true" data-editor>${value||''}</div>`;
 
-      const ddBtn=body.querySelector('[data-ddbtn]'), dd=body.querySelector('[data-dd]'), ddLabel=body.querySelector('[data-ddlabel]');
-      ddBtn.onclick=()=>{ dd.style.display=dd.style.display==='block'?'none':'block'; };
-      dd.querySelectorAll('button').forEach(b=> b.onclick=()=>{
-        dd.style.display='none';
-        const t=b.getAttribute('data-type');
-        if(t==='p'){ ddLabel.textContent='Paragraph'; render('p'); }
-        else if(t==='h2'){ ddLabel.textContent='Heading'; render('h2'); }
-        else if(t==='img'){ render('img'); }
-      });
+        <div class="rich" contenteditable="true" data-editor>${value}</div>
+      `;
 
-      const area=body.querySelector('[data-editor]');
-      body.querySelectorAll('[data-cmd]').forEach(btn=>{
-        btn.onclick=()=>{ area.focus(); document.execCommand(btn.getAttribute('data-cmd'),false,null); };
-      });
-      body.querySelector('[data-link]').onclick=()=>{
-        area.focus();
-        const url=prompt('Enter URL (https://…)'); if(url) document.execCommand('createLink',false,url);
+      const ddBtn = body.querySelector('[data-ddbtn]');
+      const dd = body.querySelector('[data-dd]');
+      const ddLabel = body.querySelector('[data-ddlabel]');
+      const area = body.querySelector('[data-editor]');
+
+      ddBtn.onclick = () => {
+        dd.style.display = dd.style.display === 'block' ? 'none' : 'block';
       };
-      area.addEventListener('paste',e=>{
-        e.preventDefault(); const txt=(e.clipboardData||window.clipboardData).getData('text/plain'); document.execCommand('insertText',false,txt);
+
+      dd.querySelectorAll('button').forEach(b => {
+        b.onclick = () => {
+          dd.style.display = 'none';
+          const t = b.getAttribute('data-type');
+          render(t);
+        };
       });
 
-    } else {
-      body.innerHTML=`
-        <div class="rte">
-          <div class="dropdown">
-            <button class="dd-btn" type="button" data-ddbtn>
-              <span data-ddlabel>Image</span>
-              <span class="material-symbols-rounded">arrow_drop_down</span>
-            </button>
-            <div class="dd" data-dd>
-              <button type="button" data-type="p">Paragraph</button>
-              <button type="button" data-type="h2">Heading</button>
-              <button type="button" data-type="img">Image</button>
-            </div>
-          </div>
-        </div>
-        <div class="uploader">
-          <div class="bar" style="gap:8px">
-            <input class="field s-val" placeholder="https://…" value="${esc(value)}">
-            <input type="file" accept="image/*" class="ghost tiny s-file" style="padding:9px 10px">
-          </div>
-          <p>Upload a file or drag and drop — PNG, JPG, SVG up to 1 MB</p>
-        </div>
-        <div class="row" style="margin-top:6px"><label>Alt text</label><input class="field s-alt" placeholder="Describe the image" value="${esc(alt)}"></div>`;
-
-      const ddBtn=body.querySelector('[data-ddbtn]'), dd=body.querySelector('[data-dd]');
-      ddBtn.onclick=()=>{ dd.style.display=dd.style.display==='block'?'none':'block'; };
-      dd.querySelectorAll('button').forEach(b=> b.onclick=()=>{ dd.style.display='none'; const t=b.getAttribute('data-type'); if(t==='img')return; render(t); });
-
-      body.querySelector('.s-file').addEventListener('change',e=>{
-        const f=e.target.files?.[0]; if(!f) return;
-        const r=new FileReader(); r.onload=()=>{ body.querySelector('.s-val').value=r.result; }; r.readAsDataURL(f);
+      body.querySelectorAll('[data-cmd]').forEach(btn => {
+        btn.onclick = () => {
+          area.focus();
+          document.execCommand(btn.getAttribute('data-cmd'), false, null);
+        };
       });
+
+      body.querySelector('[data-link]').onclick = () => {
+        area.focus();
+        const url = prompt("Enter URL");
+        if (url) document.execCommand("createLink", false, url);
+      };
+
+      return;
     }
+
+    // IMAGE BLOCK
+    body.innerHTML = `
+      <div class="rte">
+        <div class="dropdown">
+          <button class="dd-btn" type="button" data-ddbtn>
+            <span data-ddlabel>IMG</span>
+            <span class="material-symbols-rounded">arrow_drop_down</span>
+          </button>
+          <div class="dd" data-dd>
+            <button type="button" data-type="p">Paragraph</button>
+            <button type="button" data-type="h2">Heading</button>
+            <button type="button" data-type="img">Image</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="uploader">
+        <div class="bar" style="gap:8px">
+          <input class="field s-val" value="${value}" placeholder="https://…">
+          <input type="file" accept="image/*" class="ghost tiny s-file" style="padding:9px 10px">
+        </div>
+        <p>Upload PNG / JPG / SVG</p>
+      </div>
+      <div class="row" style="margin-top:6px">
+        <label>Alt text</label>
+        <input class="field s-alt" value="${alt}" placeholder="Describe image">
+      </div>
+    `;
+
+    const ddBtn = body.querySelector('[data-ddbtn]');
+    const dd = body.querySelector('[data-dd]');
+
+    ddBtn.onclick = () => {
+      dd.style.display = dd.style.display === 'block' ? 'none' : 'block';
+    };
+
+    dd.querySelectorAll('button').forEach(b => {
+      b.onclick = () => {
+        dd.style.display = 'none';
+        const t = b.getAttribute('data-type');
+        render(t);
+      };
+    });
+
+    const file = body.querySelector('.s-file');
+    file.addEventListener('change', e => {
+      const f = e.target.files?.[0];
+      if (!f) return;
+      const r = new FileReader();
+      r.onload = () => {
+        body.querySelector('.s-val').value = r.result;
+      };
+      r.readAsDataURL(f);
+    });
   }
+
   render(type);
 
-  el.querySelector('[data-up]').onclick=()=>{ const i=[...host.children].indexOf(el); if(i>0) host.insertBefore(el,host.children[i-1]); };
-  el.querySelector('[data-down]').onclick=()=>{ const i=[...host.children].indexOf(el); if(i<host.children.length-1) host.insertBefore(el,host.children[i+2]||null); };
-  el.querySelector('[data-remove]').onclick=()=> el.remove();
+  el.querySelector('[data-up]').onclick = () => {
+    const i = [...host.children].indexOf(el);
+    if (i > 0) host.insertBefore(el, host.children[i - 1]);
+  };
+
+  el.querySelector('[data-down]').onclick = () => {
+    const i = [...host.children].indexOf(el);
+    if (i < host.children.length - 1) host.insertBefore(el, host.children[i + 2] || null);
+  };
+
+  el.querySelector('[data-remove]').onclick = () => el.remove();
 
   host.appendChild(el);
 }
 
 function collectSections(host){
-  const out=[];
-  host.querySelectorAll('.section').forEach(sec=>{
-    const kind=sec.querySelector('.s-title').textContent.trim().toLowerCase();
-    const k = (kind==='h2' || kind==='heading') ? 'h2' : kind;
-    if(k==='img'){
-      const v=sec.querySelector('.s-val')?.value||''; const alt=sec.querySelector('.s-alt')?.value||'';
-      if(v||alt) out.push({type:'img', value:v, alt});
-    }else{
-      const html=sec.querySelector('[data-editor]')?.innerHTML.trim()||'';
-      if(html) out.push({type:k, value:html});
+  const out = [];
+
+  host.querySelectorAll('.section').forEach(sec => {
+
+    // Get the raw label shown in UI
+    const raw = sec.querySelector('.s-title').textContent.trim().toLowerCase();
+    let k;
+
+    // Normalize type
+    if (raw === 'h2' || raw === 'heading') {
+      k = 'h2';
+    } else if (raw === 'p' || raw === 'paragraph') {
+      k = 'p';
+    } else if (raw === 'img' || raw === 'image') {
+      k = 'img';
+    } else {
+      k = 'p';
+    }
+
+    // Process image sections
+    if (k === 'img') {
+      const v = sec.querySelector('.s-val')?.value || '';
+      const alt = sec.querySelector('.s-alt')?.value || '';
+      if (v || alt) {
+        out.push({ type: 'img', value: v, alt });
+      }
+      return;
+    }
+
+    // Process text sections (p, h2)
+    const html = sec.querySelector('[data-editor]')?.innerHTML.trim() || '';
+    if (html) {
+      out.push({ type: k, value: html });
     }
   });
+
   return out;
 }
 
