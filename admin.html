@@ -1654,7 +1654,88 @@ if (saveContactBtn) {
 </script>
 <script>
   window.BNDLABS_API_BASE = "https://bndlabs-backend.onrender.com";
-</script><script>
+</script>
+<script>
+/**
+ * CMSauth — client-side auth helper for admin
+ * - Post password to /api/auth/login
+ * - Stores token in sessionStorage under "bnd_token"
+ * - Exposes authFetch/postWithAuth helpers that include Authorization header
+ */
+window.CMSauth = (function () {
+  const BASE = (window.BNDLABS_API_BASE || "").replace(/\/$/, "") + "/api";
+  const TOKEN_KEY = "bnd_token";
+
+  function _getToken() {
+    return sessionStorage.getItem(TOKEN_KEY) || null;
+  }
+  function _setToken(t) {
+    if (t) sessionStorage.setItem(TOKEN_KEY, t);
+    else sessionStorage.removeItem(TOKEN_KEY);
+  }
+
+  async function loginAdmin(password) {
+    if (!password) throw new Error("Password required");
+    const res = await fetch(`${BASE}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password })
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      const msg = body?.error || `Login failed (${res.status})`;
+      throw new Error(msg);
+    }
+    const body = await res.json().catch(() => ({}));
+    const token = body?.token || body?.Token || null;
+    if (!token) throw new Error("No token returned from server");
+    _setToken(token);
+    return { ok: true, token };
+  }
+
+  function logout() {
+    _setToken(null);
+    // keep UI state control in admin page (sessionStorage bod_authed, gate) as is
+  }
+
+  function authHeaders(add = {}) {
+    const token = _getToken();
+    const h = Object.assign({ "Content-Type": "application/json" }, add || {});
+    if (token) h.Authorization = `Bearer ${token}`;
+    return h;
+  }
+
+  async function authFetch(url, opts = {}) {
+    const headers = Object.assign({}, opts.headers || {}, authHeaders());
+    const cfg = Object.assign({}, opts, { headers });
+    return fetch(url, cfg);
+  }
+
+  async function postWithAuth(endpoint, data) {
+    const url = endpoint.startsWith("http") ? endpoint : `${BASE}/${endpoint.replace(/^\/+/, "")}`;
+    const resp = await authFetch(url, {
+      method: "POST",
+      body: JSON.stringify(data)
+    });
+    if (!resp.ok) {
+      const text = await resp.text().catch(() => "");
+      throw new Error(`Request failed ${resp.status} ${text}`);
+    }
+    return resp.json().catch(() => ({ ok: true }));
+  }
+
+  return {
+    loginAdmin,
+    logout,
+    token: _getToken,
+    authHeaders,
+    authFetch,
+    postWithAuth
+  };
+})();
+</script>
+
+<script>
 document.addEventListener("DOMContentLoaded", () => {
   setTimeout(() => {
     const API_BASE = "https://bndlabs-backend.onrender.com/api";
@@ -1683,15 +1764,21 @@ document.addEventListener("DOMContentLoaded", () => {
         return fallback;
       }
     }
-    async function postJSON(endpoint, data){
-      const r = await fetch(`${API_BASE}/${endpoint}`, {
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify(data)
-      });
-      if(!r.ok) throw new Error(`POST /${endpoint} ${r.status}`);
-      return r.json().catch(()=>({ok:true}));
-    }
+async function postJSON(endpoint, data){
+  // Use CMSauth.postWithAuth if available, otherwise fallback to fetch
+  if (window.CMSauth && typeof window.CMSauth.postWithAuth === "function") {
+    return window.CMSauth.postWithAuth(endpoint, data);
+  }
+
+  // Fallback (no auth header)
+  const r = await fetch(`${API_BASE}/${endpoint}`, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify(data)
+  });
+  if(!r.ok) throw new Error(`POST /${endpoint} ${r.status}`);
+  return r.json().catch(()=>({ok:true}));
+}
 
     async function prime(){
       _cache.home     = await fetchJSON("home", {});
