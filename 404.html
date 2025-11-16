@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-
 <title>Page Not Found | bndlabs</title>
 <meta name="description" content="Oops! The page you’re looking for doesn’t exist. Explore some of bndlabs’s latest work instead.">
 <link rel="canonical" href="https://bndlabs.com/404">
 
-<!-- Favicon + PWA -->
-<link rel="icon" type="image/png" href="favicon.png">
+<!-- Favicon + PWA (correct path) -->
+<link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+<link rel="apple-touch-icon" href="assets/images/favicon.svg">
 <meta name="theme-color" content="#FF4D00">
 
 <style>
@@ -43,7 +43,7 @@ header{
 }
 .brand{display:flex;align-items:center;gap:10px}
 .brand .name{font-weight:700;font-size:18px;color:#fff}
-.logo svg{width:36px;height:36px;fill:#fff}
+.logo svg{width:36px;height:36px;fill:currentColor}
 .nav{display:none;}
 .nav.active{
   display:flex;flex-direction:column;align-items:flex-end;
@@ -61,7 +61,7 @@ header{
   text-align:center;
   font-weight:500;
   transition:.2s;
-  text-decoration:none; /* ✅ removes underline */
+  text-decoration:none;
 }
 .nav a:hover{background:rgba(255,255,255,.18);transform:translateY(-1px)}
 .nav a.active{background:var(--primary-gradient);color:#fff;font-weight:700}
@@ -163,11 +163,13 @@ footer{
 </style>
 </head>
 
-<body>
+<!-- important: identify page for render.js compatibility -->
+<body data-page="four">
 <header>
   <div class="brand">
-    <div class="logo">
-      <svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-2.9h2v-2.2c0-2 1.2-3.1 3-3.1.9 0 1.8.1 2 .1v2.3h-1.1c-1 0-1.3.6-1.3 1.2v1.7h2.6l-.4 2.9h-2.2v7A10 10 0 0 0 22 12z" fill="currentColor"/></svg>
+    <div class="logo" aria-hidden="true">
+      <!-- header logo (protected SVG) -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-2.9h2v-2.2c0-2 1.2-3.1 3-3.1.9 0 1.8.1 2 .1v2.3h-1.1c-1 0-1.3.6-1.3 1.2v1.7h2.6l-.4 2.9h-2.2v7A10 10 0 0 0 22 12z" /></svg>
     </div>
     <div class="brand-text"><div class="name">bndlabs</div></div>
   </div>
@@ -186,6 +188,7 @@ footer{
 <main>
   <section class="error-wrap">
     <div class="error-text">
+      <!-- static defaults (safe baseline) -->
       <h1 id="err_title">Hmmm...</h1>
       <p id="err_line1">Occurred, a 404 error has. I sense much fear in you.</p>
       <p id="err_line2">Trust in the force, clear your mind, unlearn what you have learned, and find your missing page you will.</p>
@@ -204,7 +207,9 @@ footer{
   <section class="latest-wrap">
     <div class="latest-inner">
       <div class="latest-title" id="latest_title">SOME OF MY LATEST WORK</div>
-      <div class="work-grid" id="latest_grid"></div>
+      <div class="work-grid" id="latest_grid">
+        <!-- projects will be injected here -->
+      </div>
     </div>
   </section>
 </main>
@@ -212,11 +217,19 @@ footer{
 <footer>
   <div class="footer-inner">
     <div class="footer-left">© 2025 <strong>bndlabs</strong>. Designed & coded by Godadcore.</div>
-    <div class="socials">
-      <a href="#"><svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-2.9h2v-2.2c0-2 1.2-3.1 3-3.1.9 0 1.8.1 2 .1v2.3h-1.1c-1 0-1.3.6-1.3 1.2v1.7h2.6l-.4 2.9h-2.2v7A10 10 0 0 0 22 12z"/></svg></a>
-      <a href="#"><svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.1 1.5 4.4 4.4 0 0 0-7.5 3v1A10.7 10.7 0 0 1 3 4s-4 9 5 13a11.6 11.6 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.1-.8A7.7 7.7 0 0 0 23 3z"/></svg></a>
-      <a href="#"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1.3 14h-2.6v-6h2.6v6zm0-7.3h-2.6V7h2.6v1.7z"/></svg></a>
+    <div class="socials" id="site_socials">
+      <!-- static footer icons (protected SVGs) -->
+      <a href="https://www.linkedin.com/in/bodundeemmanuel" target="_blank" rel="noopener" aria-label="LinkedIn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5A2.5 2.5 0 112.5 6a2.5 2.5 0 012.48-2.5zM3 8h4v13H3zM9 8h3.8v1.8h.05A4.2 4.2 0 0117 8.1c3.2 0 3.8 2.1 3.8 4.9V21h-4v-7c0-1.7-.03-3.9-2.4-3.9-2.4 0-2.7 1.8-2.7 3.8V21H9z"/></svg>
+      </a>
+      <a href="https://x.com/whoisemmavibe" target="_blank" rel="noopener" aria-label="X">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18.36 2H21l-6.8 7.74L22 22h-4.78l-5.38-7.02L6.6 22H3l7.19-8.18L2 2h4.85l4.9 6.44L18.36 2zM8.55 4.28H6.92l8.59 11.3h1.66L8.55 4.28z"/></svg>
+      </a>
+      <a href="https://www.instagram.com/whoisemmavibe_" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2C4.2 2 2 4.2 2 7v10c0 2.8 2.2 5 5 5h10c2.8 0 5-2.2 5-5V7c0-2.8-2.2-5-5-5H7zm10 2c1.7 0 3 1.3 3 3v10c0 1.7-1.3 3-3 3H7c-1.7 0-3-1.3-3-3V7c0-1.7 1.3-3 3-3h10zm-5 3.8A5.2 5.2 0 1017.2 13 5.2 5.2 0 0012 7.8zm0 8.6A3.4 3.4 0 1115.4 13 3.4 3.4 0 0112 16.4zM17.5 6a1 1 0 101 1 1 1 0 00-1-1z"/></svg>
+      </a>
     </div>
+
     <nav class="footer-nav">
       <a href="about.html">About</a>
       <a href="portfolio.html">Portfolio</a>
@@ -227,116 +240,146 @@ footer{
 </footer>
 
 <script>
-const menuToggle=document.getElementById('menuToggle');
-const nav=document.querySelector('.nav');
-menuToggle.addEventListener('click',()=>nav.classList.toggle('active'));
-document.addEventListener('click',e=>{
-  if(!nav.contains(e.target) && !menuToggle.contains(e.target)){
-    nav.classList.remove('active');
-  }
+/* ===== small UI helpers ===== */
+const menuToggle = document.getElementById('menuToggle');
+const nav = document.querySelector('.nav');
+menuToggle.addEventListener('click', ()=>nav.classList.toggle('active'));
+document.addEventListener('click', e=>{
+  if(!nav.contains(e.target) && !menuToggle.contains(e.target)) nav.classList.remove('active');
 });
 
-/* === 404 CMS Loader (Dynamic) === */
-(function(){
-  const raw = 
-  let d = {};
-  try { d = JSON.parse(raw) || {}; } catch(e) { d = {}; }
+/* ===== Safe 404 + Projects loader (option C: static defaults + dynamic latest projects) ===== */
+(async function init404(){
+  // static defaults (already in DOM) — will be overwritten if API returns valid values
+  const defaults = {
+    title: document.getElementById('err_title').textContent,
+    line1: document.getElementById('err_line1').textContent,
+    line2: document.getElementById('err_line2').textContent,
+    image: document.getElementById('err_img').src,
+    btn_do_label: document.getElementById('btn_do').textContent,
+    btn_donot_label: document.getElementById('btn_donot').textContent,
+    btn_try_label: document.getElementById('btn_try').textContent,
+    btn_do_link: 'home.html',
+    btn_donot_link: 'home.html',
+    try_disabled: true,
+    use_latest: true,
+    latest_count: 3,
+    custom_projects: []
+  };
 
-  // --- Texts ---
-  if(d.title) document.getElementById('err_title').textContent = d.title;
-  if(d.line1) document.getElementById('err_line1').textContent = d.line1;
-  if(d.line2) document.getElementById('err_line2').textContent = d.line2;
-  if(d.image) document.getElementById('err_img').src = d.image;
+  // safe writer
+  const apply404 = (d) => {
+    if(!d) d = {};
+    if(d.title) document.getElementById('err_title').textContent = d.title;
+    if(d.line1) document.getElementById('err_line1').textContent = d.line1;
+    if(d.line2) document.getElementById('err_line2').textContent = d.line2;
+    if(d.image) document.getElementById('err_img').src = d.image;
+    if(d.btn_do_label) document.getElementById('btn_do').textContent = d.btn_do_label;
+    if(d.btn_donot_label) document.getElementById('btn_donot').textContent = d.btn_donot_label;
+    if(d.btn_try_label) document.getElementById('btn_try').textContent = d.btn_try_label;
+    const btnTry = document.getElementById('btn_try');
+    btnTry.disabled = !!d.try_disabled;
+    // wire buttons
+    document.getElementById('btn_do').onclick = () => window.location.href = (d.btn_do_link || 'home.html');
+    document.getElementById('btn_donot').onclick = () => window.location.href = (d.btn_donot_link || 'home.html');
+    document.getElementById('btn_try').onclick = () => {
+      if(d.btn_try_link) window.location.href = d.btn_try_link;
+      else window.location.href = 'home.html';
+    };
+  };
 
-  // --- Buttons ---
-  const btnDo = document.getElementById('btn_do');
-  const btnDonot = document.getElementById('btn_donot');
-  const btnTry = document.getElementById('btn_try');
-
-  if(d.btn_do_label) btnDo.textContent = d.btn_do_label;
-  if(d.btn_donot_label) btnDonot.textContent = d.btn_donot_label;
-  if(d.btn_try_label) btnTry.textContent = d.btn_try_label;
-  if(d.try_disabled) btnTry.disabled = true;
-  else btnTry.disabled = false;
-
-  btnDo.onclick = ()=> window.location.href = d.btn_do_link || 'home.html';
-  btnDonot.onclick = ()=> window.location.href = d.btn_donot_link || 'home.html';
-  btnTry.onclick = ()=> window.location.href = 'home.html'; // optional custom action
-
-  // --- Latest work section ---
-  const grid = document.getElementById('latest_grid');
-  const titleEl = document.getElementById('latest_title');
-  titleEl.textContent = 'SOME OF MY LATEST WORK';
-
-  const cmsProjects = JSON.parse( || '[]');
-  if(!cmsProjects.length) return;
-
-  let showProjects = [];
-
-  if(d.use_latest){
-    const count = d.latest_count || 3;
-    showProjects = cmsProjects.slice(-count).reverse();
-  } else if(Array.isArray(d.custom_projects) && d.custom_projects.length){
-    showProjects = cmsProjects.filter(p=> d.custom_projects.includes(p.id));
-  } else {
-    showProjects = cmsProjects.slice(-3).reverse();
+  // Attempt to fetch /api/404 (backend). If it fails, fallback to localStorage or defaults.
+  let cms404 = null;
+  try {
+    const resp = await fetch('https://bndlabs-backend.onrender.com/api/404', { credentials: 'omit' });
+    if(resp.ok) {
+      const json = await resp.json();
+      if(json && typeof json === 'object') cms404 = json;
+    }
+  } catch (err) {
+    // ignore network errors - we'll use fallback
+    console.warn('Could not fetch /api/404:', err && err.message ? err.message : err);
   }
 
-  grid.innerHTML = showProjects.map(p=>`
-    <a class="work-card" href="${p.link || '#'}">
-      <img src="${p.hero || p.image || ''}" alt="${p.title || ''}">
-      <div class="p">
-        <h3>${p.title || ''}</h3>
-        <small>${p.tag || ''}</small>
-      </div>
-    </a>`).join('');
-})();
-// ====== MANUAL SAVE 404 BUTTON (now saves to Firebase too) ======
-const saveFourBtn = document.getElementById('four_save');
-if (saveFourBtn) {
-  saveFourBtn.addEventListener('click', async () => {
+  // fallback: localStorage stored cms_404 (stringified object)
+  if(!cms404) {
     try {
-      const val = (function collectFour() {
-        const q = (id) => document.getElementById(id);
-        return {
-          title: q('four_title').value.trim(),
-          line1: q('four_line1').value.trim(),
-          line2: q('four_line2').value.trim(),
-          btn_do_label: q('four_btn_do_label').value.trim(),
-          btn_do_link: q('four_btn_do_link').value.trim(),
-          btn_donot_label: q('four_btn_donot_label').value.trim(),
-          btn_donot_link: q('four_btn_donot_link').value.trim(),
-          btn_try_label: q('four_btn_try_label').value.trim(),
-          try_disabled: q('four_try_disabled').checked,
-          image: q('four_image').value.trim(),
-          use_latest: q('four_use_latest').checked,
-          latest_count: Number(q('four_latest_count').value || 0),
-          custom_projects: (q('four_custom_projects').value || '')
-            .split(',')
-            .map((s) => s.trim())
-            .filter(Boolean),
-          remove_nav_underline: q('four_remove_nav_underline').checked
-        };
-      })();
-
-      // ✅ Save to localStorage and Firebase
-      );
-      await Store.write('cms_404', val);
-
-      const saved = document.getElementById('four_saved');
-      if (saved) {
-        saved.style.display = 'inline';
-        setTimeout(() => (saved.style.display = 'none'), 1500);
-      }
-      alert('✅ 404 data saved successfully to Firebase!');
-    } catch (err) {
-      alert('⚠️ Failed to save 404: ' + err.message);
+      const raw = localStorage.getItem('cms_404') || '{}';
+      cms404 = JSON.parse(raw || '{}');
+    } catch(e) {
+      cms404 = {};
     }
-  });
+  }
+
+  // apply the resolved config (merge with defaults)
+  apply404(Object.assign({}, defaults, cms404));
+
+  // --- Projects: try backend -> fallback to localStorage -> final fallback none ---
+  let projects = [];
+  try {
+    const r = await fetch('https://bndlabs-backend.onrender.com/api/projects', { credentials: 'omit' });
+    if(r.ok) projects = await r.json();
+  } catch(e){ /* ignore */ }
+
+  if(!Array.isArray(projects) || !projects.length) {
+    try {
+      projects = JSON.parse(localStorage.getItem('cms_projects') || '[]');
+    } catch(e) {
+      projects = [];
+    }
+  }
+  // normalize project list to recent-first
+  if(Array.isArray(projects)) {
+    projects.sort((a,b)=> (b.updated||0) - (a.updated||0));
+  } else {
+    projects = [];
+  }
+
+  const grid = document.getElementById('latest_grid');
+  const cfg = Object.assign({}, defaults, cms404 || {});
+  let showProjects = [];
+
+  if(cfg.use_latest) {
+    const n = Math.max(1, Number(cfg.latest_count||3));
+    showProjects = (projects || []).slice(0, n);
+  } else if(Array.isArray(cfg.custom_projects) && cfg.custom_projects.length) {
+    showProjects = (projects || []).filter(p => cfg.custom_projects.includes(p.id));
+  } else {
+    showProjects = (projects || []).slice(0, 3);
+  }
+
+  // render
+  grid.innerHTML = showProjects.map(p => {
+    const href = p.link || ('portfolio-details.html?id=' + encodeURIComponent(p.id||''));
+    const hero = p.hero || p.image || '';
+    return `<a class="work-card" href="${escapeHtmlAttr(href)}">
+      <img loading="lazy" src="${escapeHtmlAttr(hero)}" alt="${escapeHtmlAttr(p.title||'')}" />
+      <div class="p"><h3>${escapeHtml(p.title || '')}</h3><small>${escapeHtml(p.tag || '')}</small></div>
+    </a>`;
+  }).join('');
+
+})(); // end init404
+
+/* small escaping helpers */
+function escapeHtml(s){
+  if(s == null) return '';
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+function escapeHtmlAttr(s){
+  return escapeHtml(s);
 }
 </script>
+
+<!-- CORE SCRIPTS (these were corrected) -->
 <script src="js/data.js"></script>
 <script src="js/render.js"></script>
+
+<!-- Clean URLs injection (fixed startsWith) -->
 <script>
 (function(){
   const MARKER = '/*__CLEAN_URLS_INJECTED__*/';
@@ -355,7 +398,7 @@ if (saveFourBtn) {
           const main = parts[0].replace(/index\.html?$/i, '').replace(/\.html?$/i, '');
           const tail = parts.slice(1).join('');
           let clean = main || '/';
-          if (!clean.startswith('/')) clean = '/' + clean;
+          if (!clean.startsWith('/')) clean = '/' + clean;
           if (tail) clean += tail;
           link.setAttribute('href', clean);
         }
@@ -367,59 +410,38 @@ if (saveFourBtn) {
 })();
  /*__CLEAN_URLS_INJECTED__*/ 
 </script>
-<script>
-// Wait until the page is fully ready
-setTimeout(() => {
 
+<!-- Watch + enforce clean URLs (defensive) -->
+<script>
+setTimeout(() => {
     function forceCleanLinks() {
         const links = document.querySelectorAll("a[href]");
-
         links.forEach(link => {
             let href = link.getAttribute("href");
             if (!href) return;
-
-            // Convert Node.js URL objects / absolute URLs to plain string
             href = String(href);
-
-            // Skip external sites EXCEPT your own domain
+            // skip external except your domain
             if (/^(https?:\/\/)/i.test(href)) {
-                // Allow your own domain
                 if (!href.includes("bndlabs-frontend.onrender.com")) return;
             }
-
-            // Remove domain so we can treat it like a relative link
             href = href.replace("https://bndlabs-frontend.onrender.com", "");
             href = href.replace("http://bndlabs-frontend.onrender.com", "");
-
-            // Skip hashes, mailto, js functions
             if (/^(#|mailto:|javascript:)/i.test(href)) return;
-
-            // Only convert .html links
             if (href.match(/\.html?$|\/index\.html?$/i)) {
                 const parts = href.split(/(#|\?)/);
-                const main = parts[0]
-                    .replace(/index\.html?$/i, "")
-                    .replace(/\.html?$/i, "");
+                const main = parts[0].replace(/index\.html?$/i, "").replace(/\.html?$/i, "");
                 const tail = parts.slice(1).join("");
-
                 let clean = main || "/";
                 clean = String(clean);
-
                 if (!clean.startsWith("/")) clean = "/" + clean;
                 if (tail) clean += tail;
-
                 link.setAttribute("href", clean);
             }
         });
     }
-
-    // Run immediately
     forceCleanLinks();
-
-    // Watch for any DOM changes (menus opening, CMS content loading, etc.)
     const obs = new MutationObserver(forceCleanLinks);
     obs.observe(document.body, { childList: true, subtree: true });
-
 }, 300);
 </script>
 </body>
