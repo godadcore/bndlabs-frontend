@@ -722,21 +722,37 @@ if (sessionStorage.getItem("bod_authed") === "yes") {
   gate.style.display = "none";
 }
 
-// Handle login button
-enter.addEventListener("click", () => {
-  const inputValue = pass.value;
-  if (checkPassword(inputValue)) {
-    sessionStorage.setItem("bod_authed", "yes");
-    gate.style.display = "none";
-    pass.value = "";
-  } else {
+// ===========================================
+// ADMIN LOGIN — JWT AUTH WITH YOUR BACKEND
+// ===========================================
+
+enter.addEventListener("click", async () => {
+  const password = pass.value.trim();
+  if (!password) {
+    alert("⚠️ Enter your password");
+    return;
+  }
+
+  try {
+    // Try to login to backend
+    const auth = await CMSauth.loginAdmin(password);
+
+    // If successful:
+    sessionStorage.setItem("bod_authed", "yes");   // your old UI logic
+    gate.style.display = "none";                   // hide the gate
+    pass.value = "";                               // clear input
+
+    console.log("✅ Admin authenticated successfully");
+  } catch (err) {
     alert("⚠️ Incorrect password");
+    console.warn("Login failed:", err);
+
     sessionStorage.removeItem("bod_authed");
     pass.focus();
   }
 });
 
-// Handle Enter key press
+// Handle Enter key
 pass.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     e.preventDefault();
