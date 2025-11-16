@@ -245,5 +245,35 @@ if(menuToggle) menuToggle.addEventListener("click",()=>nav.classList.toggle("act
 
 <script src="js/data.js"></script>
 <script src="js/render.js"></script>
+<script>
+(function(){
+  const MARKER = '/*__CLEAN_URLS_INJECTED__*/';
+  if (window.__CLEAN_URLS_INJECTED) return;
+  window.__CLEAN_URLS_INJECTED = true;
+
+  document.addEventListener("DOMContentLoaded", () => {
+    try {
+      const links = document.querySelectorAll("a[href]");
+      links.forEach(link => {
+        let href = link.getAttribute("href");
+        if (!href) return;
+        if (/^(https?:|\/\/|#|mailto:|javascript:)/i.test(href)) return;
+        if (href.match(/\.html?$|\/index\.html?$/i)) {
+          const parts = href.split(/(#|\?)/);
+          const main = parts[0].replace(/index\.html?$/i, '').replace(/\.html?$/i, '');
+          const tail = parts.slice(1).join('');
+          let clean = main || '/';
+          if (!clean.startswith('/')) clean = '/' + clean;
+          if (tail) clean += tail;
+          link.setAttribute('href', clean);
+        }
+      });
+    } catch (err) {
+      console.warn('Clean URL script error:', err);
+    }
+  });
+})();
+ /*__CLEAN_URLS_INJECTED__*/ 
+</script>
 </body>
 </html>
