@@ -113,7 +113,13 @@ header {
   /* changed hero padding to 50px top/bottom (you requested 50) */
   .hero{background:#fff;overflow:hidden;padding:25px 0;}
   .hero-inner{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center;}
-  .hero h1{font-family:"SF Pro Display",-apple-system,BlinkMacSystemFont,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:72px;letter-spacing:-1px;margin-bottom:10px; color var(--primary);}
+.hero h1{
+  font-family:"SF Pro Display", -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size:72px;
+  letter-spacing:-1px;
+  margin-bottom:10px;
+  color: var(--primary);  /* your brand color */
+}
   .hero p.lead{color:var(--muted);font-size:20px;margin-bottom:18px;max-width:540px;
 }
   .meta{display:flex;gap:14px;color:var(--faint);font-size:14px;margin-top:8px}
