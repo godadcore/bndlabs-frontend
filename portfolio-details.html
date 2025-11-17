@@ -111,7 +111,7 @@ header {
   .pad-top{padding-top:96px}
 
   /* changed hero padding to 50px top/bottom (you requested 50) */
-  .hero{background:#fff;overflow:hidden;padding:50px 0;}
+  .hero{background:#fff;overflow:hidden;padding:25px 0;}
   .hero-inner{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center;}
   .hero h1{font-family:"SF Pro Display",-apple-system,BlinkMacSystemFont,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:72px;letter-spacing:-1px;margin-bottom:10px;}
   .hero p.lead{color:var(--muted);font-size:20px;margin-bottom:18px;max-width:540px}
@@ -220,9 +220,9 @@ header {
   }
 
   /* LEFT-ALIGN hero description on mobile screens (added per request) */
-  @media (max-width: 900px) {
-    .hero p.lead { text-align: left; }
-  }
+@media (max-width: 900px) {
+    .hero p.lead { text-align: center; }
+}
 </style>
 </head>
 
