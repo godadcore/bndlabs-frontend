@@ -106,6 +106,7 @@ header {
   font-size:22px;
   cursor:pointer;
 }
+
   .container{max-width:var(--max-width);margin:0 auto;padding:0 36px}
   .pad-top{padding-top:96px}
 
@@ -118,8 +119,13 @@ header {
   .hero-art{width:600px;max-width:100%;height:auto;object-fit:cover;border-radius:28px;box-shadow:0 18px 60px rgba(0,0,0,.1);}
   .hero-break{width:100%;height:40px;box-shadow:0 4px 12px rgba(0,0,0,0.04);background:#fff;}
 
+  /* blocks (these are the sections that hold each header + content) */
   section.block{padding:90px 0;border-bottom:1px solid rgba(0,0,0,0.05);background:#fff;}
   section.block.grey{background:var(--grey-bg)}
+  .block .container { /* ensure container inside block keeps padding */
+    padding-left:36px;
+    padding-right:36px;
+  }
   .block h2{font-size:30px;margin-top:32px;margin-bottom:12px;font-family:"SF Pro Display",-apple-system,BlinkMacSystemFont,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;}
   .block p{color:var(--muted);max-width:820px;margin-top:10px;}
   .block img{margin-bottom:36px;border-radius:20px}
@@ -129,6 +135,16 @@ header {
   .img-scroll img:hover{transform:scale(1.02);}
   .img-scroll::-webkit-scrollbar{height:6px;}
   .img-scroll::-webkit-scrollbar-thumb{background:rgba(0,0,0,.2);border-radius:3px;}
+
+  /* list and ol fixes so bullets/numbers stay inside container padding on small screens */
+  .block ul, .block ol {
+    padding-left: 1.15rem;
+    margin-left: 0;
+    list-style-position: inside;
+    color:var(--muted);
+  }
+  .block li { margin-bottom:8px; }
+
   @media(max-width:900px){
     .hero-inner{grid-template-columns:1fr;text-align:center}
     .two-up{grid-template-columns:1fr}
@@ -153,48 +169,54 @@ header {
   .socials a{width:36px;height:36px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,0.1);}
   .socials a svg{width:18px;height:18px;fill:#000;}
   @media(max-width:720px){.footer-inner{flex-direction:column;gap:10px;}}
-/* ======== EXTRA RESPONSIVE FIXES FOR MOBILE & TABLET ======== */
-@media (max-width: 1200px) {
-  .hero h1 { font-size: 56px; }
-  .hero p.lead { font-size: 18px; }
-  .hero-art { width: 480px; }
-}
 
-@media (max-width: 900px) {
-  .hero { padding: 60px 0; }
-  .hero-inner { grid-template-columns: 1fr; text-align: center; }
-  .hero-art-wrapper { justify-content: center; margin-top: 30px; }
-  .hero-art { width: 90%; max-width: 420px; }
-  .hero h1 { font-size: 42px; line-height: 1.2; }
-  .hero p.lead { font-size: 17px; margin: 0 auto 20px; max-width: 500px; }
-  .meta { justify-content: center; }
-  section.block { padding: 70px 0; }
-  .block h2 { font-size: 26px; }
-  .block p { font-size: 15px; line-height: 1.6; }
-}
+  /* ======== EXTRA RESPONSIVE FIXES FOR MOBILE & TABLET ======== */
+  @media (max-width: 1200px) {
+    .hero h1 { font-size: 56px; }
+    .hero p.lead { font-size: 18px; }
+    .hero-art { width: 480px; }
+  }
 
-@media (max-width: 720px) {
-  .container { padding: 0 20px; }
-  .hero h1 { font-size: 32px; }
-  .hero p.lead { font-size: 16px; }
-  .hero-art { width: 100%; max-width: 360px; }
-  section.block { padding: 60px 0; }
-  .block h2 { font-size: 22px; }
-  .block p { font-size: 15px; }
-}
+  @media (max-width: 900px) {
+    .hero { padding: 60px 0; }
+    .hero-inner { grid-template-columns: 1fr; text-align: center; }
+    .hero-art-wrapper { justify-content: center; margin-top: 30px; }
+    .hero-art { width: 90%; max-width: 420px; }
+    .hero h1 { font-size: 42px; line-height: 1.2; }
+    .hero p.lead { font-size: 17px; margin: 0 auto 20px; max-width: 500px; }
+    .meta { justify-content: center; }
+    section.block { padding: 70px 0; }
+    .block h2 { font-size: 26px; }
+    .block p { font-size: 15px; line-height: 1.6; }
+    .block .container { padding-left: 28px; padding-right: 28px; }
+  }
 
-@media (max-width: 480px) {
-  .hero { padding: 50px 0; }
-  .hero h1 { font-size: 26px; }
-  .hero p.lead { font-size: 15px; }
-  .hero-art { width: 100%; border-radius: 16px; }
-  .meta { flex-direction: column; gap: 4px; font-size: 13px; }
-  section.block { padding: 50px 0; }
-  .block h2 { font-size: 20px; }
-  .block p { font-size: 14px; line-height: 1.5; }
-  footer { padding: 24px 14px; }
-  .footer-inner { flex-direction: column; gap: 10px; }
-}
+  @media (max-width: 720px) {
+    .container { padding: 0 20px; }
+    .hero h1 { font-size: 32px; }
+    .hero p.lead { font-size: 16px; }
+    .hero-art { width: 100%; max-width: 360px; }
+    section.block { padding: 60px 0; }
+    .block h2 { font-size: 22px; }
+    .block p { font-size: 15px; }
+    .block .container { padding-left: 20px; padding-right: 20px; }
+  }
+
+  @media (max-width: 480px) {
+    .hero { padding: 50px 0; }
+    .hero h1 { font-size: 26px; }
+    .hero p.lead { font-size: 15px; }
+    .hero-art { width: 100%; border-radius: 16px; }
+    .meta { flex-direction: column; gap: 4px; font-size: 13px; }
+    section.block { padding: 50px 0; }
+    .block h2 { font-size: 20px; }
+    .block p { font-size: 14px; line-height: 1.5; }
+    footer { padding: 24px 14px; }
+    .footer-inner { flex-direction: column; gap: 10px; }
+    .block .container { padding-left: 18px; padding-right: 18px; }
+    /* tighten list padding a bit on very small screens */
+    .block ul, .block ol { padding-left: .9rem; }
+  }
 </style>
 </head>
 
@@ -202,8 +224,8 @@ header {
 <header>
   <a href="home.html" class="brand" aria-label="Go to Home">
     <div class="logo">
-  <img src="assets/images/logo.svg" alt="bndlabs logo">
-</div>
+      <img src="assets/images/logo.svg" alt="bndlabs logo">
+    </div>
   </a>
   <nav class="nav">
     <a href="home.html">Home</a>
@@ -267,13 +289,18 @@ header {
 document.getElementById('menuToggle').addEventListener('click',()=>{
   document.querySelector('.nav').classList.toggle('active');
 });
-</script>
 
-<script>
+/*
+  Section builder logic:
+  - Each "h2" item starts a new section
+  - Everything after that (p, img, lists, raw HTML, etc.) is grouped into the same section
+  - If there are items before the first h2, they will be placed into an initial section
+*/
 (async()=>{
   const params = new URLSearchParams(location.search);
   const id = params.get('id');
   const container = document.getElementById('sections');
+  const more = document.getElementById('moreGrid');
 
   try {
     const res = await fetch('https://bndlabs-backend.onrender.com/api/projects');
@@ -283,7 +310,6 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
 
     const project = projects.find(p => String(p.id) === String(id)) || projects[0];
 
-    // set hero/meta
     setText('#proj_title', project.title);
     setText('#proj_desc', project.desc);
     setText('#proj_tag', project.tag);
@@ -292,6 +318,7 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
 
     const items = Array.isArray(project.sections) ? project.sections : [];
 
+    // if no items, show placeholder
     if (!items.length) {
       container.innerHTML = `
         <section class="block grey">
@@ -299,66 +326,71 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
             No sections yet.
           </div>
         </section>`;
-      return;
-    }
-
-    // --- Build sections so that all content stays in the current section until a new H2 appears.
-    let block = document.createElement('section');
-    block.className = 'block';
-    let html = '';
-    let hasContent = false;
-
-    items.forEach(sec => {
-      const t = (sec.type || '').toLowerCase();
-      if (t === 'h2') {
-        // If current block already has content, append it before starting a new section
-        if (hasContent) {
-          block.innerHTML = `<div class="container">${html}</div>`;
-          container.appendChild(block);
-          // new block
-          block = document.createElement('section');
-          block.className = 'block';
-          html = '';
-          hasContent = false;
-        }
-        // Start new block content with this h2
-        html += `<h2>${sec.value || ''}</h2>`;
-        hasContent = true;
-      } else if (t === 'p') {
-        html += `<p>${sec.value || ''}</p>`;
-        hasContent = true;
-      } else if (t === 'img') {
-        html += `<img src="${(sec.value || '')}" alt="">`;
-        hasContent = true;
-      } else {
-        // fallback — include any other types raw
-        html += (sec.value || '');
-        if (sec.value) hasContent = true;
-      }
-    });
-
-    // Append last block if it has content
-    if (hasContent) {
-      block.innerHTML = `<div class="container">${html}</div>`;
-      container.appendChild(block);
-    }
-
-    // Optionally: render "more" grid (keeps existing behavior if you have js/render.js)
-    if (typeof window.renderMore === 'function') {
-      try { window.renderMore(projects, document.getElementById('moreGrid')); } catch(e) {}
     } else {
-      // simple fallback: show latest 3 excluding current
-      const moreEl = document.getElementById('moreGrid');
-      if (moreEl) {
-        const others = projects.filter(p => p.id !== project.id).slice(0,3);
-        moreEl.innerHTML = others.map(o=>`
-          <div class="more-item">
-            <img src="${o.hero||''}" alt="">
-            <div class="p"><h3>${o.title||''}</h3><small>${o.tag||''}</small></div>
-          </div>
-        `).join('');
+      // builder state
+      let currentBlock = null;
+      let currentHtml = '';
+
+      function flushBlock() {
+        if (!currentBlock) return;
+        currentBlock.innerHTML = `<div class="container">${currentHtml}</div>`;
+        container.appendChild(currentBlock);
+        currentBlock = null;
+        currentHtml = '';
       }
+
+      items.forEach(sec => {
+        // normalize type to lower-case (just in case)
+        const t = (sec.type || '').toString().toLowerCase();
+
+        if (t === 'h2') {
+          // starting a new section
+          // if we already building one, flush it first
+          if (currentBlock) flushBlock();
+
+          currentBlock = document.createElement('section');
+          currentBlock.className = 'block';
+          currentHtml = `<h2>${sec.value || ''}</h2>`;
+          return;
+        }
+
+        // if no currentBlock yet (no h2 seen), create an initial block
+        if (!currentBlock) {
+          currentBlock = document.createElement('section');
+          currentBlock.className = 'block';
+          currentHtml = '';
+        }
+
+        // now append the current item into currentHtml
+        if (t === 'p') {
+          currentHtml += `<p>${sec.value || ''}</p>`;
+        } else if (t === 'img') {
+          // allow either direct URL or dataURI
+          currentHtml += `<img src="${sec.value || ''}" alt="">`;
+        } else if (t === 'raw' || t === 'html' || t === 'div') {
+          // if CMS stored a block of HTML (lists, custom markup), insert as-is
+          currentHtml += sec.value || '';
+        } else {
+          // default: append value as raw text/HTML
+          currentHtml += sec.value || '';
+        }
+      });
+
+      // flush last block if any
+      flushBlock();
     }
+
+    // render "more" grid
+    const others = projects.filter(p => String(p.id) !== String(project.id)).slice(0,6);
+    more.innerHTML = others.map(o => `
+      <a class="more-item" href="portfolio-details.html?id=${o.id}">
+        <img src="${o.hero || ''}" alt="${o.title || ''}">
+        <div class="p">
+          <h3>${o.title || ''}</h3>
+          <small>${o.tag || ''}</small>
+        </div>
+      </a>
+    `).join('');
 
   } catch (err) {
     console.error(err);
@@ -371,7 +403,90 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
 
 <script src="js/data.js"></script>
 <script src="js/render.js"></script>
+<script>
+(function(){
+  const MARKER = '/*__CLEAN_URLS_INJECTED__*/';
+  if (window.__CLEAN_URLS_INJECTED) return;
+  window.__CLEAN_URLS_INJECTED = true;
 
-<!-- keep your clean-URL scripts unchanged (omitted here for brevity) -->
+  document.addEventListener("DOMContentLoaded", () => {
+    try {
+      const links = document.querySelectorAll("a[href]");
+      links.forEach(link => {
+        let href = link.getAttribute("href");
+        if (!href) return;
+        if (/^(https?:|\/\/|#|mailto:|javascript:)/i.test(href)) return;
+        if (href.match(/\.html?$|\/index\.html?$/i)) {
+          const parts = href.split(/(#|\?)/);
+          const main = parts[0].replace(/index\.html?$/i, '').replace(/\.html?$/i, '');
+          const tail = parts.slice(1).join('');
+          let clean = main || '/';
+          if (!clean.startsWith('/')) clean = '/' + clean;
+          if (tail) clean += tail;
+          link.setAttribute('href', clean);
+        }
+      });
+    } catch (err) {
+      console.warn('Clean URL script error:', err);
+    }
+  });
+})();
+ /*__CLEAN_URLS_INJECTED__*/ 
+</script>
+<script>
+// Wait until the page is fully ready
+setTimeout(() => {
+
+    function forceCleanLinks() {
+        const links = document.querySelectorAll("a[href]");
+
+        links.forEach(link => {
+            let href = link.getAttribute("href");
+            if (!href) return;
+
+            // Convert Node.js URL objects / absolute URLs to plain string
+            href = String(href);
+
+            // Skip external sites EXCEPT your own domain
+            if (/^(https?:\/\/)/i.test(href)) {
+                // Allow your own domain
+                if (!href.includes("bndlabs-frontend.onrender.com")) return;
+            }
+
+            // Remove domain so we can treat it like a relative link
+            href = href.replace("https://bndlabs-frontend.onrender.com", "");
+            href = href.replace("http://bndlabs-frontend.onrender.com", "");
+
+            // Skip hashes, mailto, js functions
+            if (/^(#|mailto:|javascript:)/i.test(href)) return;
+
+            // Only convert .html links
+            if (href.match(/\.html?$|\/index\.html?$/i)) {
+                const parts = href.split(/(#|\?)/);
+                const main = parts[0]
+                    .replace(/index\.html?$/i, "")
+                    .replace(/\.html?$/i, "");
+                const tail = parts.slice(1).join("");
+
+                let clean = main || "/";
+                clean = String(clean);
+
+                if (!clean.startsWith("/")) clean = "/" + clean;
+                if (tail) clean += tail;
+
+                link.setAttribute("href", clean);
+            }
+        });
+    }
+
+    // Run immediately
+    forceCleanLinks();
+
+    // Watch for any DOM changes (menus opening, CMS content loading, etc.)
+    const obs = new MutationObserver(forceCleanLinks);
+    obs.observe(document.body, { childList: true, subtree: true });
+
+}, 300);
+</script>
 </body>
 </html>
