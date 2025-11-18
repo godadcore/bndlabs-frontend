@@ -312,9 +312,7 @@ modalBg.addEventListener("click", (e) => {
 });
 
 // ==== CONFIG =====
-const token = sessionStorage.getItem("bnd_token") || "";
-console.log("Token:", token);
-
+// No login / token required for admin messages
 const API_BASE = "https://orca-app-sf2v6.ondigitalocean.app/api";
 let currentPage = 1;
 let limit = 20;
@@ -326,13 +324,12 @@ async function loadMessages(page = 1) {
   currentPage = page;
 
   try {
-    const res = await fetch(`${API_BASE}/messages/paginated?page=${page}&limit=${limit}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`, // Still included
-      },
-    });
+   const res = await fetch(`${API_BASE}/messages/paginated?page=${page}&limit=${limit}`, {
+  method: "GET",
+  headers: {
+    "Content-Type": "application/json"
+  },
+});
 
     if (!res.ok) throw new Error("Unauthorized or fetch error");
 
@@ -423,14 +420,13 @@ window.viewMsg = (id) => {
 // === MARK READ ====
 window.markRead = async (id) => {
   try {
-    await fetch(`${API_BASE}/messages/mark-read`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-      body: JSON.stringify({ id }),
-    });
+await fetch(`${API_BASE}/messages/mark-read`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({ id }),
+});
     loadMessages(1);
   } catch (e) {
     console.error("Mark read error", e);
@@ -442,14 +438,13 @@ window.deleteMsg = async (id) => {
   if (!confirm("Delete this message permanently?")) return;
 
   try {
-    await fetch(`${API_BASE}/messages/delete`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-      body: JSON.stringify({ id }),
-    });
+ await fetch(`${API_BASE}/messages/delete`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({ id }),
+});
     loadMessages(1);
   } catch (e) {
     console.error("Delete error", e);
