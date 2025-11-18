@@ -235,9 +235,10 @@ header {
   overflow: hidden;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* IMPORTANT: start, not center */
   gap: 14px;
 }
+
 
 .carousel-item {
   flex: 0 0 calc(33.333% - 10px); /* desktop default */
