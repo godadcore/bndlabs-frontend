@@ -312,10 +312,8 @@ modalBg.addEventListener("click", (e) => {
 });
 
 // ==== CONFIG =====
-const token =
-  localStorage.getItem("auth_token") ||
-  localStorage.getItem("token") ||
-  ""; // Token is used silently, no alert or redirect
+const token = sessionStorage.getItem("bnd_token") || "";
+console.log("Token:", token);
 
 const API_BASE = "https://orca-app-sf2v6.ondigitalocean.app/api";
 let currentPage = 1;
