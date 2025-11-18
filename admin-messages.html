@@ -300,16 +300,6 @@ main{padding-top:100px;}
 </div>
 
 <script>
-const token =
-  localStorage.getItem("auth_token") ||
-  localStorage.getItem("token") ||
-  "";
-
-if (!token) {
-  alert("Session expired. Please log in again.");
-  window.location.href = "/admin"; // Redirect to login
-}
-
 const menuToggle = document.getElementById("menuToggle");
 const nav = document.querySelector(".nav");
 menuToggle.addEventListener("click", () => nav.classList.toggle("active"));
@@ -322,6 +312,11 @@ modalBg.addEventListener("click", (e) => {
 });
 
 // ==== CONFIG =====
+const token =
+  localStorage.getItem("auth_token") ||
+  localStorage.getItem("token") ||
+  ""; // Token is used silently, no alert or redirect
+
 const API_BASE = "https://orca-app-sf2v6.ondigitalocean.app/api";
 let currentPage = 1;
 let limit = 20;
@@ -337,7 +332,7 @@ async function loadMessages(page = 1) {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
+        "Authorization": `Bearer ${token}`, // Still included
       },
     });
 
@@ -444,7 +439,7 @@ window.markRead = async (id) => {
   }
 };
 
-// === DELETE ==== 
+// === DELETE ====
 window.deleteMsg = async (id) => {
   if (!confirm("Delete this message permanently?")) return;
 
@@ -475,36 +470,6 @@ document.getElementById("filterSelect").addEventListener("change", render);
 
 // === INITIAL LOAD ===
 loadMessages();
-</script>
-<script>
-(function(){
-  const MARKER = '/*__CLEAN_URLS_INJECTED__*/';
-  if (window.__CLEAN_URLS_INJECTED) return;
-  window.__CLEAN_URLS_INJECTED = true;
-
-  document.addEventListener("DOMContentLoaded", () => {
-    try {
-      const links = document.querySelectorAll("a[href]");
-      links.forEach(link => {
-        let href = link.getAttribute("href");
-        if (!href) return;
-        if (/^(https?:|\/\/|#|mailto:|javascript:)/i.test(href)) return;
-        if (href.match(/\.html?$|\/index\.html?$/i)) {
-          const parts = href.split(/(#|\?)/);
-          const main = parts[0].replace(/index\.html?$/i, '').replace(/\.html?$/i, '');
-          const tail = parts.slice(1).join('');
-          let clean = main || '/';
-          if (!clean.startsWith('/')) clean = '/' + clean;
-          if (tail) clean += tail;
-          link.setAttribute('href', clean);
-        }
-      });
-    } catch (err) {
-      console.warn('Clean URL script error:', err);
-    }
-  });
-})();
- /*__CLEAN_URLS_INJECTED__*/ 
 </script>
 <script>
 // Wait until the page is fully ready
