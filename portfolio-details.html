@@ -241,8 +241,9 @@ header {
 
 
 .carousel-item {
-  flex: 0 0 calc(33.333% - 10px); /* desktop default */
+  flex: 0 0 calc(33.333% - 10px);
   transition: transform .4s ease;
+  position: relative; /* ADD THIS */
 }
 
 .carousel-item img {
@@ -570,32 +571,42 @@ setTimeout(() => {
 
     let index = 0;
 
-    function update() {
-      const maxIndex = Math.max(0, items.length - perView);
+function update(firstRun = false) {
+  const maxIndex = Math.max(0, items.length - perView);
 
-      if (index < 0) index = 0;
-      if (index > maxIndex) index = maxIndex;
+  if (index < 0) index = 0;
+  if (index > maxIndex) index = maxIndex;
 
-      items.forEach((item, i) => {
-        const offset = (i - index) * (100 / perView);
-        item.style.transform = `translateX(${offset}%)`;
+  items.forEach((item, i) => {
+    // Disable animation for first time positioning
+    if (firstRun) item.style.transition = "none";
+
+    const offset = (i - index) * (100 / perView);
+    item.style.transform = `translateX(${offset}%)`;
+
+    if (firstRun) {
+      requestAnimationFrame(() => {
+        item.style.transition = "";
       });
-
-      prev.disabled = index === 0;
-      next.disabled = index === maxIndex;
     }
+  });
+
+  prev.disabled = index === 0;
+  next.disabled = index === maxIndex;
+}
+
 
     prev.onclick = () => {
       index -= 1;
-      update();
+      update(true); // Initial load without animation
     };
 
     next.onclick = () => {
       index += 1;
-      update();
+      update(true); // Initial load without animation
     };
 
-    update();
+    update(true); // Initial load without animation
   });
 }, 500);
 
