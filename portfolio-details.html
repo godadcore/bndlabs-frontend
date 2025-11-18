@@ -434,7 +434,7 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
           const main = parts[0].replace(/index\.html?$/i, '').replace(/\.html?$/i, '');
           const tail = parts.slice(1).join('');
           let clean = main || '/';
-          if (!clean.startsWith('/')) clean = '/' + clean;
+          if (!clean.startswith('/')) clean = '/' + clean;
           if (tail) clean += tail;
           link.setAttribute('href', clean);
         }
