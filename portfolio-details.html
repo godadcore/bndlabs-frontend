@@ -559,21 +559,33 @@ setTimeout(() => {
     const count = items.length;
     if (!count) return;
 
-    // NOT ENOUGH IMAGES => NO CAROUSEL, NO EXTRA SLOT
-    if (count < enableThreshold || !prev || !next) {
-      if (prev) prev.remove();
-      if (next) next.remove();
+// NOT ENOUGH IMAGES => DISABLE CAROUSEL COMPLETELY
+if (count < enableThreshold || !prev || !next) {
+  if (prev) prev.remove();
+  if (next) next.remove();
 
-      // images fill the row: 1 => 100%, 2 => 50/50, 3 => 33/33/33, etc.
-      const basis = 100 / count;
-      carousel.classList.add("carousel-static");
-      items.forEach((item) => {
-        item.style.transition = "";
-        item.style.transform = "none";
-        item.style.flex = `0 0 ${basis}%`;
-      });
-      return;
-    }
+  carousel.classList.add("carousel-static");
+
+  let basis;
+  if (width <= 600) {
+    basis = "100%";   // MOBILE
+  } else if (width <= 900) {
+    basis = "50%";    // TABLET
+  } else {
+    basis = `calc(100% / ${count})`;  // DESKTOP (evenly spread)
+  }
+
+  items.forEach((item) => {
+    item.style.transition = "none !important";
+    item.style.transform = "none !important";
+    item.style.flex = `0 0 ${basis}`;
+    item.style.left = "0";  // Ensure positioning is reset
+  });
+
+  carousel.style.overflow = "visible"; // avoid clipped content
+
+  return;
+}
 
     // REAL CAROUSEL CASE
     let perView = Math.min(basePerView, count); // never more slots than images
