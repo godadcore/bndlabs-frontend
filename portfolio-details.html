@@ -308,7 +308,16 @@ header {
     flex: 0 0 100%;
   }
 }
+.carousel-track {
+  display: flex;
+  transition: transform .4s ease;
+  width: 100%;
+}
 
+.carousel:not(.carousel-static) .carousel-item {
+  flex: 0 0 100%;
+  transform: none !important;
+}
 </style>
 </head>
 
@@ -432,19 +441,21 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
           currentHtml += `<img src="${imageBuffer[0]}" alt="">`;
         } else {
           // 2+ images: they MAY become a carousel (JS will decide per viewport)
-          currentHtml += `
-            <div class="carousel">
-              ${imageBuffer
-                .map(
-                  (src) => `
-                <div class="carousel-item">
+currentHtml += `
+  <div class="carousel">
+      <div class="carousel-track">
+          ${imageBuffer
+            .map(
+              (src) => `
+              <div class="carousel-item">
                   <img src="${src}" alt="">
-                </div>`
-                )
-                .join("")}
-              <button class="carousel-nav prev" disabled>&larr;</button>
-              <button class="carousel-nav next">&rarr;</button>
-            </div>`;
+              </div>`
+            )
+            .join("")}
+      </div>
+      <button class="carousel-nav prev" disabled>&larr;</button>
+      <button class="carousel-nav next">&rarr;</button>
+  </div>`;
         }
 
         imageBuffer = [];
@@ -584,7 +595,6 @@ if (count < enableThreshold || !prev || !next) {
   }
 
   items.forEach((item) => {
-    item.style.transition = "none !important";
     item.style.transform = "none !important";
     item.style.flex = `0 0 ${basis}`;
     item.style.left = "0";  // Ensure positioning is reset
@@ -604,19 +614,16 @@ if (count < enableThreshold || !prev || !next) {
 
       if (index < 0) index = 0;
       if (index > maxIndex) index = maxIndex;
+const track = carousel.querySelector(".carousel-track");
+if (firstRun) track.style.transition = "none";
 
-      items.forEach((item, i) => {
-        if (firstRun) item.style.transition = "none";
+track.style.transform = `translateX(-${index * 100}%)`;
 
-        const offset = (i - index) * (100 / perView);
-        item.style.transform = `translateX(${offset}%)`;
-
-        if (firstRun) {
-          requestAnimationFrame(() => {
-            item.style.transition = "";
-          });
-        }
-      });
+if (firstRun) {
+  requestAnimationFrame(() => {
+    track.style.transition = "";
+  });
+}
 
       prev.disabled = index === 0;
       next.disabled = index === maxIndex;
