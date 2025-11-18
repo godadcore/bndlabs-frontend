@@ -282,6 +282,16 @@ header {
 
 .carousel-nav.prev { left: 6px; }
 .carousel-nav.next { right: 6px; }
+/* when we decide "no carousel" in JS, we use this class */
+.carousel-static {
+  justify-content: center;
+  overflow: visible;
+}
+
+.carousel-static .carousel-item {
+  flex: 0 0 calc(50% - 12px);
+  transform: none !important;
+}
 
 /* RESPONSIVE BEHAVIOR */
 @media (max-width: 900px) {
@@ -373,27 +383,27 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
   Section builder logic:
   - Each "h2" item starts a new section
   - Everything after that (p, img, lists, raw HTML, etc.) is grouped into the same section
-  - If there are items before the first h2, they will be placed into an initial section
+  - Consecutive IMG items are grouped together; we decide later if they become a carousel
 */
-(async()=>{
+(async () => {
   const params = new URLSearchParams(location.search);
-  const id = params.get('id');
-  const container = document.getElementById('sections');
-  const more = document.getElementById('moreGrid');
+  const id = params.get("id");
+  const container = document.getElementById("sections");
+  const more = document.getElementById("moreGrid");
 
   try {
-    const res = await fetch('https://orca-app-sf2v6.ondigitalocean.app/api/projects');
+    const res = await fetch("https://orca-app-sf2v6.ondigitalocean.app/api/projects");
     const data = await res.json();
     const projects = Array.isArray(data) ? data : Object.values(data || {});
     if (!projects.length) return;
 
-    const project = projects.find(p => String(p.id) === String(id)) || projects[0];
+    const project = projects.find((p) => String(p.id) === String(id)) || projects[0];
 
-    setText('#proj_title', project.title);
-    setText('#proj_desc', project.desc);
-    setText('#proj_tag', project.tag);
-    setText('#proj_date', project.date);
-    setSrc('#proj_image', project.hero);
+    setText("#proj_title", project.title);
+    setText("#proj_desc", project.desc);
+    setText("#proj_tag", project.tag);
+    setText("#proj_date", project.date);
+    setSrc("#proj_image", project.hero);
 
     const items = Array.isArray(project.sections) ? project.sections : [];
 
@@ -408,113 +418,182 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
     } else {
       // builder state
       let currentBlock = null;
-      let currentHtml = '';
+      let currentHtml = "";
+      let imageBuffer = [];
+
+      function flushImages() {
+        if (!imageBuffer.length) return;
+
+        // ONE image: plain image
+        if (imageBuffer.length === 1) {
+          currentHtml += `<img src="${imageBuffer[0]}" alt="">`;
+        } else {
+          // 2+ images: they MAY become a carousel (JS will decide per viewport)
+          currentHtml += `
+            <div class="carousel">
+              ${imageBuffer
+                .map(
+                  (src) => `
+                <div class="carousel-item">
+                  <img src="${src}" alt="">
+                </div>`
+                )
+                .join("")}
+              <button class="carousel-nav prev" disabled>&larr;</button>
+              <button class="carousel-nav next">&rarr;</button>
+            </div>`;
+        }
+
+        imageBuffer = [];
+      }
 
       function flushBlock() {
         if (!currentBlock) return;
+        // make sure any pending images are placed before closing this block
+        flushImages();
         currentBlock.innerHTML = `<div class="container">${currentHtml}</div>`;
         container.appendChild(currentBlock);
         currentBlock = null;
-        currentHtml = '';
+        currentHtml = "";
       }
 
-      items.forEach(sec => {
-        // normalize type to lower-case (just in case)
-        const t = (sec.type || '').toString().toLowerCase();
+      items.forEach((sec) => {
+        const t = (sec.type || "").toString().toLowerCase();
 
-        if (t === 'h2') {
-          // starting a new section
-          // if we already building one, flush it first
-          if (currentBlock) flushBlock();
+        if (t === "h2") {
+          // close previous block (and any image group) first
+          flushBlock();
 
-          currentBlock = document.createElement('section');
-          currentBlock.className = 'block';
-          currentHtml = `<h2>${sec.value || ''}</h2>`;
+          currentBlock = document.createElement("section");
+          currentBlock.className = "block";
+          currentHtml = `<h2>${sec.value || ""}</h2>`;
           return;
         }
 
-        // if no currentBlock yet (no h2 seen), create an initial block
+        // if we don't have any block yet, start the first one
         if (!currentBlock) {
-          currentBlock = document.createElement('section');
-          currentBlock.className = 'block';
-          currentHtml = '';
+          currentBlock = document.createElement("section");
+          currentBlock.className = "block";
+          currentHtml = "";
         }
 
-        // now append the current item into currentHtml
-        if (t === 'p') {
-          currentHtml += `<p>${sec.value || ''}</p>`;
-        } else if (t === 'img') {
-  // Handle carousel grouping
-  if (!window.__tempImages) window.__tempImages = [];
-  window.__tempImages.push(sec.value || '');
-}
-         else if (t === 'raw' || t === 'html' || t === 'div') {
-          // if CMS stored a block of HTML (lists, custom markup), insert as-is
-          currentHtml += sec.value || '';
+        if (t === "img") {
+          // just collect URLs; we'll render them together later
+          imageBuffer.push(sec.value || "");
+          return;
+        }
+
+        // any non-image breaks an image group
+        flushImages();
+
+        if (t === "p") {
+          currentHtml += `<p>${sec.value || ""}</p>`;
+        } else if (t === "raw" || t === "html" || t === "div") {
+          currentHtml += sec.value || "";
         } else {
-          // default: append value as raw text/HTML
-          currentHtml += sec.value || '';
+          currentHtml += sec.value || "";
         }
       });
-// After collecting images
-if (window.__tempImages && window.__tempImages.length) {
-  if (window.__tempImages.length >= 2) {
-    currentHtml += `
-      <div class="carousel">
-        ${window.__tempImages.map(src => `
-          <div class="carousel-item"><img src="${src}" alt=""></div>
-        `).join('')}
-        <button class="carousel-nav prev" disabled>&larr;</button>
-        <button class="carousel-nav next">&rarr;</button>
-      </div>`;
-  } else {
-    // Single image (no carousel)
-    currentHtml += `<img src="${window.__tempImages[0]}" alt="">`;
-  }
-  window.__tempImages = [];
-}
 
-      // flush last block if any
+      // flush last images and last block
       flushBlock();
     }
 
     // render "more" grid
-    const others = projects.filter(p => String(p.id) !== String(project.id)).slice(0,6);
-    more.innerHTML = others.map(o => `
+    const others = projects.filter((p) => String(p.id) !== String(project.id)).slice(0, 6);
+    more.innerHTML = others
+      .map(
+        (o) => `
       <a class="more-item" href="portfolio-details?id=${o.id}">
-        <img src="${o.hero || ''}" alt="${o.title || ''}">
+        <img src="${o.hero || ""}" alt="${o.title || ""}">
         <div class="p">
-          <h3>${o.title || ''}</h3>
-          <small>${o.tag || ''}</small>
+          <h3>${o.title || ""}</h3>
+          <small>${o.tag || ""}</small>
         </div>
-      </a>
-    `).join('');
+      </a>`
+      )
+      .join("");
 
   } catch (err) {
     console.error(err);
   }
 
-  function setText(sel, val){const el=document.querySelector(sel);if(el)el.textContent=val||'';}
-  function setSrc(sel, val){const el=document.querySelector(sel);if(el)el.src=val||'';}
+  function setText(sel, val) {
+    const el = document.querySelector(sel);
+    if (el) el.textContent = val || "";
+  }
+  function setSrc(sel, val) {
+    const el = document.querySelector(sel);
+    if (el) el.src = val || "";
+  }
 })();
-
+// Carousel behaviour:
+// - Desktop (>900px): show 3 at a time, enable carousel only if 4+ images
+// - Tablet (601–900px): show 2 at a time, enable carousel only if 3+ images
+// - Mobile (<=600px): show 1 at a time, enable carousel only if 2+ images
 setTimeout(() => {
-  document.querySelectorAll('.carousel').forEach(carousel => {
-    const items = carousel.querySelectorAll('.carousel-item');
-    const prev = carousel.querySelector('.carousel-nav.prev');
-    const next = carousel.querySelector('.carousel-nav.next');
+  const width = window.innerWidth;
+
+  let perView;
+  let minCount;
+
+  if (width <= 600) {
+    perView = 1;
+    minCount = 2;
+  } else if (width <= 900) {
+    perView = 2;
+    minCount = 3;
+  } else {
+    perView = 3;
+    minCount = 4;
+  }
+
+  document.querySelectorAll(".carousel").forEach((carousel) => {
+    const items = carousel.querySelectorAll(".carousel-item");
+    const prev = carousel.querySelector(".carousel-nav.prev");
+    const next = carousel.querySelector(".carousel-nav.next");
+
+    if (!items.length) return;
+
+    // Not enough images for carousel on this screen size:
+    // remove buttons & keep images nicely centered
+    if (!prev || !next || items.length < minCount) {
+      if (prev) prev.remove();
+      if (next) next.remove();
+      carousel.classList.add("carousel-static");
+      items.forEach((item) => {
+        item.style.transform = "";
+      });
+      return;
+    }
+
     let index = 0;
 
     function update() {
+      const maxIndex = Math.max(0, items.length - perView);
+
+      if (index < 0) index = 0;
+      if (index > maxIndex) index = maxIndex;
+
       items.forEach((item, i) => {
-        item.style.transform = `translateX(${(i - index) * 100}%)`;
+        const offset = (i - index) * (100 / perView);
+        item.style.transform = `translateX(${offset}%)`;
       });
+
       prev.disabled = index === 0;
-      next.disabled = index === items.length - 3; // desktop threshold
+      next.disabled = index === maxIndex;
     }
 
-    prev.onclick = () => { index--; update(); };
-    next.onclick = () => { index++; update(); };
+    prev.onclick = () => {
+      index -= 1;
+      update();
+    };
+
+    next.onclick = () => {
+      index += 1;
+      update();
+    };
+
     update();
   });
 }, 500);
