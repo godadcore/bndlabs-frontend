@@ -481,10 +481,18 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
         }
 
         if (t === "img") {
-          // just collect URLs; we'll render them together later
-          imageBuffer.push(sec.value || "");
-          return;
-        }
+  // clean the value coming from CMS
+  const src = (sec.value || "").trim();
+
+  // if CMS image URL is empty, IGNORE this slot completely
+  if (!src) {
+    return;
+  }
+
+  // only real images get into the group
+  imageBuffer.push(src);
+  return;
+}
 
         // any non-image breaks an image group
         flushImages();
