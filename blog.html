@@ -219,7 +219,7 @@ if(menuToggle) menuToggle.addEventListener("click",()=>nav.classList.toggle("act
     blogs.forEach(post=>{
       const card=document.createElement('a');
       card.className='blog-card';
-      card.href=`blog-details.html?id=${encodeURIComponent(post.id)}`;
+      card.href=`blog-details?id=${encodeURIComponent(post.id)}`;
       card.innerHTML=`
         <img src="${escapeAttr(post.hero||'')}" alt="">
         <div class="blog-card-content">

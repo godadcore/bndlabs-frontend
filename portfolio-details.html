@@ -396,7 +396,7 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
     // render "more" grid
     const others = projects.filter(p => String(p.id) !== String(project.id)).slice(0,6);
     more.innerHTML = others.map(o => `
-      <a class="more-item" href="portfolio-details.html?id=${o.id}">
+      <a class="more-item" href="portfolio-details?id=${o.id}">
         <img src="${o.hero || ''}" alt="${o.title || ''}">
         <div class="p">
           <h3>${o.title || ''}</h3>

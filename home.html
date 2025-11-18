@@ -312,7 +312,7 @@ async function loadProjects() {
     const grid = document.getElementById('projectsGrid');
     const latest = projects.slice(0, 3);
     grid.innerHTML = latest.map(p => `
-      <a href="${p.link || `portfolio-details.html?id=${encodeURIComponent(p.id||'')}`}" class="project-card">
+      <a href="${p.link || `portfolio-details?id=${encodeURIComponent(p.id||'')}`}" class="project-card">
         <img src="${p.hero || ''}" alt="${p.title || ''}">
         <div class="project-content">
           <h3>${p.title || 'Untitled Project'}</h3>

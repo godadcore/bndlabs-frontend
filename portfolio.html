@@ -157,7 +157,7 @@ document.addEventListener("click",e=>{if(!nav.contains(e.target)&&!menuToggle.co
       const card=document.createElement('div');
       card.className='portfolio-item';
       card.innerHTML=`
-        <a href="portfolio-details.html?id=${encodeURIComponent(proj.id||'')}">
+        <a href="portfolio-details?id=${encodeURIComponent(proj.id||'')}">
           <img src="${proj.hero||'https://via.placeholder.com/800x500?text=No+Image'}" alt="${proj.title||'Project'}">
           <div class="portfolio-content">
             <h3>${proj.title||'Untitled Project'}</h3>

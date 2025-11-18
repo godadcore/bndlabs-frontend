@@ -293,7 +293,7 @@
         const recent = blogs.filter(p => String(p.id) !== String(post.id)).slice(0, 4);
         if (recent.length) {
           recentWrap.style.display = 'block';
-          recentList.innerHTML = recent.map(p => `<li class="reveal"><a href="blog.html?id=${encodeURIComponent(p.id)}">${escapeHtml(p.title || '')}</a></li>`).join('');
+          recentList.innerHTML = recent.map(p => `<li class="reveal"><a href="blog?id=${encodeURIComponent(p.id)}">${escapeHtml(p.title || '')}</a></li>`).join('');
         }
 
         const observer = new IntersectionObserver(entries => {

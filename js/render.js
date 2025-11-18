@@ -218,7 +218,7 @@
                 const hero = p.hero || p.image || "";
                 const title = p.title || "";
                 const tag = p.tag || p.category || "";
-                return `<a class="card" href="portfolio-details.html?id=${encodeURIComponent(id)}"><img loading="lazy" src="${escapeAttr(hero)}" alt=""><div class="t">${escapeHtml(title)}</div><div class="tag">${escapeHtml(tag)}</div></a>`;
+                return `<a class="card" href="portfolio-details?id=${encodeURIComponent(id)}"><img loading="lazy" src="${escapeAttr(hero)}" alt=""><div class="t">${escapeHtml(title)}</div><div class="tag">${escapeHtml(tag)}</div></a>`;
               })
               .join("");
           } catch (e) {
@@ -239,7 +239,7 @@
                 const hero = b.hero || b.image || "";
                 const title = b.title || "";
                 const subtitle = b.subtitle || b.sub || "";
-                return `<a class="post" href="blog-details.html?id=${encodeURIComponent(id)}"><img loading="lazy" src="${escapeAttr(hero)}" alt=""><div class="t">${escapeHtml(title)}</div><div class="sub">${escapeHtml(subtitle)}</div></a>`;
+                return `<a class="post" href="blog-details?id=${encodeURIComponent(id)}"><img loading="lazy" src="${escapeAttr(hero)}" alt=""><div class="t">${escapeHtml(title)}</div><div class="sub">${escapeHtml(subtitle)}</div></a>`;
               })
               .join("");
           } catch (e) {
