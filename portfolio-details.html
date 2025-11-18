@@ -529,25 +529,25 @@ document.getElementById('menuToggle').addEventListener('click',()=>{
     if (el) el.src = val || "";
   }
 })();
-// Carousel behaviour:
-// - Desktop (>900px): show 3 at a time, enable carousel only if 4+ images
-// - Tablet (601–900px): show 2 at a time, enable carousel only if 3+ images
-// - Mobile (<=600px): show 1 at a time, enable carousel only if 2+ images
+// Carousel behaviour with strict rules:
+// Desktop: carousel only if 4+ images
+// Tablet:  carousel only if 3+ images
+// Mobile:  carousel only if 2+ images
 setTimeout(() => {
   const width = window.innerWidth;
 
-  let perView;
-  let minCount;
+  let basePerView;     // how many we try to show per screen
+  let enableThreshold; // minimum image count to turn carousel ON
 
   if (width <= 600) {
-    perView = 1;
-    minCount = 2;
+    basePerView = 1;   // mobile: 1 at a time
+    enableThreshold = 2; // need 2+ images for carousel
   } else if (width <= 900) {
-    perView = 2;
-    minCount = 3;
+    basePerView = 2;   // tablet: 2 at a time
+    enableThreshold = 3; // need 3+ images
   } else {
-    perView = 3;
-    minCount = 4;
+    basePerView = 3;   // desktop: 3 at a time
+    enableThreshold = 4; // need 4+ images
   }
 
   document.querySelectorAll(".carousel").forEach((carousel) => {
@@ -555,58 +555,64 @@ setTimeout(() => {
     const prev = carousel.querySelector(".carousel-nav.prev");
     const next = carousel.querySelector(".carousel-nav.next");
 
-    if (!items.length) return;
+    const count = items.length;
+    if (!count) return;
 
-    // Not enough images for carousel on this screen size:
-    // remove buttons & keep images nicely centered
-    if (!prev || !next || items.length < minCount) {
+    // NOT ENOUGH IMAGES => NO CAROUSEL, NO EXTRA SLOT
+    if (count < enableThreshold || !prev || !next) {
       if (prev) prev.remove();
       if (next) next.remove();
+
+      // images fill the row: 1 => 100%, 2 => 50/50, 3 => 33/33/33, etc.
+      const basis = 100 / count;
       carousel.classList.add("carousel-static");
       items.forEach((item) => {
-        item.style.transform = "";
+        item.style.transition = "";
+        item.style.transform = "none";
+        item.style.flex = `0 0 ${basis}%`;
       });
       return;
     }
 
+    // REAL CAROUSEL CASE
+    let perView = Math.min(basePerView, count); // never more slots than images
     let index = 0;
 
-function update(firstRun = false) {
-  const maxIndex = Math.max(0, items.length - perView);
+    function update(firstRun = false) {
+      const maxIndex = Math.max(0, count - perView);
 
-  if (index < 0) index = 0;
-  if (index > maxIndex) index = maxIndex;
+      if (index < 0) index = 0;
+      if (index > maxIndex) index = maxIndex;
 
-  items.forEach((item, i) => {
-    // Disable animation for first time positioning
-    if (firstRun) item.style.transition = "none";
+      items.forEach((item, i) => {
+        if (firstRun) item.style.transition = "none";
 
-    const offset = (i - index) * (100 / perView);
-    item.style.transform = `translateX(${offset}%)`;
+        const offset = (i - index) * (100 / perView);
+        item.style.transform = `translateX(${offset}%)`;
 
-    if (firstRun) {
-      requestAnimationFrame(() => {
-        item.style.transition = "";
+        if (firstRun) {
+          requestAnimationFrame(() => {
+            item.style.transition = "";
+          });
+        }
       });
+
+      prev.disabled = index === 0;
+      next.disabled = index === maxIndex;
     }
-  });
-
-  prev.disabled = index === 0;
-  next.disabled = index === maxIndex;
-}
-
 
     prev.onclick = () => {
       index -= 1;
-      update(true); // Initial load without animation
+      update();
     };
 
     next.onclick = () => {
       index += 1;
-      update(true); // Initial load without animation
+      update();
     };
 
-    update(true); // Initial load without animation
+    // First layout: position slides without weird animation
+    update(true);
   });
 }, 500);
 
