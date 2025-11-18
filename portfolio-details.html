@@ -313,7 +313,18 @@ header {
   transition: transform .4s ease;
   width: 100%;
 }
+/* === ADD THIS FOR DESKTOP SPACING ONLY === */
+@media (min-width: 901px) {
+  /* Apply horizontal spacing only when carousel is enabled */
+  .carousel:not(.carousel-static) .carousel-item {
+    margin-right: 14px; /* Try 14px first. You can increase to 16px if needed. */
+  }
 
+  /* Avoid extra shift on last element */
+  .carousel:not(.carousel-static) .carousel-item:last-child {
+    margin-right: 0;
+  }
+}
 .carousel:not(.carousel-static) .carousel-item {
   flex: 0 0 100%;
   transform: none !important;
