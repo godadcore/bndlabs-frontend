@@ -3,7 +3,7 @@
   // ================================
   //  BASE API URL (backend)
   // ================================
-  const API_BASE = "https://bndlabs-backend.onrender.com/api";
+  const API_BASE = "https://orca-app-sf2v6.ondigitalocean.app/api";
 
   // ================================
   //  AUTH HANDLING (NEW)
