@@ -314,15 +314,19 @@ header {
   width: 100%;
 }
 /* === ADD THIS FOR DESKTOP SPACING ONLY === */
+/* Desktop static mode spacing ONLY */
 @media (min-width: 901px) {
-  /* Apply horizontal spacing only when carousel is enabled */
-  .carousel:not(.carousel-static) .carousel-item {
-    margin-right: 14px; /* Try 14px first. You can increase to 16px if needed. */
+  .carousel.carousel-static .carousel-item {
+    margin-right: 20px; /* Adjust to what looks best (20px recommended initially) */
   }
 
-  /* Avoid extra shift on last element */
-  .carousel:not(.carousel-static) .carousel-item:last-child {
+  .carousel.carousel-static .carousel-item:last-child {
     margin-right: 0;
+  }
+
+  /* Optional centering for 2 images */
+  .carousel.carousel-static {
+    justify-content: center;
   }
 }
 .carousel:not(.carousel-static) .carousel-item {
