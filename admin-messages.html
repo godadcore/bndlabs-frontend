@@ -300,30 +300,50 @@ main{padding-top:100px;}
 </div>
 
 <script>
-const menuToggle=document.getElementById("menuToggle");
-const nav=document.querySelector(".nav");
-menuToggle.addEventListener("click",()=>nav.classList.toggle("active"));
+const token =
+  localStorage.getItem("auth_token") ||
+  localStorage.getItem("token") ||
+  "";
 
-const modalBg=document.getElementById('modalBg');
-const modalContent=document.getElementById('modalContent');
-let selectedMsg=null;
-modalBg.addEventListener('click',e=>{if(e.target===modalBg)modalBg.classList.remove('active');});
+if (!token) {
+  alert("Session expired. Please log in again.");
+  window.location.href = "/admin"; // Redirect to login
+}
 
-// ====== CONFIG ======
+const menuToggle = document.getElementById("menuToggle");
+const nav = document.querySelector(".nav");
+menuToggle.addEventListener("click", () => nav.classList.toggle("active"));
+
+const modalBg = document.getElementById("modalBg");
+const modalContent = document.getElementById("modalContent");
+let selectedMsg = null;
+modalBg.addEventListener("click", (e) => {
+  if (e.target === modalBg) modalBg.classList.remove("active");
+});
+
+// ==== CONFIG =====
 const API_BASE = "https://orca-app-sf2v6.ondigitalocean.app/api";
 let currentPage = 1;
 let limit = 20;
 let allMessages = [];
 let totalMessages = 0;
 
-// ====== LOAD MESSAGES (PAGINATION) ======
+// ==== LOAD MESSAGES (PAGINATION) ====
 async function loadMessages(page = 1) {
   currentPage = page;
 
   try {
-    const res = await fetch(`${API_BASE}/messages/paginated?page=${page}&limit=${limit}`);
-    const data = await res.json();
+    const res = await fetch(`${API_BASE}/messages/paginated?page=${page}&limit=${limit}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+    });
 
+    if (!res.ok) throw new Error("Unauthorized or fetch error");
+
+    const data = await res.json();
     totalMessages = data.total;
 
     if (page === 1) {
@@ -339,70 +359,63 @@ async function loadMessages(page = 1) {
   }
 }
 
-// ====== TOGGLE “LOAD MORE” ======
+// ==== TOGGLE “LOAD MORE” ====
 function toggleLoadMore() {
   const btn = document.getElementById("loadMoreBtn");
-  const loadedCount = allMessages.length;
-
-  if (loadedCount < totalMessages) {
-    btn.style.display = "inline-block";
-  } else {
-    btn.style.display = "none";
-  }
+  btn.style.display = allMessages.length < totalMessages ? "inline-block" : "none";
 }
 
-// BUTTON — LOAD NEXT PAGE
+// Button — load next
 document.getElementById("loadMoreBtn").addEventListener("click", () => {
   loadMessages(currentPage + 1);
 });
 
-// ====== RENDER UI ======
-function render(){
-  const grid=document.getElementById('messageGrid');
-  const unreadCount=document.getElementById('unreadCount');
-  const searchInput=document.getElementById('searchInput');
-  const filterSelect=document.getElementById('filterSelect');
+// ==== RENDER ====
+function render() {
+  const grid = document.getElementById("messageGrid");
+  const unreadCount = document.getElementById("unreadCount");
+  const searchInput = document.getElementById("searchInput");
+  const filterSelect = document.getElementById("filterSelect");
 
   const q = searchInput.value.toLowerCase();
   const f = filterSelect.value;
 
-  const filtered = allMessages.filter(m => {
+  const filtered = allMessages.filter((m) => {
     const match =
       m.name?.toLowerCase().includes(q) ||
       m.email?.toLowerCase().includes(q) ||
       m.message?.toLowerCase().includes(q);
 
-    const pass =
-      f === "all" ||
-      (f === "unread" && !m.read) ||
-      (f === "read" && m.read);
-
+    const pass = f === "all" || (f === "unread" && !m.read) || (f === "read" && m.read);
     return match && pass;
   });
 
-  unreadCount.textContent = `${allMessages.filter(m=>!m.read).length} Unread`;
+  unreadCount.textContent = `${allMessages.filter((m) => !m.read).length} Unread`;
 
-  grid.innerHTML = filtered.map(m => `
-    <div class="card ${!m.read ? 'unread' : ''}">
-      <div class="name"><strong>${m.name || 'No name'}</strong></div>
-      <div class="email">${m.email || ''}</div>
-      <div class="preview">${(m.message || '').slice(0, 80)}...</div>
-      <div class="date">${m.date || ''}</div>
-
-      <div class="card-buttons">
-        <button onclick="viewMsg('${m.id}')">View</button>
-        <button onclick="markRead('${m.id}')">Mark Read</button>
-        <button onclick="deleteMsg('${m.id}')">Delete</button>
-        <button onclick="replyMail('${m.email || ''}')">Reply</button>
+  grid.innerHTML = filtered
+    .map(
+      (m) => `
+      <div class="card ${!m.read ? 'unread' : ''}">
+        <div class="name"><strong>${m.name || 'No name'}</strong></div>
+        <div class="email">${m.email || ''}</div>
+        <div class="preview">${(m.message || '').slice(0, 80)}...</div>
+        <div class="date">${m.date || ''}</div>
+        <div class="card-buttons">
+          <button onclick="viewMsg('${m.id}')">View</button>
+          <button onclick="markRead('${m.id}')">Mark Read</button>
+          <button onclick="deleteMsg('${m.id}')">Delete</button>
+          <button onclick="replyMail('${m.email || ''}')">Reply</button>
+        </div>
       </div>
-    </div>
-  `).join('');
+    `
+    )
+    .join("");
 }
 
-// ====== VIEW MESSAGE ======
+// ==== VIEW MESSAGE ====
 window.viewMsg = (id) => {
-  selectedMsg = allMessages.find(m => m.id == id);
-  if(!selectedMsg) return;
+  selectedMsg = allMessages.find((m) => m.id == id);
+  if (!selectedMsg) return;
 
   modalContent.innerHTML = `
     <h3>${selectedMsg.name}</h3>
@@ -411,52 +424,56 @@ window.viewMsg = (id) => {
     <p>${selectedMsg.message}</p>
   `;
 
-  modalBg.classList.add('active');
+  modalBg.classList.add("active");
 };
 
-// ====== MARK READ (PERMANENT) ======
+// === MARK READ ====
 window.markRead = async (id) => {
   try {
     await fetch(`${API_BASE}/messages/mark-read`, {
       method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({ id })
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify({ id }),
     });
-
-    await loadMessages(1); // refresh messages fully
+    loadMessages(1);
   } catch (e) {
     console.error("Mark read error", e);
   }
 };
 
-// ====== DELETE MESSAGE (PERMANENT) ======
+// === DELETE ==== 
 window.deleteMsg = async (id) => {
   if (!confirm("Delete this message permanently?")) return;
 
   try {
     await fetch(`${API_BASE}/messages/delete`, {
       method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({ id })
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify({ id }),
     });
-
-    await loadMessages(1); // refresh messages fully
+    loadMessages(1);
   } catch (e) {
     console.error("Delete error", e);
   }
 };
 
-// ====== REPLY ======
+// ==== REPLY ====
 window.replyMail = (email) => {
   if (!email) return;
   window.location.href = `mailto:${email}?subject=Reply from bndlabs`;
 };
 
-// ====== LISTENERS ======
-document.getElementById('searchInput').addEventListener('input', render);
-document.getElementById('filterSelect').addEventListener('change', render);
+// === LISTENERS ===
+document.getElementById("searchInput").addEventListener("input", render);
+document.getElementById("filterSelect").addEventListener("change", render);
 
-// ====== INITIAL LOAD ======
+// === INITIAL LOAD ===
 loadMessages();
 </script>
 <script>
