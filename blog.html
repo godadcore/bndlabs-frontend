@@ -263,7 +263,7 @@ if(menuToggle) menuToggle.addEventListener("click",()=>nav.classList.toggle("act
           const main = parts[0].replace(/index\.html?$/i, '').replace(/\.html?$/i, '');
           const tail = parts.slice(1).join('');
           let clean = main || '/';
-          if (!clean.startswith('/')) clean = '/' + clean;
+          if (!clean.startsWith('/')) clean = '/' + clean;
           if (tail) clean += tail;
           link.setAttribute('href', clean);
         }
