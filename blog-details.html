@@ -142,12 +142,40 @@
     }
 
     /* ARTICLE */
-    .article{padding:18px 0 32px}
+    .article {
+  padding: 10px 0 20px;
+}
+
+@media (max-width: 600px) {
+  .article {
+    padding: 30px 0;
+  }
+}
     .article h2{font-size:24px;margin:28px 0 10px;font-family:"SF Pro Display",-apple-system,BlinkMacSystemFont,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;text-align:left}
     .article p{color:var(--light-muted);margin:10px 0}
     .article .illustration{margin:18px 0}
     .article .illustration img{width:100%;height:auto;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+/* Prevent images from becoming too large on desktop/tablet */
+.article .illustration img,
+.carousel-item img {
+  max-width: 900px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  object-fit: contain;
+}
 
+/* Optional: control height for very tall images */
+@media (min-width: 901px) {
+  .article .illustration img,
+  .carousel-item img {
+    max-height: 580px;
+  }
+}
+.article .illustration {
+  text-align: center;
+}
     /* RECENT */
     .recent{padding:28px 0 6px;border-top:1px solid rgba(0,0,0,.06);margin-top:18px}
     .recent h3{margin:0 0 12px;font-size:18px;letter-spacing:.2px}
@@ -237,10 +265,21 @@
   .carousel.carousel-static .carousel-item:last-child { margin-right: 0; }
   .carousel.carousel-static { justify-content: center; }
 }
+/* Let JavaScript control transform */
 .carousel:not(.carousel-static) .carousel-item {
-  flex: 0 0 100%;
-  transform: none !important;
+  flex: 0 0 auto;
 }
+/* Ensure track uses correct flex layout */
+.carousel .carousel-track {
+  display: flex;
+  transition: transform .4s ease;
+}
+
+/* But no spacing overflow */
+.carousel {
+  width: 100%;
+}
+
   </style>
 </head>
 
@@ -547,10 +586,10 @@ setTimeout(() => {
       else if (width <= 900) basis = "50%";
       else basis = `calc(100% / ${count})`;
 
-      items.forEach((item) => {
-        item.style.transform = "none !important";
-        item.style.flex = `0 0 ${basis}`;
-      });
+items.forEach((item) => {
+  item.style.flex = `0 0 ${basis}`;
+});
+
 
       carousel.style.overflow = "visible";
       return;
